@@ -1,0 +1,78 @@
+---
+title: PDF Export
+description: Export your full documentation site as a PDF file.
+---
+
+## Overview
+
+PDF Export generates a single PDF that includes every page in your documentation site. Open it from **Settings > Advanced > Exports** when you need a portable copy for sharing, review, or offline use. The export runs in the background, and you receive an email notification when the file is ready to download.
+
+## Requirements
+
+<Callout kind="alert">
+
+PDF Export requires the **Standard** plan or higher. If your workspace is on the Starter plan, the Exports page shows an upgrade prompt with an **Upgrade to Standard** button instead of the export controls.
+
+Your documentation must also be deployed before you can export it. If the site has not been published yet, the export button stays disabled until deployment is available.
+
+</Callout>
+
+## Generating an export
+
+Start the export from the Exports page, then monitor progress while the system builds the PDF in the background.
+
+<Steps>
+  <Step title="Open the Exports page" icon="settings" title-type="p">
+
+  Navigate to **Settings > Advanced > Exports**.
+
+  </Step>
+  <Step title="Start the export" icon="download" title-type="p">
+
+  Click **Export Full Site as PDF** to begin generating the file.
+
+  </Step>
+  <Step title="Track progress" icon="play-circle" title-type="p">
+
+  Watch the progress bar as pages are processed. Progress appears as `X / Y pages (Z%)`, which helps you confirm the export is still moving forward.
+
+  </Step>
+  <Step title="Wait for completion" icon="book-open" title-type="p">
+
+  Keep the page open to see the export finish in real time, or wait for the email notification that tells you the PDF is ready.
+
+  </Step>
+</Steps>
+
+<Callout kind="info">
+
+A **Cancel** button is available while the export is running. Large documentation sites can take several minutes to finish.
+
+</Callout>
+
+## When the export is ready
+
+Once generation completes, the Exports page updates with the download controls and export details:
+
+- **Download PDF (X MB)** appears as the primary download button and includes the file size.
+- **Generation details** show when the PDF was created and which user requested the export.
+- **Export Again** lets you generate a fresh PDF whenever you need an updated copy.
+
+## Export expiration
+
+<Callout kind="info">
+
+Previous exports expire after a period of time. When an export is no longer available, the page shows a message prompting you to generate a new one.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Page Actions" href="/features/page-actions" icon="mouse-pointer-click">
+    Control which page-level actions appear in your published documentation sidebar.
+  </Card>
+  <Card title="Danger Zone" href="/features/danger-zone" icon="alert-triangle">
+    Manage irreversible documentation actions such as unpublishing or deleting a site.
+  </Card>
+</Columns>

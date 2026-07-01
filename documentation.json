@@ -68,6 +68,42 @@
                 "title": "Tabs",
                 "path": "components/tabs",
                 "icon": "columns"
+              },
+              {
+                "title": "HTML Block",
+                "path": "components/html-block",
+                "icon": "file-code"
+              },
+              {
+                "title": "SVG",
+                "path": "components/svg",
+                "icon": "pen-tool"
+              }
+            ]
+          },
+          {
+            "group": "Features",
+            "icon": "settings",
+            "pages": [
+              {
+                "title": "PDF Export",
+                "path": "features/pdf-export",
+                "icon": "file-down"
+              },
+              {
+                "title": "Page Actions",
+                "path": "features/page-actions",
+                "icon": "mouse-pointer-click"
+              },
+              {
+                "title": "Danger Zone",
+                "path": "features/danger-zone",
+                "icon": "alert-triangle"
+              },
+              {
+                "title": "Custom Domains",
+                "path": "features/custom-domains",
+                "icon": "globe"
               }
             ]
           }

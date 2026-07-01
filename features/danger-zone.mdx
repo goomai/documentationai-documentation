@@ -1,0 +1,55 @@
+---
+title: Danger Zone
+description: Unpublish or permanently delete your documentation site.
+---
+
+## Overview
+
+Danger Zone in **Settings > Advanced > Danger Zone** contains destructive actions for taking your documentation offline or removing it permanently. The section uses red warning styling and an alert triangle icon to signal that these actions have significant consequences. Review each action carefully before you confirm it.
+
+## Access requirements
+
+<Callout kind="alert">
+
+Admin access is required to view and perform actions in Danger Zone. If you are not an admin, you see the message `You need admin access to perform these actions.`
+
+</Callout>
+
+Only organization admins can use Danger Zone. If you need access, ask an admin in your organization to perform the action or update your role.
+
+## Unpublish Documentation
+
+Unpublishing takes your documentation site offline immediately. It removes the live site, search index, and cached assets, so visitors can no longer access the published documentation until you publish again.
+
+Before the action completes, a confirmation dialog warns that the live site will go offline immediately. Use this option when you need to temporarily remove public access without deleting the documentation itself.
+
+<Callout kind="info">
+
+Unpublishing is reversible. You can republish your documentation at any time from the editor.
+
+</Callout>
+
+## Delete Documentation
+
+Deleting removes the documentation permanently. This action also removes all related deployments, domains, and settings for that documentation.
+
+Before deletion completes, a confirmation dialog warns that the action cannot be undone. Use deletion only when you are certain you no longer need the documentation or any of its published configuration.
+
+<Callout kind="alert">
+
+Deleting documentation is permanent and irreversible.
+
+</Callout>
+
+After deletion, the app redirects you based on what remains in the organization. If the deleted documentation was the last one in the organization, you are redirected to the page where you can create new documentation. If other documentation remains, the app switches you to the first remaining documentation.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Custom Domains" href="/features/custom-domains" icon="globe">
+    Manage domain configuration and DNS records for your published documentation.
+  </Card>
+  <Card title="PDF Export" href="/features/pdf-export" icon="download">
+    Export your full documentation site as a PDF when you need an offline copy.
+  </Card>
+</Columns>
