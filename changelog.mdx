@@ -6,17 +6,47 @@ description: Sample release notes you can replace with your real updates.
 ## Sample updates
 
 <Callout kind="alert">
+
 This changelog is example content. Replace every entry with your real releases.
+
 </Callout>
 
+<Update label="2026-07-02" description="Branch-based editor URLs and workflow improvements" tags={["editor", "workflows"]}>
+
+## New features
+
+- **Branch-aware editor URLs.** The active branch is now part of the editor URL (e.g., `/editor/main`), so you can bookmark, share, and navigate between branches using your browser's Back and Forward buttons.
+- **"View changes" button on workflow runs.** Completed AI agent runs now show a single "View changes" button that takes you directly to the diff of modified files — no manual navigation needed.
+- **Deep-linkable changes view.** The file-changes dialog can be auto-opened via a URL, making it easy to share a direct link to what the AI agent changed.
+
+## Updates
+
+- **Sidebar "Editor" link always points to your active branch** instead of a generic redirect.
+- **The correct branch loads on page refresh.** Opening a branch-specific URL now loads that branch's content immediately, rather than restoring a previously-saved branch.
+- **Creating a new branch updates the URL instantly**, keeping the address bar in sync with your current context.
+- **Visiting `/editor` without a branch shows a brief loading spinner** before redirecting to your active branch.
+
+## Bug fixes
+
+- **Disabled workflow templates are now fully hidden** instead of appearing as greyed-out, unclickable cards.
+- **The workflows list only shows enabled workflows**, removing inactive entries that couldn't be interacted with.
+- **Simplified workflow run actions** — replaced confusing icon-only buttons with the clear "View changes" button.
+
+
+</Update>
+
 <Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Cleaned up placeholder copy across the starter kit.
 - Added clearer "sample" messaging to avoid confusion.
+
 </Update>
 
 <Update label="2025-12-10" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Simplified the Quickstart steps.
 - Trimmed Help Center examples.
+
 </Update>
