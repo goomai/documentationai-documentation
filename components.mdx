@@ -2,21 +2,22 @@
 title: Components (Sample)
 description: A small showcase of the built-in MDX components with usage guidelines.
 ---
+## Quick component tour.  asdas
 
-## Quick component tour
-
-<Callout kind="info">
-These are example components from Documentation.AI. Use them to make pages easier to scan.
+<Callout kind="info" collapsed="false">
+  These are example components from Documentation.AI. Use them to make pages easier to scan.
 </Callout>
 
-<Columns cols={3}>
-  <Card title="Callout" icon="info" href="/components/callouts">
+<Columns cols="3">
+  <Card title="Callout" href="/components/callouts" icon="info" horizontal="false">
     Use for tips, warnings, and important notes.
   </Card>
-  <Card title="Steps" icon="check-circle" href="/components/steps">
+
+  <Card title="Steps" href="/components/steps" icon="check-circle" horizontal="false">
     Break tasks into easy, numbered actions.
   </Card>
-  <Card title="Tabs" icon="layers" href="/components/tabs">
+
+  <Card title="Tabs" href="/components/tabs" icon="layers" horizontal="false">
     Keep alternate examples tidy.
   </Card>
 </Columns>
@@ -26,25 +27,31 @@ These are example components from Documentation.AI. Use them to make pages easie
 **When to use**
 
 - Highlight important warnings or constraints that affect success
+
 - Call out tips that save time or prevent common mistakes
+
 - Emphasize prerequisites, permissions, or irreversible actions
 
-**When not to use**
+**When not to use&#x20;**
 
 - For every minor detail; overuse makes real warnings easy to ignore
+
 - As a replacement for clear prose and headings
+
 - To hide critical blocking information at the bottom of a long page
 
 ## Steps (sample)
 
 <Steps>
-  <Step title="Add a heading" icon="type">
+  <Step title="Add a heading" icon="type" title-type="p">
     Start each page with a clear, short title.
   </Step>
-  <Step title="Explain the goal" icon="target">
+
+  <Step title="Explain the goal" icon="target" title-type="p">
     Tell readers what they will achieve.
   </Step>
-  <Step title="Link to next steps" icon="arrow-right">
+
+  <Step title="Link to next steps" icon="arrow-right" title-type="p">
     Point to the next page they should read.
   </Step>
 </Steps>
@@ -54,13 +61,17 @@ These are example components from Documentation.AI. Use them to make pages easie
 **When to use**
 
 - Readers must follow actions in a specific order
+
 - You describe tasks that can be completed in one sitting
+
 - You want to separate conceptual explanation from hands-on actions
 
 **When not to use**
 
 - For unordered checklists where sequence does not matter
+
 - To document background concepts or architecture
+
 - For long, branching workflows that need their own dedicated guide
 
 ## Tabs (sample)
@@ -72,6 +83,7 @@ These are example components from Documentation.AI. Use them to make pages easie
     docs dev
     ```
   </Tab>
+
   <Tab title="UI" icon="mouse-pointer">
     Open the editor, choose a page, and start writing.
   </Tab>
@@ -82,11 +94,16 @@ These are example components from Documentation.AI. Use them to make pages easie
 **When to use**
 
 - You show the same idea in multiple languages or platforms
+
 - You provide alternate setup paths, such as CLI versus UI
+
 - You want to keep short variants in one compact section
 
 **When not to use**
 
 - When one variant is strongly recommended over the others
+
 - For long, independent flows that deserve separate pages
+
 - When content differs so much that readers must read all variants anyway
+
