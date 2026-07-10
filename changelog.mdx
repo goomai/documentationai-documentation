@@ -6,17 +6,58 @@ description: Sample release notes you can replace with your real updates.
 ## Sample updates
 
 <Callout kind="alert">
+
 This changelog is example content. Replace every entry with your real releases.
+
 </Callout>
 
+<Update label="2026-01-28" description="Real-Time Collaboration" tags={["feature"]}>
+
+## New Features
+
+- **Collaborative editing** — Multiple teammates can edit the same page at the same time. Changes merge automatically with no conflicts.
+- **Live cursors** — See other collaborators' cursors in real time, each labeled with a name and unique color.
+- **Collaborator avatars** — Active teammates appear as avatars in the editor toolbar so you always know who's online.
+- **Inline comments** — Select text or hover a block to start a thread. Reply, @mention teammates, resolve, reopen, edit, and delete. A Comments panel lists all threads for the current branch.
+- **Notifications** — A bell icon alerts you when you're @mentioned, someone replies to your thread, or a thread is resolved. Click to jump straight to the comment.
+- **Real-time file tree** — File creations, deletions, renames, and moves propagate to all collaborators instantly.
+- **Collaborative code editor** — Raw MDX mode supports real-time sync with shared cursor positions.
+- **Live settings sync** — Navigation and configuration changes sync across all collaborators without a page reload.
+- **Publish notifications** — When a teammate publishes, everyone sees a toast and the changes panel updates live.
+- **External push detection** — Active collaborators get a warning if someone pushes via Git outside the editor.
+- **Automatic editor selection** — The app picks the right editor for your branch automatically. Override with `?collab=true` or `?collab=false` in the URL.
+
+## Updates
+
+- **Branch-based save actions** — Feature branches now offer *Save to branch*, *Save & Merge*, and *Save & Create PR* from a single dropdown.
+- **Upgrade prompt** — Legacy editor users see a "Real-time Editor" button with a "New" badge guiding them to switch over.
+- **Viewer role enforcement** — Viewers are now read-only at the real-time level — they can observe but not edit.
+- **Toast redesign** — Notifications appear in the top-right with a close button.
+- **Sidebar avatar refresh** — Smaller circular avatar showing name only, with the notification bell integrated.
+- **Brand color update** — Primary accent changed from amber to coral red.
+- **"Workflows" no longer Beta** — The Workflows sidebar label dropped its Beta badge.
+
+## Bug Fixes
+
+- Renamed files that haven't been opened now display correctly in the diff viewer.
+- The diff viewer refreshes its change list when opened, preventing stale data.
+- Pages with embedded `<Script>` components no longer fail to publish due to special characters.
+- Folder deletions are now correctly tracked as folder operations.
+
+</Update>
+
 <Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Cleaned up placeholder copy across the starter kit.
 - Added clearer "sample" messaging to avoid confusion.
+
 </Update>
 
 <Update label="2025-12-10" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Simplified the Quickstart steps.
 - Trimmed Help Center examples.
+
 </Update>
