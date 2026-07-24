@@ -1,22 +1,33 @@
 ---
-title: Sample Changelog
-description: Sample release notes you can replace with your real updates.
+title: Changelog
+description: Recent product updates, new features, and bug fixes for Documentation.AI.
 ---
 
-## Sample updates
+<Update label="2026-07-24" description="Jira & Confluence integrations, Agent Instructions, Authoring MCP Server, and chat improvements" tags={["release"]}>
 
-<Callout kind="alert">
-This changelog is example content. Replace every entry with your real releases.
-</Callout>
+### New Features
 
-<Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
-## What changed
-- Cleaned up placeholder copy across the starter kit.
-- Added clearer "sample" messaging to avoid confusion.
-</Update>
+- **Jira integration** — Connect your Jira workspace so the AI agent can search issues, sprints, and releases. Useful for generating release notes and keeping docs grounded in what your team shipped.
+- **Confluence integration** — Connect Confluence so the AI agent can read existing wiki pages and turn them into structured documentation.
+- **Agent Instructions** — Write custom instructions (up to 10,000 characters) that tell the AI agent about your brand voice, terminology, and writing style. Applied everywhere the agent runs — in the editor, in Workflows, and in background runs.
+- **Authoring MCP Server** — A new MCP server exposes 12 read and write tools for managing documentation programmatically, including file operations, branch management, and pull requests. Requires OAuth 2.1. Available alongside the existing read-only Docs MCP Server.
+- **"View changes" in editor** — When the AI agent edits a file, click "View changes" to jump directly to the edited content with a brief highlight.
 
-<Update label="2025-12-10" description="Sample Update" tags={["sample"]}>
-## What changed
-- Simplified the Quickstart steps.
-- Trimmed Help Center examples.
+### Updates
+
+- **Unified connector management** — GitHub, Jira, and Confluence are now managed from a single Agent page. The composer's context button shows all active connectors at once.
+- **Chat history is now server-persisted** — Conversations are saved server-side. If a reply is interrupted, reopening the chat rejoins the in-progress stream automatically.
+- **Stop button cancels server-side** — Stopping the AI agent now halts generation on the server, not just in the browser.
+- **Compaction indicator** — A spinner now appears when a conversation is being summarized, instead of a blank state.
+- **Source repository settings moved** — GitHub repository configuration is now in Settings, replacing the old standalone integrations page.
+- **Sidebar refreshed** — "AI Agents" is now "AI" with a dedicated Agent page. The standalone Integrations page has been removed.
+- **Publish conflict resolution synced server-side** — Merge conflicts during publish are now resolved on the server so all collaborators see the result immediately.
+- **Intercom integration removed** — Replaced by the new Jira and Confluence integrations.
+- **UI polish** — Consistent border radius, button heights, brand color on primary actions, and refined dark mode surfaces across the dashboard.
+
+### Bug Fixes
+
+- **Editor loads without GitHub connection** — The editor no longer hangs on a loading spinner when a GitHub App is not yet connected.
+
+
 </Update>
