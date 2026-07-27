@@ -1,0 +1,121 @@
+---
+title: Custom Domains
+description: Connect your own domain, configure DNS records, and manage how your documentation is served.
+---
+
+## Overview
+
+Every documentation project includes a default subdomain such as `myproject.documentationai.com`. If you want your docs to live on your own domain, connect a custom domain like `docs.mycompany.com` or serve the site at a subpath like `mycompany.com/docs` through a reverse proxy.
+
+## Deployment modes
+
+Choose the deployment mode that matches how you want to publish your documentation.
+
+| Mode | How it works | Requirements |
+| --- | --- | --- |
+| **Default subdomain** | Use the system-assigned URL for your project. No additional setup is required. | Available on all plans |
+| **Custom domain** | Serve your documentation from your own apex domain or subdomain, such as `docs.mycompany.com`. | Requires DNS configuration |
+| **Subpath** | Serve your documentation from a path on your own domain, such as `mycompany.com/docs`, using a reverse proxy. | Requires the **Standard** plan or higher |
+
+## Connecting a custom domain
+
+Connect a custom domain from your project settings, then verify it with the DNS records provided.
+
+<Steps>
+  <Step title="Open domain settings" icon="settings" title-type="p">
+
+  Go to **Settings > Domain** for the documentation project you want to update.
+
+  </Step>
+
+  <Step title="Enter your domain" icon="edit" title-type="p">
+
+  Type your domain in the custom domain field. The `https://` prefix is already fixed in the UI, so enter only the domain name, such as `docs.mycompany.com`.
+
+  </Step>
+
+  <Step title="Save the domain" icon="check-circle" title-type="p">
+
+  Save the configuration to generate the DNS records you need. After you save, the domain section shows the records to add at your DNS provider.
+
+  </Step>
+
+  <Step title="Add the DNS records" icon="database" title-type="p">
+
+  Copy the DNS records shown in the configuration table and add them at your domain registrar or DNS provider. Depending on your setup, this may include a CNAME record, a TXT record, or both.
+
+  </Step>
+
+  <Step title="Check verification status" icon="refresh-cw" title-type="p">
+
+  Return to **Settings > Domain** and click **Check status** after you add the DNS records. If DNS propagation is still in progress, wait a few minutes and check again.
+
+  </Step>
+
+  <Step title="Republish after verification" icon="upload" title-type="p">
+
+  When the domain shows **Verified**, republish your documentation so the live site starts serving from the new domain.
+
+  </Step>
+</Steps>
+
+## DNS configuration
+
+After you save a custom domain, the domain settings page shows the exact DNS records required for verification.
+
+<Callout kind="alert">
+
+If you are using Cloudflare, make sure the proxy is disabled (gray cloud / DNS only). Cloudflare proxy masks the original DNS records, which prevents domain verification from completing.
+
+</Callout>
+
+<Callout kind="info">
+
+You must manually publish your documentation after DNS configuration is fully propagated and the domain status shows Verified.
+
+</Callout>
+
+## Domain verification
+
+Verification starts after you save the domain and add the DNS records shown in the configuration table. Use **Check status** to trigger a verification check from the domain settings page.
+
+If the domain does not verify immediately, DNS propagation is usually still in progress. Wait a few minutes, then run the check again. Once verification succeeds, the domain section shows a success state and a **Re-Publish** button.
+
+## Subpath deployment
+
+Subpath mode serves your documentation from a path prefix on your own domain instead of a dedicated hostname. Use it when you want a URL such as `mycompany.com/docs` and you already control the reverse proxy in front of your site.
+
+<Callout kind="alert">
+
+Subpath deployment requires the **Standard** plan or higher.
+
+</Callout>
+
+Configure the parent domain and the subpath in **Settings > Domain**. If you enter a subpath without a leading slash, the platform adds it for you.
+
+Setup guides are available for these reverse proxy platforms:
+
+- Vercel
+- Cloudflare
+- AWS CloudFront
+
+## Removing a domain
+
+Remove a custom domain or subpath configuration from **Settings > Domain** when you want to go back to the default subdomain. Removing the configuration reverts the project to its system-assigned URL.
+
+Republish the documentation after you remove the domain configuration. The change does not affect the live site until the new deployment completes.
+
+## Reusing a domain after deletion
+
+When you delete a documentation project, its custom domain is automatically freed for reuse. Connect the same domain to a new documentation project without any additional cleanup steps.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Danger Zone" href="/features/danger-zone" icon="alert-triangle">
+    Delete a documentation project or manage irreversible project-level actions.
+  </Card>
+  <Card title="PDF Export" href="/features/pdf-export" icon="download">
+    Export your full documentation site as a PDF for sharing or offline review.
+  </Card>
+</Columns>

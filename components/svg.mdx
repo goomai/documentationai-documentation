@@ -1,0 +1,37 @@
+---
+title: SVG
+description: Embed inline SVG graphics from any URL in your MDX pages.
+---
+
+## SVG
+
+Use the `SVG` component to fetch an SVG from a URL and render it inline in the page instead of as an `img` tag.
+
+## Example
+
+<SVG src="https://example.com/diagram.svg" />
+
+<SVG src="https://example.com/logo.svg" className="h-12" />
+
+## Props
+
+| Prop | Type | Required | Description |
+| --- | --- | --- | --- |
+| `src` | `string` | Yes | URL of the SVG file to fetch and render inline. |
+| `className` | `string` | No | CSS class applied to the wrapper. Use it to control height and layout. Width defaults to `100%`. |
+| `uid` | `string` | No | Written as a `data-uid` attribute on the wrapper for scripting or selection hooks. |
+
+## Rendering behavior
+
+<Callout kind="info">
+
+- SVGs render inline in the DOM, not as `img` tags, so they inherit surrounding styles and can be styled with CSS.
+- SVGs are fetched server-side and cached for 1 hour for fast initial page load.
+- If the SVG URL is unreachable, the component renders nothing. It does not show a fallback placeholder.
+- The wrapper `div` defaults to full width. Use the `className` prop to set height, for example `className="h-40"`.
+
+</Callout>
+
+## Learn more
+
+Read the full SVG guide at https://documentation.ai/docs/components/svg.

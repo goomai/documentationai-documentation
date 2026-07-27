@@ -21,6 +21,55 @@ Use callouts to draw attention to important information without breaking the rea
   Double-check destructive actions before proceeding.
 </Callout>
 
+<Callout kind="success">
+  Your deployment completed successfully.
+</Callout>
+
+<Callout kind="danger">
+  This action cannot be undone. Proceed with caution.
+</Callout>
+
+## Custom icons
+
+Override the default icon for any callout by passing a Lucide icon name to the `icon` prop. Use the kebab-case name (e.g., `icon="rocket"`, `icon="shield-check"`).
+
+<Callout kind="info" icon="rocket">
+  This callout uses a rocket icon instead of the default info icon.
+</Callout>
+
+<Callout kind="tip" icon="lightbulb">
+  Icon names follow Lucide's kebab-case convention. If a name doesn't match a Lucide icon, the callout falls back to the default icon for its kind.
+</Callout>
+
+## Custom colors
+
+Set a custom background tint and icon color with the `color` prop. Accept any CSS color value (hex, named, `rgb()`, `hsl()`). The background uses a 12% opacity tint of your color, while the icon uses the full color.
+
+<Callout kind="info" color="#8b5cf6">
+  This callout has a purple background tint and a purple icon.
+</Callout>
+
+<Callout kind="tip" color="#f59e0b">
+  This callout has an amber background tint and an amber icon.
+</Callout>
+
+## Custom callouts
+
+Use `kind="custom"` for fully branded callouts with no predefined styling. Pair it with `icon` and `color` to control both the icon and background:
+
+<Callout kind="custom" icon="rocket" color="#8b5cf6">
+  This callout has a purple tint, a rocket icon, and inherits default body text color.
+</Callout>
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `kind` | `info` \| `tip` \| `alert` \| `success` \| `danger` \| `custom` | `info` | Determines the callout's default icon and background color. |
+| `icon` | string | — | A Lucide icon name in kebab-case. Overrides the default icon for the callout's kind. |
+| `color` | string | — | A CSS color value. Sets a custom background tint (12% opacity) and icon color. Overrides the kind-based background. |
+| `children` | ReactNode | — | The callout content. |
+
 ## Learn more
 
 Read the full Callout guide at https://documentation.ai/docs/components/callout.

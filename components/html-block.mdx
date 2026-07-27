@@ -1,0 +1,68 @@
+---
+title: HTML Block
+description: Embed custom HTML with a live preview directly in your documentation pages.
+---
+
+## HTML Block
+
+Use the HTML Block to embed raw HTML in a page and preview the result directly in the editor. The preview stays isolated from the rest of the page, so your custom markup and styles render on their own.
+
+## Inserting an HTML Block
+
+Add an HTML Block from the editor slash menu.
+
+<Steps>
+  <Step title="Open the slash menu">
+
+  In a new line, type `/html` to find the HTML Block. You can also type `/embed` or `/markup`.
+
+  </Step>
+  <Step title="Insert the block">
+
+  Select **HTML Block** from the content menu. New blocks start with a basic HTML template so you can begin editing immediately.
+
+  </Step>
+</Steps>
+
+## Editing and preview
+
+HTML Blocks have two editing modes so you can switch between writing markup and checking the result.
+
+### Preview mode
+
+Preview mode is the default view, including after you reload the page. The block renders your HTML live in an isolated container, so surrounding page styles do not affect your content and your custom styles do not affect the rest of the page.
+
+### Code mode
+
+Click the code icon to switch to code mode and edit raw HTML in a textarea. Press <kbd>Tab</kbd> to insert two spaces while editing.
+
+To save your changes and return to preview, do any of the following:
+
+- Click the preview icon
+- Press <kbd>Escape</kbd>
+- Click outside the editor
+
+If the block is empty, the editor shows a **Click to add HTML content** placeholder.
+
+<Callout kind="tip">
+
+The preview is style-isolated, so your custom HTML and CSS will not interfere with the rest of the page, and the page's styles will not affect your HTML.
+
+</Callout>
+
+## Importing MDX with unknown components
+
+Import MDX files without losing custom content. If the editor finds components it does not recognize, it converts those components into HTML Blocks instead of dropping them.
+
+This preserves the imported markup so you can keep the content in your page and edit it manually if needed.
+
+## Learn more
+
+<Columns cols={1}>
+  <Card
+    title="HTML Block guide"
+    href="https://documentation.ai/docs/components/html-block"
+    icon="external-link"
+    cta="Open guide"
+  />
+</Columns>

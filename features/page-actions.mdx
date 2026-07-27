@@ -56,6 +56,32 @@ Changes do not affect the live sidebar until you publish.
 
 </Callout>
 
+## SEO overrides with frontmatter
+
+Two optional frontmatter fields let you control what search engines and social media platforms see, independently of the visible page heading and description:
+
+| Field | Controls |
+| --- | --- |
+| `metaTitle` | Browser tab title, Open Graph title, Twitter card title, and JSON-LD headline |
+| `metaDescription` | Meta description tag, Open Graph description, and Twitter card description |
+
+If you omit these fields, search engines fall back to the page's `title` and `description` frontmatter values. The visible `<h1>` heading and on-page description are not affected.
+
+```yaml
+---
+title: Getting Started
+description: Set up your first project in minutes.
+metaTitle: Getting Started with Documentation.AI
+metaDescription: Learn how to create, configure, and publish your first documentation site.
+---
+```
+
+## Click-to-copy heading links
+
+Every heading with an anchor ID acts as a copy-to-clipboard link. Clicking anywhere on a heading copies the section URL to the clipboard and updates the browser's address bar. A link icon in the margin confirms the copy with a checkmark for one second.
+
+This behavior is built in and requires no configuration.
+
 ## Next steps
 
 <Columns cols={2}>
