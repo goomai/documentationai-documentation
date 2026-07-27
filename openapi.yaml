@@ -1,186 +1,523 @@
 openapi: '3.0.0'
 info:
-  version: 1.0.0
-  title: Sample API
-  description: >
-    This is a sample OpenAPI file included with the starter kit.
+  title: Git Integration API
+  version: 2.0.0
+  description: |
+    API endpoints for connecting GitLab projects, managing connections, receiving webhooks, and downloading source archives.
 
-    Replace this entire file with your own OpenAPI specification that fully
-    describes your API, including your endpoints, schemas, authentication,
-    and error handling. Use this sample only as a structural reference, not
-    as a starting point for a production API definition.
+    Authentication:
+    - All endpoints except the webhook receiver require a bearer token in the `Authorization` header.
+    - The webhook receiver uses the `X-Gitlab-Token` header instead of bearer authentication.
+
+    Usage notes:
+    - Validate a GitLab token and project before creating a connection.
+    - Connected projects can be listed, updated, or disconnected at the organization level.
+    - Source archives are returned as raw ZIP binaries.
+  contact:
+    name: Documentation.ai Support
+    url: https://documentation.ai
+    email: support@documentation.ai
   license:
-    name: MIT
+    name: Proprietary
+    url: https://documentation.ai
 servers:
-  - url: https://api.example.com/v1
+  - url: https://api.documentation.ai
+tags:
+  - name: GitLab
+    description: Operations for validating, connecting, updating, listing, and disconnecting GitLab integrations.
+  - name: Webhooks
+    description: Operations for receiving GitLab webhook events.
+  - name: Source Archives
+    description: Operations for downloading source repository archives for documentation projects.
 paths:
-  /projects:
-    get:
-      summary: List all projects
-      operationId: listProjects
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: An paged array of projects
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Projects'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+  /gitlab/validate:
     post:
-      summary: Create project
-      operationId: createProjects
+      tags:
+        - GitLab
+      summary: Validate a GitLab token and project
+      description: Validates a GitLab access token and project before connecting. Nothing is saved. Checks token validity, project access, write permissions, and webhook registration capability.
+      operationId: validateGitLabTokenAndProject
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GitLabValidateRequest'
+            example:
+              projectId: '12345'
+              accessToken: glpat-exampletoken
+              host: https://gitlab.company.internal
       responses:
-        201:
-          description: Null response
-        default:
-          description: unexpected error
+        '200':
+          description: Validation result for the provided GitLab token and project.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /projects/{projectId}:
+                $ref: '#/components/schemas/GitLabValidateResponse'
+              example:
+                valid: true
+                project:
+                  id: '12345'
+                  name: docs-site
+                  fullPath: team/docs-site
+                  defaultBranch: main
+                  webUrl: https://gitlab.com/team/docs-site
+                  cloneUrl: https://gitlab.com/team/docs-site.git
+                  visibility: private
+                canWrite: true
+                canRegisterWebhook: true
+                warning: Webhook registration requires Maintainer role on some self-hosted instances.
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /gitlab/connect:
+    post:
+      tags:
+        - GitLab
+      summary: Connect a GitLab project
+      description: Connects a GitLab project to an organization. Stores the access token securely and registers a webhook on the project for auto-deploy.
+      operationId: connectGitLabProject
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GitLabConnectRequest'
+            example:
+              organizationId: 550e8400-e29b-41d4-a716-446655440000
+              projectId: '12345'
+              accessToken: glpat-exampletoken
+              documentationId: 660e8400-e29b-41d4-a716-446655440000
+              host: https://gitlab.company.internal
+      responses:
+        '200':
+          description: GitLab project connected successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitLabConnectResponse'
+              example:
+                connectionId: conn_123
+                repositoryId: repo_123
+                project:
+                  id: '12345'
+                  name: docs-site
+                  fullPath: team/docs-site
+                  defaultBranch: main
+                  webUrl: https://gitlab.com/team/docs-site
+                  cloneUrl: https://gitlab.com/team/docs-site.git
+                  visibility: private
+                webhookRegistered: true
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /gitlab/token:
+    put:
+      tags:
+        - GitLab
+      summary: Update GitLab access token
+      description: Replaces the stored access token on an existing GitLab connection. Use this when a token expires or needs rotation.
+      operationId: updateGitLabAccessToken
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GitLabTokenUpdateRequest'
+            example:
+              organizationId: 550e8400-e29b-41d4-a716-446655440000
+              connectionId: 770e8400-e29b-41d4-a716-446655440000
+              accessToken: glpat-newtoken
+      responses:
+        '200':
+          description: Token updated and validated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitLabTokenUpdateResponse'
+              example:
+                valid: true
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /gitlab/organizations/{organizationId}/connections:
     get:
-      summary: Get project info
-      operationId: showProjectById
+      tags:
+        - GitLab
+      summary: List GitLab connections
+      description: Returns all GitLab connections for an organization.
+      operationId: listGitLabConnections
+      security:
+        - BearerAuth: []
       parameters:
-        - name: projectId
-          in: path
+        - $ref: '#/components/parameters/OrganizationId'
+      responses:
+        '200':
+          description: A list of GitLab connections for the organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitLabConnectionsListResponse'
+              example:
+                connections:
+                  - id: 770e8400-e29b-41d4-a716-446655440000
+                    projectId: '12345'
+                    accountName: team/docs-site
+                    host: https://gitlab.com
+                    webhookRegistered: true
+                    tokenExpiresAt: null
+                    createdAt: '2026-01-15T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /gitlab/organizations/{organizationId}/connections/{connectionId}:
+    delete:
+      tags:
+        - GitLab
+      summary: Disconnect a GitLab project
+      description: Removes a GitLab connection and its stored credentials.
+      operationId: disconnectGitLabProject
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrganizationId'
+        - $ref: '#/components/parameters/ConnectionId'
+      responses:
+        '200':
+          description: GitLab connection removed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                success: true
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /gitlab/webhook:
+    post:
+      tags:
+        - Webhooks
+      summary: GitLab webhook receiver
+      description: Receives push and merge request webhook events from GitLab. This endpoint is authenticated via the X-Gitlab-Token header, not a bearer token. The server acknowledges receipt immediately with a 200 response before processing the event asynchronously.
+      operationId: receiveGitLabWebhook
+      security: []
+      parameters:
+        - name: X-Gitlab-Event
+          in: header
           required: true
-          description: The id of the project to retrieve
+          description: Event type, for example `Push Hook` or `Merge Request Hook`.
           schema:
             type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Projects'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /documents:
-    get:
-      summary: List all documents
-      operationId: listDocuments
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: An paged array of documents
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Documents'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    post:
-      summary: Create document
-      operationId: createDocuments
-      responses:
-        201:
-          description: Null response
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /documents/{docId}:
-    get:
-      summary: Get document info
-      operationId: showDocumentById
-      parameters:
-        - name: docId
-          in: path
+          example: Push Hook
+        - name: X-Gitlab-Token
+          in: header
           required: true
-          description: The id of the document to retrieve
+          description: Shared secret for webhook authentication.
           schema:
             type: string
+          example: webhook-secret-token
+        - name: X-Gitlab-Event-Uuid
+          in: header
+          required: false
+          description: Delivery identifier used for idempotency.
+          schema:
+            type: string
+          example: 9f8a7b6c-1234-5678-90ab-cdef12345678
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+            example:
+              project:
+                id: 12345
+                path_with_namespace: team/docs-site
+              ref: refs/heads/main
       responses:
-        200:
-          description: Expected response to a valid request
+        '200':
+          description: Webhook accepted and will be processed asynchronously.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Documents'
-        default:
-          description: unexpected error
+                $ref: '#/components/schemas/WebhookReceivedTrueResponse'
+              example:
+                received: true
+        '400':
+          description: Missing event type or project ID.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/WebhookReceivedFalseResponse'
+              example:
+                received: false
+        '401':
+          description: Invalid or missing X-Gitlab-Token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookReceivedFalseResponse'
+              example:
+                received: false
+        '404':
+          description: No connection found for this project.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookReceivedFalseResponse'
+              example:
+                received: false
+  /organizations/{organizationId}/documentation/{documentationId}/source-archive:
+    get:
+      tags:
+        - Source Archives
+      summary: Download source repository archive
+      description: Downloads the full source repository for a documentation project as a ZIP file. The server proxies the provider's archive endpoint and injects credentials internally. Requires admin role on the documentation.
+      operationId: downloadSourceRepositoryArchive
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrganizationId'
+        - $ref: '#/components/parameters/DocumentationId'
+      responses:
+        '200':
+          description: ZIP archive download.
+          headers:
+            Content-Disposition:
+              description: Suggested filename for the downloaded archive.
+              schema:
+                type: string
+              example: attachment; filename="documentation-source.zip"
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
 components:
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Bearer token for authenticated requests
+  parameters:
+    OrganizationId:
+      name: organizationId
+      in: path
+      required: true
+      description: Unique identifier of the organization.
+      schema:
+        type: string
+        format: uuid
+      example: 550e8400-e29b-41d4-a716-446655440000
+    ConnectionId:
+      name: connectionId
+      in: path
+      required: true
+      description: Unique identifier of the GitLab connection.
+      schema:
+        type: string
+        format: uuid
+      example: 770e8400-e29b-41d4-a716-446655440000
+    DocumentationId:
+      name: documentationId
+      in: path
+      required: true
+      description: Unique identifier of the documentation project.
+      schema:
+        type: string
+        format: uuid
+      example: 660e8400-e29b-41d4-a716-446655440000
+  responses:
+    BadRequestError:
+      description: Invalid input or malformed request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Invalid request payload.
+    UnauthorizedError:
+      description: Missing or invalid authentication.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Unauthorized.
+    ForbiddenError:
+      description: Insufficient permissions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 403
+            message: Forbidden.
+    NotFoundError:
+      description: Resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 404
+            message: Resource not found.
+    ConflictError:
+      description: Resource conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 409
+            message: Connection already exists.
+    UnprocessableEntityError:
+      description: Semantic validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 422
+            message: Validation failed.
+    InternalServerError:
+      description: Unexpected server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 500
+            message: Internal server error.
   schemas:
-    Project:
+    GitLabProject:
+      type: object
+      description: Metadata for a GitLab project.
       required:
         - id
         - name
+        - fullPath
+        - defaultBranch
+        - webUrl
+        - cloneUrl
+        - visibility
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          description: Numeric GitLab project ID represented as a string.
+          example: '12345'
         name:
           type: string
-        description:
+          description: Project name.
+          example: docs-site
+        fullPath:
           type: string
-    Projects:
-      type: array
-      items:
-        $ref: '#/components/schemas/Project'
-    Document:
+          description: Full namespace path of the project.
+          example: team/docs-site
+        defaultBranch:
+          type: string
+          description: Default branch of the project.
+          example: main
+        webUrl:
+          type: string
+          description: Web URL of the project.
+          example: https://gitlab.com/team/docs-site
+        cloneUrl:
+          type: string
+          description: Git clone URL of the project.
+          example: https://gitlab.com/team/docs-site.git
+        visibility:
+          type: string
+          description: Visibility level of the project.
+          example: private
+    GitLabConnection:
+      type: object
+      description: A stored GitLab connection for an organization.
       required:
         - id
-        - title
+        - projectId
+        - accountName
+        - host
+        - webhookRegistered
+        - tokenExpiresAt
+        - createdAt
       properties:
         id:
-          type: integer
-          format: int64
-        title:
           type: string
-        content:
+          description: Unique identifier for the connection.
+          example: 770e8400-e29b-41d4-a716-446655440000
+        projectId:
           type: string
-    Documents:
-      type: array
-      items:
-        $ref: '#/components/schemas/Document'
+          description: GitLab project ID.
+          example: '12345'
+        accountName:
+          type: string
+          description: Account or namespace name associated with the project.
+          example: team/docs-site
+        host:
+          type: string
+          description: GitLab host URL.
+          example: https://gitlab.com
+        webhookRegistered:
+          type: boolean
+          description: Indicates whether the webhook is registered successfully.
+          example: true
+        tokenExpiresAt:
+          type: string
+          nullable: true
+          description: Expiration timestamp for the stored token, if known.
+          format: date-time
+          example: null
+        createdAt:
+          type: string
+          description: Timestamp when the connection was created.
+          format: date-time
+          example: '2026-01-15T10:30:00Z'
     Error:
+      type: object
+      description: Standard error response.
       required:
         - code
         - message
@@ -188,5 +525,200 @@ components:
         code:
           type: integer
           format: int32
+          description: Application-specific error code.
+          example: 400
         message:
           type: string
+          description: Human-readable error message.
+          example: Invalid request payload.
+    GitLabValidateRequest:
+      type: object
+      description: Request payload for validating a GitLab token and project.
+      required:
+        - projectId
+        - accessToken
+      properties:
+        projectId:
+          type: string
+          minLength: 1
+          description: Numeric GitLab project ID.
+          example: '12345'
+        accessToken:
+          type: string
+          minLength: 1
+          description: GitLab access token with `api` scope.
+          example: glpat-exampletoken
+        host:
+          type: string
+          description: Self-hosted GitLab instance URL. Omit for gitlab.com.
+          example: https://gitlab.company.internal
+    GitLabValidateResponse:
+      type: object
+      description: Result of GitLab token and project validation.
+      required:
+        - valid
+        - project
+        - canWrite
+        - canRegisterWebhook
+      properties:
+        valid:
+          type: boolean
+          description: Indicates whether the token and project are valid.
+          example: true
+        project:
+          $ref: '#/components/schemas/GitLabProject'
+        canWrite:
+          type: boolean
+          description: Whether the token has write access.
+          example: true
+        canRegisterWebhook:
+          type: boolean
+          description: Whether the token can register webhooks.
+          example: true
+        error:
+          type: string
+          description: Error message if validation failed.
+          example: Token does not have access to the specified project.
+        warning:
+          type: string
+          description: Non-blocking warning message.
+          example: Webhook registration may require additional permissions.
+    GitLabConnectRequest:
+      type: object
+      description: Request payload for connecting a GitLab project.
+      required:
+        - organizationId
+        - projectId
+        - accessToken
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+          description: Organization to connect to.
+          example: 550e8400-e29b-41d4-a716-446655440000
+        projectId:
+          type: string
+          minLength: 1
+          description: GitLab project ID.
+          example: '12345'
+        accessToken:
+          type: string
+          minLength: 1
+          description: GitLab access token.
+          example: glpat-exampletoken
+        documentationId:
+          type: string
+          format: uuid
+          description: Existing documentation to link.
+          example: 660e8400-e29b-41d4-a716-446655440000
+        host:
+          type: string
+          description: Self-hosted GitLab instance URL.
+          example: https://gitlab.company.internal
+    GitLabConnectResponse:
+      type: object
+      description: Response returned after connecting a GitLab project.
+      required:
+        - connectionId
+        - repositoryId
+        - project
+        - webhookRegistered
+      properties:
+        connectionId:
+          type: string
+          description: Identifier of the created connection.
+          example: conn_123
+        repositoryId:
+          type: string
+          description: Identifier of the linked repository record.
+          example: repo_123
+        project:
+          $ref: '#/components/schemas/GitLabProject'
+        webhookRegistered:
+          type: boolean
+          description: Whether the webhook was registered successfully.
+          example: true
+        warning:
+          type: string
+          description: Non-fatal warning related to the connection.
+          example: Webhook was skipped because it already exists.
+    GitLabTokenUpdateRequest:
+      type: object
+      description: Request payload for rotating a GitLab access token.
+      required:
+        - organizationId
+        - connectionId
+        - accessToken
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+          description: Organization that owns the connection.
+          example: 550e8400-e29b-41d4-a716-446655440000
+        connectionId:
+          type: string
+          format: uuid
+          description: Connection to update.
+          example: 770e8400-e29b-41d4-a716-446655440000
+        accessToken:
+          type: string
+          minLength: 1
+          description: Replacement GitLab access token.
+          example: glpat-newtoken
+    GitLabTokenUpdateResponse:
+      type: object
+      description: Result of a token update operation.
+      required:
+        - valid
+      properties:
+        valid:
+          type: boolean
+          description: Indicates whether the new token is valid.
+          example: true
+    GitLabConnectionsListResponse:
+      type: object
+      description: List of GitLab connections for an organization.
+      required:
+        - connections
+      properties:
+        connections:
+          type: array
+          description: GitLab connections associated with the organization.
+          items:
+            $ref: '#/components/schemas/GitLabConnection'
+    SuccessResponse:
+      type: object
+      description: Generic success response.
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the operation completed successfully.
+          example: true
+    WebhookReceivedTrueResponse:
+      type: object
+      description: Webhook acknowledgment for accepted requests.
+      required:
+        - received
+      properties:
+        received:
+          type: boolean
+          enum:
+            - true
+          description: Indicates the webhook was accepted.
+          example: true
+    WebhookReceivedFalseResponse:
+      type: object
+      description: Webhook acknowledgment for rejected requests.
+      required:
+        - received
+      properties:
+        received:
+          type: boolean
+          enum:
+            - false
+          description: Indicates the webhook was not accepted.
+          example: false
+security:
+  - BearerAuth: []

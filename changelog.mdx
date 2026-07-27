@@ -1,22 +1,50 @@
 ---
-title: Sample Changelog
-description: Sample release notes you can replace with your real updates.
+title: Changelog
+description: Release notes for recent updates to the documentation platform.
 ---
 
-## Sample updates
+## Updates
 
-<Callout kind="alert">
-This changelog is example content. Replace every entry with your real releases.
-</Callout>
+<Update label="2026-07-27" description="Git provider abstraction and GitLab integration" tags={["new", "enhancement"]}>
+
+## What changed
+
+### New features
+
+- **GitLab integration**: Connect GitLab projects to your documentation using personal or project access tokens with API scope. Self-hosted GitLab instances are supported — provide the instance URL when connecting.
+- **Source archive download**: Download the full source repository for a documentation project as a ZIP file through an authenticated API request.
+- **Webhook auto-deploy for GitLab**: Push events to the default branch of a connected GitLab project now trigger automatic deployments, matching the existing GitHub behavior.
+
+### Changed behavior
+
+- **`webhookRegistered` field**: Documentation responses now include a `webhookRegistered` field that indicates whether auto-deploy webhooks are active. The field is `true` when the webhook is registered, `false` when a GitLab connection exists but the webhook could not be created (token lacks Maintainer role), and `null` when no provider connection exists.
+- **Switching source repositories**: Changing a documentation's source repository now immediately clears all editor state from the previous repository, including file trees, file contents, and comments. This prevents stale files from appearing in the editor after a source switch.
+- **Publishing conflicts**: When another writer updates the branch during an editing session, the server now returns a `409 Conflict` response instead of the previous unstructured error. The response message instructs the user to refresh and retry.
+- **Merge branch responses**: The `status` field in merge branch responses is now consistently `201` (new merge commit) or `204` (already merged), regardless of the git provider.
+
+### Security
+
+- GitLab access tokens are encrypted at rest using a dedicated encryption key. Self-hosted deployments must configure the `GIT_PROVIDER_ENCRYPTION_KEY` environment variable before connecting GitLab projects.
+- GitLab webhook deliveries are authenticated using a per-connection shared secret sent in the `X-Gitlab-Token` header, verified with constant-time comparison to prevent timing attacks.
+
+</Update>
 
 <Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Cleaned up placeholder copy across the starter kit.
 - Added clearer "sample" messaging to avoid confusion.
+
 </Update>
 
 <Update label="2025-12-10" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Simplified the Quickstart steps.
 - Trimmed Help Center examples.
+
 </Update>
+
+---
+
+Last updated: July 2026

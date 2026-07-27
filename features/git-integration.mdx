@@ -1,0 +1,160 @@
+---
+title: Git Integration
+description: Connect GitHub or GitLab repositories to your documentation, manage webhooks for auto-deploy, and download source archives.
+---
+
+## Overview
+
+Connect your documentation to repositories in GitHub or GitLab and deploy changes automatically from your source of truth. GitHub repositories connect through the GitHub App installation flow, while GitLab projects connect with a personal or project access token that includes the `api` scope.
+
+GitLab also supports self-hosted instances. If your team uses a self-managed GitLab server instead of gitlab.com, enter the instance URL when you create the connection.
+
+Once connected, pushes to the repository's default branch trigger a new deployment automatically. That keeps your published documentation in sync with the branch your team maintains.
+
+## Connecting a GitLab project
+
+### Validate before connecting
+
+Validate your GitLab token and project before saving a connection. Validation checks access without storing credentials, which helps you confirm the token, project, and permissions before you rely on the integration.
+
+To validate a project, you need:
+
+- A **GitLab project ID**. Use the numeric project ID shown on the project's overview page.
+- An **access token with `api` scope**.
+- An optional **host URL** for self-hosted GitLab instances. Leave this blank for gitlab.com.
+
+The validation result confirms:
+
+- Whether the token and project are valid
+- Project details such as name, default branch, web URL, clone URL, and visibility
+- Whether the token has write access, which requires the **Developer** role or higher
+- Whether the token can register webhooks, which requires the **Maintainer** role or higher
+
+<Callout kind="info">
+
+A token with Developer access can push content but cannot register webhooks for auto-deploy. Use a Maintainer-level token if you want pushes to trigger deployments automatically.
+
+
+</Callout>
+
+### Connect the project
+
+Connect the project after validation succeeds. The platform stores the token securely, links the repository to your documentation, and attempts to register a webhook on the GitLab project.
+
+A GitLab connection requires:
+
+- Your **organization ID**
+- The **GitLab project ID**
+- The **access token**
+
+You can also provide:
+
+- An existing **documentation ID** if you want to attach the connection to a specific documentation project
+- A **host URL** for self-hosted GitLab instances
+
+After the connection is created, you receive a connection record that includes the connection ID, repository ID, project details, and whether the webhook was registered successfully.
+
+<Steps>
+
+  <Step title="Validate the token and project" icon="check-circle" title-type="p">
+
+  Confirm the project ID, token scope, and access level before saving the connection.
+
+  </Step>
+  <Step title="Create the connection" icon="github" title-type="p">
+
+  Save the GitLab project, access token, and optional self-hosted URL to connect the repository to your documentation.
+
+  </Step>
+  <Step title="Verify webhook status" icon="zap" title-type="p">
+
+  Check the connection status after setup. A successful connection should show that the webhook is registered, which means pushes to the default branch can trigger auto-deploy.
+
+  </Step>
+</Steps>
+
+## Managing connections
+
+### List connections
+
+Review all GitLab connections for your organization from the connections view. Each entry shows the project ID, account name, host URL, webhook registration status, token expiry when available, and the date the connection was created.
+
+This view helps you confirm which repositories are active and quickly spot connections that need attention. If a token is close to expiring or a webhook was not registered, fix it before deployments are interrupted.
+
+### Rotate an access token
+
+Update an access token without disconnecting the project when the current token expires or your team rotates credentials. You need the organization ID, the connection ID, and the new access token.
+
+After rotation, verify the connection again to confirm access still works as expected. If the new token has different permissions than the old one, webhook registration status may change.
+
+### Disconnect
+
+Disconnect a GitLab project when you no longer want it linked to your documentation. You need the organization ID and the connection ID.
+
+Disconnecting removes the stored credentials and ends the provider connection. After the connection is removed, repository-based updates and webhook-driven deploys stop for that documentation.
+
+## Auto-deploy webhooks
+
+Auto-deploy depends on a webhook registered on the connected GitLab project. When the connection is established, the platform creates a webhook that listens for push events and merge request events.
+
+A push to the repository's default branch triggers a new deployment automatically. Merge request events are also received, which helps keep the integration aware of repository activity tied to documentation workflows.
+
+Each webhook delivery is authenticated with a shared secret sent in the `X-Gitlab-Token` header. That secret lets the platform verify that incoming webhook events came from the connected GitLab project.
+
+<Callout kind="alert">
+
+`webhookRegistered` shows whether auto-deploy is ready for a documentation source connection.
+
+- `true` — the webhook is registered and pushes will trigger auto-deploy. For GitHub connections, this is always `true`.
+- `false` — a GitLab connection exists, but the webhook could not be registered. This usually means the token has Developer access, which allows pushing content, but not Maintainer access, which is required to create project hooks. Auto-deploy will not work until you provide a Maintainer-level token.
+- `null` — no provider connection exists, so webhook status is unknown.
+
+
+</Callout>
+
+## Switching source repositories
+
+Switch a documentation project to a different source repository when ownership changes or you want to move the docs to a new codebase. The platform updates the source immediately and starts working from the new repository.
+
+<Callout kind="alert">
+
+When you switch a documentation project's source repository, the platform immediately clears all editor state from the previous repository, including the file tree, file contents, and comments.
+
+This prevents stale files from the old repository from appearing in the editor after the switch. A new deployment is also triggered automatically for the new repository.
+
+
+</Callout>
+
+## Downloading a source archive
+
+Download the full source repository for a documentation project as a ZIP archive when you need an offline copy, a backup, or a handoff package. The archive is delivered through an authenticated request and streams directly from the server.
+
+The download response includes a `Content-Disposition` header with the suggested filename. The platform handles repository credentials internally, so you do not need to expose Git provider tokens in the browser to retrieve the archive.
+
+## Publishing conflicts
+
+Publishing can fail if another writer updates the branch while you are still editing. In that case, the server returns a `409 Conflict` response with the message `The branch has been updated since you started editing. Please refresh your page to get the latest changes and try again.`
+
+<Callout kind="info">
+
+Refresh the editor to load the latest branch state before publishing again. After the refresh, review any incoming changes and retry the publish action.
+
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+
+  <Card title="Authentication" href="/authentication" icon="lock">
+
+    Learn how API authentication works for authenticated endpoints.
+
+  </Card>
+  <Card title="Changelog" href="/changelog" icon="book-open">
+
+    See what changed in recent releases.
+
+  </Card>
+
+</Columns>
