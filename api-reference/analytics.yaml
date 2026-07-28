@@ -1,0 +1,1057 @@
+openapi: 3.0.3
+info:
+  title: Documentation.ai Analytics API
+  version: 1.0.0
+  description: |
+    The Analytics API provides read-only access to traffic, feedback, and AI assistant analytics for Documentation.ai content.
+
+    ## Authentication
+
+    All endpoints require an API key sent in the `Authorization` header using the Bearer token format:
+
+    `Authorization: Bearer <token>`
+
+    Authentication is applied globally to every operation in this specification.
+
+    ## Date ranges
+
+    Most analytics endpoints accept optional `startDate` and `endDate` query parameters in `YYYY-MM-DD` format.
+
+    - `endDate` defaults to today in UTC when omitted.
+    - `startDate` defaults to 6 days before `endDate` when omitted.
+    - The maximum allowed date range is 90 days.
+    - Dates must be valid calendar dates in `YYYY-MM-DD` format.
+    - `startDate` cannot be after `endDate`.
+
+    ## Access
+
+    These analytics endpoints are available to all authenticated roles, including viewer, editor, and admin users.
+  contact:
+    name: Documentation.ai Support
+    url: https://documentation.ai
+    email: support@documentation.ai
+  license:
+    name: Proprietary
+    url: https://documentation.ai/legal
+servers:
+  - url: https://api.documentation.ai/v1
+    description: Production
+tags:
+  - name: Analytics
+    description: Traffic and page analytics endpoints.
+  - name: Feedback
+    description: Analytics for end-user page feedback and comments.
+  - name: AI
+    description: Analytics for AI assistant questions, answer feedback, and usage volume.
+paths:
+  /analytics/overview:
+    get:
+      tags:
+        - Analytics
+      summary: Get traffic totals for a date range
+      description: Returns aggregate traffic totals for the selected date range, including total page views and sessions.
+      operationId: getAnalyticsOverview
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+      responses:
+        '200':
+          description: Traffic totals returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsOverviewResponse'
+              example:
+                startDate: '2026-01-01'
+                endDate: '2026-01-07'
+                pageViews: 12450
+                sessions: 3890
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/traffic:
+    get:
+      tags:
+        - Analytics
+      summary: Get daily traffic series
+      description: Returns daily page view and session totals for the selected date range. Days with zero traffic are included with zero values.
+      operationId: getAnalyticsTraffic
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+      responses:
+        '200':
+          description: Daily traffic series returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsTrafficResponse'
+              example:
+                startDate: '2026-01-01'
+                endDate: '2026-01-03'
+                series:
+                  - date: '2026-01-01'
+                    pageViews: 1500
+                    sessions: 480
+                  - date: '2026-01-02'
+                    pageViews: 0
+                    sessions: 0
+                  - date: '2026-01-03'
+                    pageViews: 1700
+                    sessions: 530
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/pages:
+    get:
+      tags:
+        - Analytics
+      summary: Get top viewed pages
+      description: Returns the most viewed pages for the selected date range, ranked by traffic.
+      operationId: getAnalyticsPages
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/LimitPages'
+      responses:
+        '200':
+          description: Top viewed pages returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsPagesResponse'
+              example:
+                startDate: '2026-01-01'
+                endDate: '2026-01-07'
+                pages:
+                  - pagePath: /docs/getting-started
+                    pageTitle: Getting Started
+                    pageViews: 3200
+                    sessions: 1100
+                  - pagePath: /docs/api/authentication
+                    pageTitle: Authentication
+                    pageViews: 2800
+                    sessions: 980
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/referrers:
+    get:
+      tags:
+        - Analytics
+      summary: Get traffic sources
+      description: Returns top referrers by page views for the selected date range. Direct visits appear as `(direct)`.
+      operationId: getAnalyticsReferrers
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/LimitReferrers'
+      responses:
+        '200':
+          description: Referrer analytics returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsReferrersResponse'
+              example:
+                referrers:
+                  - referrer: google.com
+                    pageViews: 2400
+                    percentage: 48.5
+                  - referrer: '(direct)'
+                    pageViews: 1800
+                    percentage: 36
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/feedback:
+    get:
+      tags:
+        - Feedback
+      summary: Get per-page feedback totals
+      description: Returns paginated per-page feedback totals for the selected date range, along with an overall summary for the full range.
+      operationId: getAnalyticsFeedback
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/FeedbackLimit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/PathContains'
+        - $ref: '#/components/parameters/FeedbackSortBy'
+        - $ref: '#/components/parameters/SortOrder'
+      responses:
+        '200':
+          description: Feedback analytics returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsFeedbackResponse'
+              example:
+                startDate: '2026-01-01'
+                endDate: '2026-01-31'
+                pages:
+                  - pagePath: /docs/getting-started
+                    pageTitle: Getting Started
+                    likes: 42
+                    dislikes: 5
+                    totalFeedback: 47
+                    comments: 8
+                    satisfactionRate: 89.36
+                summary:
+                  totalFeedback: 120
+                  likes: 100
+                  dislikes: 20
+                  comments: 15
+                  satisfactionRate: 83.33
+                total: 18
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/feedback/comments:
+    get:
+      tags:
+        - Feedback
+      summary: Get written feedback comments for a page
+      description: Returns paginated written feedback comments for the exact page path provided. Only entries with text are returned. Results are ordered newest first.
+      operationId: getAnalyticsFeedbackComments
+      parameters:
+        - $ref: '#/components/parameters/PagePath'
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/CommentsLimit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Feedback comments returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsFeedbackCommentsResponse'
+              example:
+                pagePath: /docs/getting-started
+                comments:
+                  - id: cmt_01HXYZ123ABC
+                    type: like
+                    text: Very helpful page.
+                    sessionId: sess_abc123
+                    submittedAt: '2026-01-10T14:22:31Z'
+                  - id: cmt_01HXYZ456DEF
+                    type: dislike
+                    text: Missing setup details.
+                    sessionId: sess_def456
+                    submittedAt: '2026-01-09T09:10:00Z'
+                total: 2
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/ai/questions:
+    get:
+      tags:
+        - AI
+      summary: Get AI assistant questions
+      description: Returns paginated AI assistant questions and answers for the selected date range. Results are ordered newest first. The `sessionId` and `maxConfidence` filters cannot be used together.
+      operationId: getAnalyticsAiQuestions
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/AiQuestionsLimit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/MaxConfidence'
+      responses:
+        '200':
+          description: AI assistant questions returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsAiQuestionsResponse'
+              example:
+                questions:
+                  - question: How do I authenticate with the API?
+                    answer: Use a Bearer token in the Authorization header.
+                    pagePath: /docs/api/authentication
+                    sessionId: sess_abc123
+                    confidenceScore: 0.72
+                    askedAt: '2026-01-12T08:45:10Z'
+                  - question: What is the rate limit?
+                    answer: The API rate limit depends on your plan.
+                    pagePath: /docs/api/limits
+                    sessionId: sess_xyz789
+                    confidenceScore: null
+                    askedAt: '2026-01-12T08:30:00Z'
+                total: 2
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/ai/answer-feedback:
+    get:
+      tags:
+        - AI
+      summary: Get AI answer feedback ratings
+      description: Returns paginated AI answer feedback entries for the selected date range, along with an overall summary for the full range. Results are ordered newest first.
+      operationId: getAnalyticsAiAnswerFeedback
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/FeedbackEntriesLimit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: AI answer feedback returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsAiAnswerFeedbackResponse'
+              example:
+                entries:
+                  - questionId: qst_01HXYZ789JKL
+                    question: How do I create an API key?
+                    answerSnippet: Open your workspace settings and create a new token.
+                    type: like
+                    pagePath: /docs/api/authentication
+                    sessionId: sess_abc123
+                    submittedAt: '2026-01-11T12:00:00Z'
+                summary:
+                  totalFeedback: 54
+                  likes: 41
+                  dislikes: 13
+                  satisfactionRate: 75.93
+                total: 54
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+  /analytics/ai/volume:
+    get:
+      tags:
+        - AI
+      summary: Get daily AI question volume
+      description: Returns daily AI question and session counts for the selected date range. Days with zero questions are included with zero values.
+      operationId: getAnalyticsAiVolume
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+      responses:
+        '200':
+          description: Daily AI question volume returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsAiVolumeResponse'
+              example:
+                series:
+                  - date: '2026-01-01'
+                    questions: 24
+                    sessions: 18
+                  - date: '2026-01-02'
+                    questions: 0
+                    sessions: 0
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Supply the API key as a Bearer token in the Authorization header.
+  parameters:
+    StartDate:
+      name: startDate
+      in: query
+      description: Start of the date range (inclusive). Defaults to 6 days before endDate. Maximum range is 90 days. Dates must be real calendar days in YYYY-MM-DD format. startDate cannot be after endDate.
+      required: false
+      schema:
+        type: string
+        format: date
+        example: '2026-01-01'
+    EndDate:
+      name: endDate
+      in: query
+      description: End of the date range (inclusive). Defaults to today in UTC. Maximum range is 90 days. Dates must be real calendar days in YYYY-MM-DD format. startDate cannot be after endDate.
+      required: false
+      schema:
+        type: string
+        format: date
+        example: '2026-01-07'
+    LimitPages:
+      name: limit
+      in: query
+      description: Maximum number of pages to return (max 100).
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    LimitReferrers:
+      name: limit
+      in: query
+      description: Maximum number of referrers to return (max 100).
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+        example: 10
+    FeedbackLimit:
+      name: limit
+      in: query
+      description: Maximum number of pages to return per page of results.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    CommentsLimit:
+      name: limit
+      in: query
+      description: Maximum number of comments to return.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    AiQuestionsLimit:
+      name: limit
+      in: query
+      description: Maximum number of questions to return (max 50, lower than other endpoints because full answer text is included).
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 20
+        example: 20
+    FeedbackEntriesLimit:
+      name: limit
+      in: query
+      description: Maximum number of feedback entries to return.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    Offset:
+      name: offset
+      in: query
+      description: Number of items to skip for pagination.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+        example: 0
+    PathContains:
+      name: pathContains
+      in: query
+      description: Case-insensitive substring filter on page path.
+      required: false
+      schema:
+        type: string
+        example: getting-started
+    FeedbackSortBy:
+      name: sortBy
+      in: query
+      description: Field to sort results by.
+      required: false
+      schema:
+        type: string
+        enum:
+          - totalFeedback
+          - likes
+          - dislikes
+          - comments
+          - satisfactionRate
+        default: totalFeedback
+        example: totalFeedback
+    SortOrder:
+      name: sortOrder
+      in: query
+      description: Sort direction.
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+        example: desc
+    PagePath:
+      name: pagePath
+      in: query
+      description: Exact page path to retrieve comments for.
+      required: true
+      schema:
+        type: string
+        example: /docs/getting-started
+    SessionId:
+      name: sessionId
+      in: query
+      description: Filter to questions from a specific session. Cannot be combined with maxConfidence.
+      required: false
+      schema:
+        type: string
+        example: sess_abc123
+    MaxConfidence:
+      name: maxConfidence
+      in: query
+      description: Returns only questions with a confidence score strictly below this threshold. Questions without a score are excluded. Cannot be combined with sessionId.
+      required: false
+      schema:
+        type: number
+        minimum: 0
+        maximum: 1
+        example: 0.6
+  responses:
+    BadRequestError:
+      description: Invalid request parameters, including invalid date ranges or incompatible filters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Invalid date range.
+    UnauthorizedError:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Missing or invalid API key.
+    BadGatewayError:
+      description: Analytics service unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 502
+            message: Analytics service unavailable.
+  schemas:
+    Error:
+      type: object
+      description: Standard error response.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Machine-readable HTTP-style error code.
+          example: 400
+        message:
+          type: string
+          description: Human-readable error message.
+          example: Invalid date range.
+    AnalyticsOverviewResponse:
+      type: object
+      required:
+        - startDate
+        - endDate
+        - pageViews
+        - sessions
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Start of the returned date range.
+          example: '2026-01-01'
+        endDate:
+          type: string
+          format: date
+          description: End of the returned date range.
+          example: '2026-01-07'
+        pageViews:
+          type: integer
+          description: Total page views in the date range.
+          example: 12450
+        sessions:
+          type: integer
+          description: Total sessions in the date range.
+          example: 3890
+    TrafficSeriesPoint:
+      type: object
+      required:
+        - date
+        - pageViews
+        - sessions
+      properties:
+        date:
+          type: string
+          format: date
+          description: Calendar day in UTC.
+          example: '2026-01-01'
+        pageViews:
+          type: integer
+          description: Page views recorded for the day.
+          example: 1500
+        sessions:
+          type: integer
+          description: Sessions recorded for the day.
+          example: 480
+    AnalyticsTrafficResponse:
+      type: object
+      required:
+        - startDate
+        - endDate
+        - series
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Start of the returned date range.
+          example: '2026-01-01'
+        endDate:
+          type: string
+          format: date
+          description: End of the returned date range.
+          example: '2026-01-03'
+        series:
+          type: array
+          description: Daily traffic metrics, including zero-traffic days.
+          items:
+            $ref: '#/components/schemas/TrafficSeriesPoint'
+    TopPage:
+      type: object
+      required:
+        - pagePath
+        - pageTitle
+        - pageViews
+        - sessions
+      properties:
+        pagePath:
+          type: string
+          description: Path of the page.
+          example: /docs/getting-started
+        pageTitle:
+          type: string
+          description: Title of the page.
+          example: Getting Started
+        pageViews:
+          type: integer
+          description: Number of page views for the page.
+          example: 3200
+        sessions:
+          type: integer
+          description: Number of sessions for the page.
+          example: 1100
+    AnalyticsPagesResponse:
+      type: object
+      required:
+        - startDate
+        - endDate
+        - pages
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Start of the returned date range.
+          example: '2026-01-01'
+        endDate:
+          type: string
+          format: date
+          description: End of the returned date range.
+          example: '2026-01-07'
+        pages:
+          type: array
+          description: Top pages for the selected range.
+          items:
+            $ref: '#/components/schemas/TopPage'
+    ReferrerEntry:
+      type: object
+      required:
+        - referrer
+        - pageViews
+        - percentage
+      properties:
+        referrer:
+          type: string
+          description: Referrer domain or `(direct)` for direct visits.
+          example: google.com
+        pageViews:
+          type: integer
+          description: Page views attributed to the referrer.
+          example: 2400
+        percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Share of total page views attributed to the referrer, from 0 to 100.
+          example: 48.5
+    AnalyticsReferrersResponse:
+      type: object
+      required:
+        - referrers
+      properties:
+        referrers:
+          type: array
+          description: Top referrers for the selected range.
+          items:
+            $ref: '#/components/schemas/ReferrerEntry'
+    FeedbackPageEntry:
+      type: object
+      required:
+        - pagePath
+        - pageTitle
+        - likes
+        - dislikes
+        - totalFeedback
+        - comments
+        - satisfactionRate
+      properties:
+        pagePath:
+          type: string
+          description: Path of the page.
+          example: /docs/getting-started
+        pageTitle:
+          type: string
+          description: Title of the page.
+          example: Getting Started
+        likes:
+          type: integer
+          description: Number of positive feedback ratings.
+          example: 42
+        dislikes:
+          type: integer
+          description: Number of negative feedback ratings.
+          example: 5
+        totalFeedback:
+          type: integer
+          description: Total number of feedback ratings.
+          example: 47
+        comments:
+          type: integer
+          description: Number of written comments.
+          example: 8
+        satisfactionRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Percentage of feedback ratings that are likes, from 0 to 100.
+          example: 89.36
+    FeedbackSummary:
+      type: object
+      required:
+        - totalFeedback
+        - likes
+        - dislikes
+        - comments
+        - satisfactionRate
+      properties:
+        totalFeedback:
+          type: integer
+          description: Total feedback count across the entire selected date range.
+          example: 120
+        likes:
+          type: integer
+          description: Total likes across the entire selected date range.
+          example: 100
+        dislikes:
+          type: integer
+          description: Total dislikes across the entire selected date range.
+          example: 20
+        comments:
+          type: integer
+          description: Total written comments across the entire selected date range.
+          example: 15
+        satisfactionRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Percentage of feedback ratings that are likes, from 0 to 100.
+          example: 83.33
+    AnalyticsFeedbackResponse:
+      type: object
+      required:
+        - startDate
+        - endDate
+        - pages
+        - summary
+        - total
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Start of the returned date range.
+          example: '2026-01-01'
+        endDate:
+          type: string
+          format: date
+          description: End of the returned date range.
+          example: '2026-01-31'
+        pages:
+          type: array
+          description: Paginated page-level feedback results.
+          items:
+            $ref: '#/components/schemas/FeedbackPageEntry'
+        summary:
+          $ref: '#/components/schemas/FeedbackSummary'
+        total:
+          type: integer
+          description: Total number of pages with any feedback in the selected date range.
+          example: 18
+    FeedbackComment:
+      type: object
+      required:
+        - id
+        - type
+        - text
+        - sessionId
+        - submittedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the comment.
+          example: cmt_01HXYZ123ABC
+        type:
+          type: string
+          description: Feedback type associated with the written comment.
+          enum:
+            - like
+            - dislike
+          example: like
+        text:
+          type: string
+          description: Written feedback text.
+          example: Very helpful page.
+        sessionId:
+          type: string
+          description: Session identifier associated with the feedback.
+          example: sess_abc123
+        submittedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp when the comment was submitted.
+          example: '2026-01-10T14:22:31Z'
+    AnalyticsFeedbackCommentsResponse:
+      type: object
+      required:
+        - pagePath
+        - comments
+        - total
+      properties:
+        pagePath:
+          type: string
+          description: Exact page path used to retrieve comments.
+          example: /docs/getting-started
+        comments:
+          type: array
+          description: Written feedback comments ordered newest first.
+          items:
+            $ref: '#/components/schemas/FeedbackComment'
+        total:
+          type: integer
+          description: Total number of matching written comments.
+          example: 2
+    AiQuestionEntry:
+      type: object
+      required:
+        - question
+        - answer
+        - pagePath
+        - sessionId
+        - confidenceScore
+        - askedAt
+      properties:
+        question:
+          type: string
+          description: Question asked to the AI assistant.
+          example: How do I authenticate with the API?
+        answer:
+          type: string
+          description: Full answer returned by the AI assistant.
+          example: Use a Bearer token in the Authorization header.
+        pagePath:
+          type: string
+          description: Page path where the question was asked.
+          example: /docs/api/authentication
+        sessionId:
+          type: string
+          description: Session identifier for the AI interaction.
+          example: sess_abc123
+        confidenceScore:
+          type: number
+          nullable: true
+          minimum: 0
+          maximum: 1
+          description: Confidence score for the answer, or null when no score was recorded.
+          example: 0.72
+        askedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp when the question was asked.
+          example: '2026-01-12T08:45:10Z'
+    AnalyticsAiQuestionsResponse:
+      type: object
+      required:
+        - questions
+        - total
+      properties:
+        questions:
+          type: array
+          description: Paginated AI assistant questions ordered newest first.
+          items:
+            $ref: '#/components/schemas/AiQuestionEntry'
+        total:
+          type: integer
+          description: Total number of matching questions.
+          example: 2
+    AiAnswerFeedbackEntry:
+      type: object
+      required:
+        - questionId
+        - question
+        - answerSnippet
+        - type
+        - pagePath
+        - sessionId
+        - submittedAt
+      properties:
+        questionId:
+          type: string
+          description: Identifier of the original AI question.
+          example: qst_01HXYZ789JKL
+        question:
+          type: string
+          description: The original question text.
+          example: How do I create an API key?
+        answerSnippet:
+          type: string
+          description: Short excerpt from the AI answer.
+          example: Open your workspace settings and create a new token.
+        type:
+          type: string
+          description: Feedback rating on the AI answer.
+          enum:
+            - like
+            - dislike
+          example: like
+        pagePath:
+          type: string
+          description: Page path where the AI answer was shown.
+          example: /docs/api/authentication
+        sessionId:
+          type: string
+          description: Session identifier associated with the feedback.
+          example: sess_abc123
+        submittedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp when the feedback was submitted.
+          example: '2026-01-11T12:00:00Z'
+    AiAnswerFeedbackSummary:
+      type: object
+      required:
+        - totalFeedback
+        - likes
+        - dislikes
+        - satisfactionRate
+      properties:
+        totalFeedback:
+          type: integer
+          description: Total AI answer feedback entries across the entire selected date range.
+          example: 54
+        likes:
+          type: integer
+          description: Total positive AI answer feedback entries.
+          example: 41
+        dislikes:
+          type: integer
+          description: Total negative AI answer feedback entries.
+          example: 13
+        satisfactionRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Percentage of AI answer feedback entries that are likes, from 0 to 100.
+          example: 75.93
+    AnalyticsAiAnswerFeedbackResponse:
+      type: object
+      required:
+        - entries
+        - summary
+        - total
+      properties:
+        entries:
+          type: array
+          description: Paginated AI answer feedback entries ordered newest first.
+          items:
+            $ref: '#/components/schemas/AiAnswerFeedbackEntry'
+        summary:
+          $ref: '#/components/schemas/AiAnswerFeedbackSummary'
+        total:
+          type: integer
+          description: Total number of matching AI answer feedback entries.
+          example: 54
+    AiVolumeSeriesPoint:
+      type: object
+      required:
+        - date
+        - questions
+        - sessions
+      properties:
+        date:
+          type: string
+          format: date
+          description: Calendar day in UTC.
+          example: '2026-01-01'
+        questions:
+          type: integer
+          description: Number of AI questions asked on the day.
+          example: 24
+        sessions:
+          type: integer
+          description: Number of sessions with AI usage on the day.
+          example: 18
+    AnalyticsAiVolumeResponse:
+      type: object
+      required:
+        - series
+      properties:
+        series:
+          type: array
+          description: Daily AI question volume, including zero-question days.
+          items:
+            $ref: '#/components/schemas/AiVolumeSeriesPoint'
+  security:
+    - ApiKeyAuth: []

@@ -1,0 +1,90 @@
+---
+title: Analytics API
+description: Query traffic totals, page views, referrers, reader feedback, and AI assistant usage for your documentation site.
+---
+
+## Overview
+
+The Analytics API provides read-only access to traffic, feedback, and AI assistant analytics for your documentation site. Use these endpoints to build dashboards, track content performance, and monitor reader engagement.
+
+## Authentication
+
+Send your API key in the `Authorization` header using the Bearer token format. All analytics endpoints are available to every role: viewer, editor, and admin.
+
+```bash
+curl https://api.documentation.ai/v1/analytics/overview \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+<Callout kind="info" collapsed="false">
+
+Your API key determines which documentation's analytics are returned. You cannot query another documentation's analytics by passing a different ID — the server always uses the documentation associated with your key.
+
+
+</Callout>
+
+## Date ranges
+
+All analytics endpoints accept optional `startDate` and `endDate` query parameters in `YYYY-MM-DD` format.
+
+- `endDate` defaults to today in UTC when omitted.
+- `startDate` defaults to 6 days before `endDate` when omitted.
+- Maximum range is 90 days.
+- `startDate` cannot be after `endDate`.
+- Dates must be valid calendar days. For example, `2026-02-30` is rejected.
+- The default window is the last 7 days, inclusive of both endpoints.
+
+```bash
+curl "https://api.documentation.ai/v1/analytics/overview?startDate=2026-03-01&endDate=2026-03-07" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Available endpoints
+
+Use the overview endpoint first if you need a quick summary, then move to the more specific endpoints for reporting, dashboards, or deeper analysis.
+
+<Columns cols={3}>
+
+  <Card title="Traffic & Pages" icon="trending-up" href="/api-reference/analytics/overview">
+
+  - `GET /analytics/overview` — Aggregate page views and sessions for a date range
+  - `GET /analytics/traffic` — Daily page views and sessions, zero-filled for each day
+  - `GET /analytics/pages` — Top viewed pages ranked by traffic
+  - `GET /analytics/referrers` — Top traffic sources with percentage share
+
+
+  </Card>
+  <Card title="Reader Feedback" icon="message-square" href="/api-reference/analytics/feedback">
+
+  - `GET /analytics/feedback` — Per-page feedback totals with sorting and pagination
+  - `GET /analytics/feedback/comments` — Written feedback comments for a specific page
+
+
+  </Card>
+  <Card title="AI Assistant" icon="bot" href="/api-reference/analytics/ai/questions">
+
+  - `GET /analytics/ai/questions` — Questions asked to the AI assistant, with full answers
+  - `GET /analytics/ai/answer-feedback` — Ratings left on AI answers
+  - `GET /analytics/ai/volume` — Daily AI question and session counts
+
+
+  </Card>
+
+</Columns>
+
+## Response caching
+
+<Callout kind="tip" collapsed="false">
+
+Analytics responses are cached for 60 seconds per documentation site. Repeated requests within the cache window return the same results without querying the underlying analytics service again. This keeps costs down while providing near-real-time data.
+
+
+</Callout>
+
+## Error handling
+
+Expect these status codes when a request cannot be completed:
+
+- `400` — Invalid date range, missing required parameters, or incompatible filter combination
+- `401` — Missing or invalid API key
+- `502` — Analytics service temporarily unavailable

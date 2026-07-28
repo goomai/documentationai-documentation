@@ -1,0 +1,99 @@
+---
+title: Deployment API
+description: Trigger production and preview deployments, list recent deployments, and poll deployment status through the REST API.
+---
+
+## Overview
+
+The Deployment API lets you trigger production and preview deployments, list recent deployments, and check deployment status programmatically. Use these endpoints to integrate deployments into CI/CD pipelines or build custom deployment workflows.
+
+## Authentication
+
+Send your API key in the `Authorization` header using the Bearer token format.
+
+```bash
+curl https://api.documentation.ai/v1/deployments \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Roles and permissions
+
+Use the following access matrix to confirm which roles can call each deployment endpoint.
+
+| Endpoint | viewer | editor | admin |
+|---|---:|---:|---:|
+| `GET /deployments` | ✓ | ✓ | ✓ |
+| `GET /deployments/{deploymentId}` | ✓ | ✓ | ✓ |
+| `POST /deploy` | ✗ | ✓ | ✓ |
+| `POST /deploy/preview` | ✗ | ✓ | ✓ |
+
+<Callout kind="info" collapsed="false">
+
+Deployment results are always scoped to the documentation associated with your API key. A deployment ID from another documentation returns `404`, not `403` — the response never confirms whether the ID exists elsewhere.
+
+
+</Callout>
+
+## Triggering a deployment
+
+`POST /deploy` triggers a production deployment of the current branch head. The endpoint returns `202 Accepted` because deployment runs asynchronously, so you need to poll the deployment status endpoint to track progress.
+
+```bash
+curl -X POST https://api.documentation.ai/v1/deploy \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+If you need to deploy a specific revision, include `commitSha` in the request body instead of deploying the current branch head.
+
+## Preview deployments
+
+`POST /deploy/preview` publishes a branch to its own preview URL without affecting the live site. Send the `branch` field in the request body, and confirm that preview deployments are enabled for your workspace plan before calling the endpoint.
+
+```bash
+curl -X POST https://api.documentation.ai/v1/deploy/preview \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"branch": "feature/search"}'
+```
+
+## Deployment statuses
+
+Track deployment progress with these status values:
+
+- **`pending`** — Deployment queued but not yet started
+- **`building`** — Deployment is in progress
+- **`ready`** — Deployment completed successfully
+- **`error`** — Deployment failed; check the `logs` field for details
+- **`cancelled`** — Deployment was cancelled before completion
+
+## Trigger types
+
+Use the trigger type to understand what started a deployment:
+
+- **`user`** — Triggered manually from the dashboard
+- **`auto`** — Triggered automatically by a commit or merge
+- **`system`** — Triggered by a system process
+- **`api`** — Triggered through the REST API
+
+## Polling for status
+
+After you trigger a deployment, use the `deploymentId` from the response to poll `GET /deployments/{deploymentId}` until the `status` changes to `ready` or `error`. When the status is `error`, the `logs` field contains failure details.
+
+```bash
+curl https://api.documentation.ai/v1/deployments/dep_01HV8W7M9K2J4N6P8Q1R3S5T7U \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+A successful deployment eventually returns `ready`. If the deployment remains in `pending` or `building`, continue polling until the final state changes.
+
+## Error handling
+
+Handle these common responses when integrating the Deployment API:
+
+- **`400`** — Missing required field, such as `branch` for preview deployments
+- **`401`** — Missing or invalid API key
+- **`403`** — Insufficient role, or preview deployments not included in the current plan
+- **`404`** — Branch, domain, or deployment not found
+- **`422`** — Preview deployment could not be started

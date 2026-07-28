@@ -6,24 +6,36 @@ description: The basic building blocks of this starter kit.
 ## Overview
 
 <Callout kind="alert">
+
 This page is an example. Replace every concept with the real terms your product uses.
+
 </Callout>
 
 ## The building blocks
 
 <Columns cols={2}>
+
   <Card title="Pages" icon="file-text">
+
     Every page is an `.mdx` file. Content lives in the repo and is safe to edit.
+
   </Card>
   <Card title="Navigation" icon="list">
+
     Sidebar structure comes from `documentation.json`.
+
   </Card>
   <Card title="Components" icon="layout-grid">
+
     Reusable blocks like Callouts, Steps, Tabs, and Cards keep pages consistent.
+
   </Card>
   <Card title="API Reference" icon="code">
-    If you use it, the API tab reads from `openapi.yaml`.
+
+    The API tab reads from an OpenAPI spec — either a repo-relative file path like `openapi.yaml` or a remote `https` URL. Use the `openapi-output` field to control where generated pages are placed for URL-based specs.
+
   </Card>
+
 </Columns>
 
 ## Navigation shape (sample)
@@ -45,10 +57,15 @@ This page is an example. Replace every concept with the real terms your product 
 ## How to adapt this page
 
 <Steps>
+
   <Step title="Replace the terms" icon="edit">
+
     Swap "Pages" and "Components" for your real domain language.
+
   </Step>
   <Step title="Add your concepts" icon="plus">
+
     Create a section for the ideas your users must learn first.
+
   </Step>
 </Steps>

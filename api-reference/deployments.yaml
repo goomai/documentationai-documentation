@@ -1,0 +1,597 @@
+openapi: 3.0.3
+info:
+  title: Deployment API
+  version: 1.0.0
+  description: |
+    The Deployment API provides endpoints to trigger and inspect deployments for documentation.ai projects.
+
+    ## Authentication
+
+    All endpoints require API key authentication using a Bearer token sent in the `Authorization` header.
+
+    Example:
+
+    `Authorization: Bearer doci_your_api_token`
+
+    ## Authorization
+
+    Access is scoped to the authenticated API key's own documentation. Some endpoints require elevated roles:
+
+    - `viewer`: can read deployment information
+    - `editor`: can trigger deployments and preview deployments
+    - `admin`: can trigger deployments and preview deployments
+
+    ## Usage notes
+
+    - Deployment trigger endpoints return `202 Accepted` because deployment processing is asynchronous.
+    - Use `GET /deployments/{deploymentId}` to poll for status updates after creating a deployment.
+    - Preview deployments require the preview deployment plan to be enabled for the workspace.
+  contact:
+    name: Documentation.ai API Support
+    url: https://documentation.ai
+    email: support@documentation.ai
+  license:
+    name: Proprietary
+    url: https://documentation.ai/legal
+servers:
+  - url: https://api.documentation.ai/v1
+    description: Production
+tags:
+  - name: Deployments
+    description: Trigger, list, and inspect production and preview deployments.
+paths:
+  /deploy:
+    post:
+      tags:
+        - Deployments
+      summary: Trigger a production deployment
+      description: Triggers a deployment of the current deployment branch head. Requires editor or admin role. Returns `202 Accepted` with the deployment ID. The deployment is not finished yet, so poll the deployment status endpoint to track progress.
+      operationId: triggerProductionDeployment
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployRequest'
+            examples:
+              emptyBody:
+                summary: Empty request body
+                value: {}
+              specificCommit:
+                summary: Deploy a specific commit
+                value:
+                  commitSha: 7f3c9d1a8b2e4f6a1c9d0e3b5a7f2c4d6e8f9a0b
+      responses:
+        '202':
+          description: Deployment accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployResponse'
+              examples:
+                accepted:
+                  summary: Accepted deployment request
+                  value:
+                    deploymentId: dep_01HV8W7M9K2J4N6P8Q1R3S5T7U
+                    status: pending
+                    url: https://docs.acme.com
+        '403':
+          description: Viewer role lacks permission.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  summary: Insufficient role
+                  value:
+                    code: 403
+                    message: Viewer role does not have permission to trigger deployments.
+        '404':
+          description: Branch or active domain not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                notFound:
+                  summary: Missing branch or domain
+                  value:
+                    code: 404
+                    message: Active deployment branch or domain was not found.
+      security:
+        - ApiKeyAuth: []
+  /deploy/preview:
+    post:
+      tags:
+        - Deployments
+      summary: Trigger a preview deployment
+      description: Publishes a branch to its own preview URL without touching the live site. Requires editor or admin role. The preview deployment plan must be enabled for your workspace.
+      operationId: triggerPreviewDeployment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreviewDeployRequest'
+            examples:
+              branchHead:
+                summary: Deploy branch head to preview
+                value:
+                  branch: feature/search-redesign
+              specificCommit:
+                summary: Deploy a specific commit from a branch
+                value:
+                  branch: feature/search-redesign
+                  commitSha: 91ab42ce78d1f3456ab7890c12de34f56789ab01
+      responses:
+        '202':
+          description: Preview deployment accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreviewDeployResponse'
+              examples:
+                accepted:
+                  summary: Accepted preview deployment request
+                  value:
+                    deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+                    status: building
+                    url: https://feature-search-redesign.preview.docs.acme.com
+                    branch: feature/search-redesign
+        '400':
+          description: Missing required branch field.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missingBranch:
+                  summary: Validation error
+                  value:
+                    code: 400
+                    message: The branch field is required.
+        '403':
+          description: Editor permission required, or preview deployments not included in the current plan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  summary: Preview deployment not allowed
+                  value:
+                    code: 403
+                    message: Preview deployments are not available for the current role or workspace plan.
+        '404':
+          description: Branch not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                branchNotFound:
+                  summary: Unknown branch
+                  value:
+                    code: 404
+                    message: Branch feature/search-redesign was not found.
+        '422':
+          description: Preview deployment could not be started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                cannotStart:
+                  summary: Preview deployment unavailable
+                  value:
+                    code: 422
+                    message: Preview deployment could not be started because no active domain is configured.
+      security:
+        - ApiKeyAuth: []
+  /deployments:
+    get:
+      tags:
+        - Deployments
+      summary: List recent deployments
+      description: Returns a paginated list of recent deployments, newest first. Available to all roles (viewer, editor, admin). Results are scoped to the authenticated API key's own documentation.
+      operationId: listDeployments
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of deployments to return.
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+            default: 20
+            example: 20
+        - name: offset
+          in: query
+          description: Number of deployments to skip for pagination.
+          required: false
+          schema:
+            type: integer
+            default: 0
+            example: 0
+      responses:
+        '200':
+          description: A paginated list of deployments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentListResponse'
+              examples:
+                success:
+                  summary: Recent deployments
+                  value:
+                    deployments:
+                      - deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+                        status: ready
+                        url: https://feature-search-redesign.preview.docs.acme.com
+                        branch: feature/search-redesign
+                        isPreview: true
+                        triggerType: api
+                        createdAt: '2026-04-18T14:22:11Z'
+                        updatedAt: '2026-04-18T14:24:59Z'
+                      - deploymentId: dep_01HV8W7M9K2J4N6P8Q1R3S5T7U
+                        status: ready
+                        url: https://docs.acme.com
+                        branch: main
+                        isPreview: false
+                        triggerType: user
+                        createdAt: '2026-04-18T13:02:45Z'
+                        updatedAt: '2026-04-18T13:05:10Z'
+                    total: 2
+        '401':
+          description: Missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                unauthorized:
+                  summary: Invalid authentication
+                  value:
+                    code: 401
+                    message: Missing or invalid API key.
+      security:
+        - ApiKeyAuth: []
+  /deployments/{deploymentId}:
+    get:
+      tags:
+        - Deployments
+      summary: Get deployment status
+      description: Returns the status of a single deployment, including failure logs when available. Available to all roles. A deployment ID belonging to another documentation returns `404` rather than `403` so the response does not confirm the ID exists.
+      operationId: getDeploymentStatus
+      parameters:
+        - name: deploymentId
+          in: path
+          description: The ID of the deployment to retrieve.
+          required: true
+          schema:
+            type: string
+            example: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+      responses:
+        '200':
+          description: Deployment status details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatus'
+              examples:
+                ready:
+                  summary: Completed deployment
+                  value:
+                    deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+                    status: ready
+                    url: https://feature-search-redesign.preview.docs.acme.com
+                    branch: feature/search-redesign
+                    isPreview: true
+                    triggerType: api
+                    logs: null
+                    createdAt: '2026-04-18T14:22:11Z'
+                    updatedAt: '2026-04-18T14:24:59Z'
+                failed:
+                  summary: Failed deployment with logs
+                  value:
+                    deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+                    status: error
+                    url: https://feature-search-redesign.preview.docs.acme.com
+                    branch: feature/search-redesign
+                    isPreview: true
+                    triggerType: api
+                    logs: Build failed: missing environment variable DOCS_SEARCH_API_KEY
+                    createdAt: '2026-04-18T14:22:11Z'
+                    updatedAt: '2026-04-18T14:23:02Z'
+        '401':
+          description: Missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                unauthorized:
+                  summary: Invalid authentication
+                  value:
+                    code: 401
+                    message: Missing or invalid API key.
+        '404':
+          description: Deployment not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                notFound:
+                  summary: Unknown deployment
+                  value:
+                    code: 404
+                    message: Deployment not found.
+      security:
+        - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Use a Bearer token in the Authorization header, for example `Authorization: Bearer doci_your_api_token`.
+  schemas:
+    DeployRequest:
+      type: object
+      description: Request body for triggering a production deployment.
+      properties:
+        commitSha:
+          type: string
+          description: Deploy a specific commit. Defaults to the current deployment branch head.
+          example: 7f3c9d1a8b2e4f6a1c9d0e3b5a7f2c4d6e8f9a0b
+      example:
+        commitSha: 7f3c9d1a8b2e4f6a1c9d0e3b5a7f2c4d6e8f9a0b
+    PreviewDeployRequest:
+      type: object
+      description: Request body for triggering a preview deployment.
+      required:
+        - branch
+      properties:
+        branch:
+          type: string
+          description: Branch to preview.
+          example: feature/search-redesign
+        commitSha:
+          type: string
+          description: Deploy a specific commit. Defaults to the branch head.
+          example: 91ab42ce78d1f3456ab7890c12de34f56789ab01
+      example:
+        branch: feature/search-redesign
+        commitSha: 91ab42ce78d1f3456ab7890c12de34f56789ab01
+    DeployResponse:
+      type: object
+      description: Response returned when a production deployment request is accepted.
+      required:
+        - deploymentId
+        - status
+        - url
+      properties:
+        deploymentId:
+          type: string
+          description: Unique identifier for the deployment.
+          example: dep_01HV8W7M9K2J4N6P8Q1R3S5T7U
+        status:
+          $ref: '#/components/schemas/DeploymentStatusEnum'
+        url:
+          type: string
+          description: URL associated with the deployment.
+          example: https://docs.acme.com
+      example:
+        deploymentId: dep_01HV8W7M9K2J4N6P8Q1R3S5T7U
+        status: pending
+        url: https://docs.acme.com
+    PreviewDeployResponse:
+      type: object
+      description: Response returned when a preview deployment request is accepted.
+      required:
+        - deploymentId
+        - status
+        - url
+        - branch
+      properties:
+        deploymentId:
+          type: string
+          description: Unique identifier for the deployment.
+          example: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+        status:
+          $ref: '#/components/schemas/DeploymentStatusEnum'
+        url:
+          type: string
+          description: Preview URL associated with the deployment.
+          example: https://feature-search-redesign.preview.docs.acme.com
+        branch:
+          type: string
+          description: Branch being deployed to preview.
+          example: feature/search-redesign
+      example:
+        deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+        status: building
+        url: https://feature-search-redesign.preview.docs.acme.com
+        branch: feature/search-redesign
+    Deployment:
+      type: object
+      description: Deployment record in a list response.
+      required:
+        - deploymentId
+        - status
+        - url
+        - branch
+        - isPreview
+        - triggerType
+        - createdAt
+        - updatedAt
+      properties:
+        deploymentId:
+          type: string
+          description: Unique identifier for the deployment.
+          example: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+        status:
+          $ref: '#/components/schemas/DeploymentStatusEnum'
+        url:
+          type: string
+          description: URL associated with the deployment.
+          example: https://feature-search-redesign.preview.docs.acme.com
+        branch:
+          type: string
+          description: Source branch for the deployment.
+          example: feature/search-redesign
+        isPreview:
+          type: boolean
+          description: Indicates whether the deployment is a preview deployment.
+          example: true
+        triggerType:
+          $ref: '#/components/schemas/TriggerTypeEnum'
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the deployment was created.
+          example: '2026-04-18T14:22:11Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the deployment was last updated.
+          example: '2026-04-18T14:24:59Z'
+      example:
+        deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+        status: ready
+        url: https://feature-search-redesign.preview.docs.acme.com
+        branch: feature/search-redesign
+        isPreview: true
+        triggerType: api
+        createdAt: '2026-04-18T14:22:11Z'
+        updatedAt: '2026-04-18T14:24:59Z'
+    DeploymentStatus:
+      type: object
+      description: Detailed deployment status including logs when available.
+      required:
+        - deploymentId
+        - status
+        - url
+        - branch
+        - isPreview
+        - triggerType
+        - logs
+        - createdAt
+        - updatedAt
+      properties:
+        deploymentId:
+          type: string
+          description: Unique identifier for the deployment.
+          example: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+        status:
+          $ref: '#/components/schemas/DeploymentStatusEnum'
+        url:
+          type: string
+          description: URL associated with the deployment.
+          example: https://feature-search-redesign.preview.docs.acme.com
+        branch:
+          type: string
+          description: Source branch for the deployment.
+          example: feature/search-redesign
+        isPreview:
+          type: boolean
+          description: Indicates whether the deployment is a preview deployment.
+          example: true
+        triggerType:
+          $ref: '#/components/schemas/TriggerTypeEnum'
+        logs:
+          type: string
+          nullable: true
+          description: Failure detail when status is `error`; otherwise `null`.
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the deployment was created.
+          example: '2026-04-18T14:22:11Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the deployment was last updated.
+          example: '2026-04-18T14:24:59Z'
+      example:
+        deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+        status: error
+        url: https://feature-search-redesign.preview.docs.acme.com
+        branch: feature/search-redesign
+        isPreview: true
+        triggerType: api
+        logs: Build failed: missing environment variable DOCS_SEARCH_API_KEY
+        createdAt: '2026-04-18T14:22:11Z'
+        updatedAt: '2026-04-18T14:23:02Z'
+    DeploymentListResponse:
+      type: object
+      description: Paginated deployment list response.
+      required:
+        - deployments
+        - total
+      properties:
+        deployments:
+          type: array
+          description: List of deployments ordered from newest to oldest.
+          items:
+            $ref: '#/components/schemas/Deployment'
+        total:
+          type: integer
+          description: Total number of deployments available for the current scope.
+          example: 2
+      example:
+        deployments:
+          - deploymentId: dep_01HV8X0N1P2Q3R4S5T6U7V8W9X
+            status: ready
+            url: https://feature-search-redesign.preview.docs.acme.com
+            branch: feature/search-redesign
+            isPreview: true
+            triggerType: api
+            createdAt: '2026-04-18T14:22:11Z'
+            updatedAt: '2026-04-18T14:24:59Z'
+        total: 1
+    DeploymentStatusEnum:
+      type: string
+      description: Current lifecycle status of a deployment.
+      enum:
+        - pending
+        - building
+        - ready
+        - error
+        - cancelled
+      example: pending
+    TriggerTypeEnum:
+      type: string
+      description: Source that initiated the deployment.
+      enum:
+        - user
+        - auto
+        - system
+        - api
+      example: api
+    Error:
+      type: object
+      description: Standard error response.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Application-specific error code, usually aligned with the HTTP status.
+          example: 404
+        message:
+          type: string
+          description: Human-readable error message.
+          example: Deployment not found.
+      example:
+        code: 404
+        message: Deployment not found.
+  responses: {}
+  parameters: {}
+security:
+  - ApiKeyAuth: []

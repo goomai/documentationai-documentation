@@ -1,22 +1,60 @@
 ---
-title: Sample Changelog
-description: Sample release notes you can replace with your real updates.
+title: Changelog
+description: Release notes for new features, improvements, and fixes across the documentation.ai platform.
 ---
 
 ## Sample updates
 
 <Callout kind="alert">
+
 This changelog is example content. Replace every entry with your real releases.
+
+
 </Callout>
 
+<Update label="2026-07-28" description="Analytics API and Deployment API" tags={["feature", "api"]}>
+
+## New features
+
+### Analytics API
+Nine read-only analytics endpoints are now available under `/analytics`. All endpoints accept `startDate` and `endDate` query parameters (default: last 7 days, max 90 days) and are accessible to all roles.
+
+- `GET /analytics/overview` — Traffic totals for a date range
+- `GET /analytics/traffic` — Daily page views and sessions
+- `GET /analytics/pages` — Top viewed pages
+- `GET /analytics/referrers` — Top traffic sources
+- `GET /analytics/feedback` — Per-page feedback totals with summary
+- `GET /analytics/feedback/comments` — Written feedback for a specific page
+- `GET /analytics/ai/questions` — AI assistant questions and answers
+- `GET /analytics/ai/answer-feedback` — Ratings on AI answers
+- `GET /analytics/ai/volume` — Daily AI question volume
+
+### Deployment API
+Four deployment management endpoints are now available:
+
+- `POST /deploy` — Trigger a production deployment (editor/admin)
+- `POST /deploy/preview` — Publish a branch to a preview URL (editor/admin)
+- `GET /deployments` — List recent deployments (all roles)
+- `GET /deployments/{deploymentId}` — Get deployment status with logs (all roles)
+
+### OpenAPI URL support
+The `openapi` field in `documentation.json` now accepts HTTP(S) URLs in addition to repo-relative file paths. Use the new `openapi-output` property to control where generated pages are placed when referencing a URL-based spec.
+
+
+</Update>
+
 <Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Cleaned up placeholder copy across the starter kit.
 - Added clearer "sample" messaging to avoid confusion.
+
 </Update>
 
 <Update label="2025-12-10" description="Sample Update" tags={["sample"]}>
+
 ## What changed
 - Simplified the Quickstart steps.
 - Trimmed Help Center examples.
+
 </Update>

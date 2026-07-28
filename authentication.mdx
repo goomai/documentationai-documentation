@@ -1,48 +1,62 @@
 ---
-title: Authentication (Sample)
-description: Sample guidance for authentication and OpenAPI usage.
+title: Authentication
+description: Authenticate API requests with API keys using Bearer tokens and understand role-based access for each endpoint group.
 ---
 
 ## Overview
 
-This is sample content. Replace tokens, URLs, headers, and flows with your real authentication requirements.
+All REST API requests require an API key sent in the `Authorization` header using the Bearer token format. Generate API keys from your workspace settings, and choose a role: `viewer`, `editor`, or `admin`, when you create each key.
 
-<Callout kind="info">
+<Callout kind="info" collapsed="false">
 
-This site ships with placeholder content for authentication. Update this page and `openapi.yaml` to match your real API before sharing with users.
+Each API key carries both authentication and authorization. The key proves who is calling the API, and its assigned role determines which endpoint groups the key can access.
+
 
 </Callout>
 
-This API uses OpenAPI to describe endpoints, parameters, and responses. The reference is generated from `openapi.yaml`, so keep that file up to date as your API evolves.
-
 ## Authentication
 
-Use a bearer token in the `Authorization` header for authenticated requests. Replace the base URL and token with values for your own API.
+Send the API key as a Bearer token in the `Authorization` header.
 
 ```bash
-curl https://api.example.com/v1/example \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl https://api.documentation.ai/v1/analytics/overview \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-<ParamField header="Authorization" param-type="string" required="true">
-  `Bearer YOUR_TOKEN`
+<ParamField header="Authorization" param-type="string" required="true" deprecated="false" show-location="true">
+
+`Bearer YOUR_API_KEY` — replace `YOUR_API_KEY` with a valid API key from your workspace settings.
+
+
 </ParamField>
 
-## Keep OpenAPI in sync
+## Roles and permissions
 
-Define your authentication and base settings in `openapi.yaml` so the API Reference stays accurate and consistent.
+API keys are assigned a role that determines which endpoints they can access.
 
-At a minimum, you should:
+| Role | Read endpoints | Write and deploy endpoints |
+|---|---|---|
+| viewer | Analytics, deployments list and status | — |
+| editor | Analytics, deployments list and status | Deploy, preview deploy |
+| admin | Analytics, deployments list and status | Deploy, preview deploy |
 
-- Define one or more security schemes that describe how clients authenticate (for example, bearer token, API key in a header, or other scheme).
-- Reference those security schemes on operations that require authentication so they are clearly marked as secured.
-- Set the correct base URL and any required global headers (for example, versioning or tenant headers) so example requests are copy-pasteable.
+<Callout kind="info" collapsed="false">
 
-When your real authentication flow changes (for example, new header names, token formats, or additional requirements), update `openapi.yaml`. The generated API Reference will then reflect your current auth model without needing to edit each endpoint page by hand.
+All analytics endpoints are available to every role, including `viewer`. Deployment trigger endpoints, `POST /deploy` and `POST /deploy/preview`, require `editor` or `admin`.
 
-## Using the API reference
 
-Use the API Reference to explore endpoints, required parameters, and example responses. When you change authentication headers or base URLs, update `openapi.yaml` so the generated reference matches what your clients should use.
+</Callout>
+
+## Security
+
+Your API key determines which documentation data is accessible. The server always uses the documentation associated with your key, so passing a different ID in a request does not grant access to another documentation's analytics or deployments.
+
+<Callout kind="alert" collapsed="false">
+
+Your API key determines which documentation's data is accessible. The server always uses the documentation associated with your key — you cannot access another documentation's analytics or deployments by passing a different ID in the request.
+
+
+</Callout>
 
 ## Common mistakes
 
@@ -50,8 +64,16 @@ Use the API Reference to explore endpoints, required parameters, and example res
 
 Verify that:
 
-- The token is valid and not expired.
-- The token is sent in the `Authorization` header.
-- The header value includes the `Bearer` prefix and a space before the token.
+- The API key is valid and has not been revoked.
+- The key is sent in the `Authorization` header.
+- The header value includes the `Bearer` prefix and a space before the key.
+
+
+</Expandable>
+
+<Expandable title="Why am I getting a 403?" default-open="false">
+
+This means your API key's role does not have permission for the requested endpoint. For example, a `viewer` key cannot trigger deployments. Check the role assigned to your key in workspace settings.
+
 
 </Expandable>
