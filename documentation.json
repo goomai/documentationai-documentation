@@ -33,7 +33,8 @@
                 "path": "components",
                 "icon": "code"
               }
-            ]
+            ],
+            "openapi": "https://petstore3.swagger.io/api/v3/openapi.json"
           },
           {
             "group": "Components",
@@ -42,12 +43,18 @@
               {
                 "title": "Images",
                 "path": "components/images",
-                "icon": "image"
+                "icon": "image",
+                "openapi": "https://petstore3.swagger.io/api/v3/openapi.json GET /pet/findByStatus",
+                "openapi-mode": "auto",
+                "method": "GET"
               },
               {
                 "title": "Cards",
                 "path": "components/cards",
-                "icon": "square"
+                "icon": "square",
+                "openapi": "https://petstore3.swagger.io/api/v3/openapi.json POST /pet/{petId}",
+                "openapi-mode": "auto",
+                "method": "POST"
               },
               {
                 "title": "Code",
