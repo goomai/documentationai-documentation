@@ -34,7 +34,15 @@
                 "icon": "code"
               }
             ],
-            "openapi": "https://petstore3.swagger.io/api/v3/openapi.json"
+            "openapi": "https://petstore3.swagger.io/api/v3/openapi.json",
+            "hidden-apis": [
+              "PUT /pet",
+              "GET /pet/findByStatus",
+              "GET /pet/findByTags"
+            ],
+            "access-roles": [
+              "beta"
+            ]
           },
           {
             "group": "Components",
@@ -43,18 +51,12 @@
               {
                 "title": "Images",
                 "path": "components/images",
-                "icon": "image",
-                "openapi": "https://petstore3.swagger.io/api/v3/openapi.json GET /pet/findByStatus",
-                "openapi-mode": "auto",
-                "method": "GET"
+                "icon": "image"
               },
               {
                 "title": "Cards",
                 "path": "components/cards",
-                "icon": "square",
-                "openapi": "https://petstore3.swagger.io/api/v3/openapi.json POST /pet/{petId}",
-                "openapi-mode": "auto",
-                "method": "POST"
+                "icon": "square"
               },
               {
                 "title": "Code",
@@ -86,6 +88,9 @@
                 "path": "components/svg",
                 "icon": "pen-tool"
               }
+            ],
+            "access-roles": [
+              "enterprise"
             ]
           },
           {
@@ -135,6 +140,9 @@
             "group": "Sample Endpoints",
             "openapi": "openapi.yaml"
           }
+        ],
+        "access-roles": [
+          "internal"
         ]
       },
       {
