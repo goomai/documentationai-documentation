@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "another bidd in my gadda",
+                "path": "another-hudda"
+              },
+              {
                 "title": "hello boyaa",
                 "path": "hello-boyaapati"
               },
