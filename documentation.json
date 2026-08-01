@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "hyndas",
+                "path": "hyndas-as"
+              },
+              {
                 "title": "heyas dasd",
                 "path": "heyas-dasd-as"
               },
