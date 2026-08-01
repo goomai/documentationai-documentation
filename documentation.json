@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "another gidds",
+                "path": "another-gidds-hua"
+              },
+              {
                 "title": "another bidd in my gadda",
                 "path": "another-hudda"
               },
