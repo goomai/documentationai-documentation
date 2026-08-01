@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "test121",
+                "path": "test121"
+              },
+              {
                 "title": "heyalsoasd",
                 "path": "heyalsoasd-asd"
               },
