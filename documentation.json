@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "tt1",
+                "path": "tt1"
+              },
+              {
                 "title": "qoaslda sdasd",
                 "path": "qoaslda-sdasd-asdas"
               },
