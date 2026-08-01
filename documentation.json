@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "hello bidddd",
+                "path": "hello-bidddd"
+              },
+              {
                 "title": "Images",
                 "path": "components/images",
                 "icon": "image"
