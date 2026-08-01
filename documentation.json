@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "heyalsoasd",
+                "path": "heyalsoasd-asd"
+              },
+              {
                 "title": "hyndas",
                 "path": "hyndas-as"
               },
