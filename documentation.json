@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "hello boyaa",
+                "path": "hello-boyaapati"
+              },
+              {
                 "title": "hello bidddd",
                 "path": "hello-bidddd-changelog"
               },
