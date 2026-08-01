@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "heyas dasd",
+                "path": "heyas-dasd-as"
+              },
+              {
                 "title": "gudmor",
                 "path": "gudmor"
               },
