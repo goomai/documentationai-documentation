@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "newtest1",
+                "path": "newtest1"
+              },
+              {
                 "title": "tt1",
                 "path": "tt1"
               },
