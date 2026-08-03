@@ -9,269 +9,274 @@
     }
   },
   "navigation": {
-    "tabs": [
+    "products": [
       {
-        "tab": "Documentation",
-        "icon": "book",
-        "groups": [
+        "product": "dspm",
+        "tabs": [
           {
-            "group": "Start Here",
-            "icon": "rocket",
+            "tab": "Documentation",
+            "icon": "book",
+            "groups": [
+              {
+                "group": "Start Here",
+                "icon": "rocket",
+                "pages": [
+                  {
+                    "title": "bye babai",
+                    "path": "bye-babai"
+                  },
+                  {
+                    "title": "hello babai",
+                    "path": "hello-babai"
+                  },
+                  {
+                    "title": "Introduction",
+                    "path": "introduction",
+                    "icon": "home"
+                  },
+                  {
+                    "title": "Quickstart",
+                    "path": "quickstart",
+                    "icon": "zap"
+                  },
+                  {
+                    "title": "Components",
+                    "path": "components",
+                    "icon": "code"
+                  }
+                ],
+                "openapi": "https://petstore3.swagger.io/api/v3/openapi.json",
+                "hidden-apis": [
+                  "PUT /pet",
+                  "GET /pet/findByStatus",
+                  "GET /pet/findByTags"
+                ],
+                "access-roles": [
+                  "beta"
+                ]
+              },
+              {
+                "group": "Components",
+                "icon": "layers",
+                "pages": [
+                  {
+                    "title": "b6",
+                    "path": "b6a"
+                  },
+                  {
+                    "title": "b5",
+                    "path": "b51"
+                  },
+                  {
+                    "title": "b4",
+                    "path": "b4"
+                  },
+                  {
+                    "title": "b3",
+                    "path": "b3"
+                  },
+                  {
+                    "title": "b2",
+                    "path": "b2"
+                  },
+                  {
+                    "title": "b1",
+                    "path": "b1"
+                  },
+                  {
+                    "title": "a1",
+                    "path": "a1"
+                  },
+                  {
+                    "title": "newtest1",
+                    "path": "newtest1"
+                  },
+                  {
+                    "title": "tt1",
+                    "path": "tt1"
+                  },
+                  {
+                    "title": "qoaslda sdasd",
+                    "path": "qoaslda-sdasd-asdas"
+                  },
+                  {
+                    "title": "helloasdasdasd",
+                    "path": "helloasdasdasd"
+                  },
+                  {
+                    "title": "test121",
+                    "path": "test121"
+                  },
+                  {
+                    "title": "heyalsoasd",
+                    "path": "heyalsoasd-asd"
+                  },
+                  {
+                    "title": "hyndas",
+                    "path": "hyndas-as"
+                  },
+                  {
+                    "title": "heyas dasd",
+                    "path": "heyas-dasd-as"
+                  },
+                  {
+                    "title": "gudmor",
+                    "path": "gudmor"
+                  },
+                  {
+                    "title": "Images",
+                    "path": "components/images",
+                    "icon": "image"
+                  },
+                  {
+                    "title": "Cards",
+                    "path": "components/cards",
+                    "icon": "square"
+                  },
+                  {
+                    "title": "Code",
+                    "path": "components/code",
+                    "icon": "code"
+                  },
+                  {
+                    "title": "Callouts",
+                    "path": "components/callouts",
+                    "icon": "message-square"
+                  },
+                  {
+                    "title": "Steps",
+                    "path": "components/steps",
+                    "icon": "list-ordered"
+                  },
+                  {
+                    "title": "Tabs",
+                    "path": "components/tabs",
+                    "icon": "columns"
+                  },
+                  {
+                    "title": "HTML Block",
+                    "path": "components/html-block",
+                    "icon": "file-code"
+                  },
+                  {
+                    "title": "SVG",
+                    "path": "components/svg",
+                    "icon": "pen-tool"
+                  }
+                ],
+                "access-roles": [
+                  "enterprise"
+                ]
+              },
+              {
+                "group": "Features",
+                "icon": "settings",
+                "pages": [
+                  {
+                    "title": "PDF Export",
+                    "path": "features/pdf-export",
+                    "icon": "file-down"
+                  },
+                  {
+                    "title": "Page Actions",
+                    "path": "features/page-actions",
+                    "icon": "mouse-pointer-click"
+                  },
+                  {
+                    "title": "Danger Zone",
+                    "path": "features/danger-zone",
+                    "icon": "alert-triangle"
+                  },
+                  {
+                    "title": "Custom Domains",
+                    "path": "features/custom-domains",
+                    "icon": "globe"
+                  }
+                ],
+                "access-roles": [
+                  "enterprise"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "icon": "code",
+            "groups": [
+              {
+                "group": "Overview",
+                "icon": "file-text",
+                "pages": [
+                  {
+                    "title": "Authentication",
+                    "path": "authentication",
+                    "icon": "lock"
+                  }
+                ]
+              },
+              {
+                "group": "Sample Endpoints",
+                "openapi": "openapi.yaml"
+              }
+            ],
+            "access-roles": [
+              "internal"
+            ]
+          },
+          {
+            "tab": "Help Center",
+            "icon": "help-circle",
             "pages": [
               {
-                "title": "bye babai",
-                "path": "bye-babai"
-              },
-              {
-                "title": "hello babai",
-                "path": "hello-babai"
-              },
-              {
-                "title": "Introduction",
-                "path": "introduction",
+                "title": "Help Center",
+                "path": "help-center",
                 "icon": "home"
               },
               {
-                "title": "Quickstart",
-                "path": "quickstart",
-                "icon": "zap"
+                "group": "FAQs",
+                "icon": "help-circle",
+                "expandable": false,
+                "pages": [
+                  {
+                    "title": "Documentation Source",
+                    "path": "help-center/faq/getting-started"
+                  }
+                ]
               },
               {
-                "title": "Components",
-                "path": "components",
-                "icon": "code"
-              }
-            ],
-            "openapi": "https://petstore3.swagger.io/api/v3/openapi.json",
-            "hidden-apis": [
-              "PUT /pet",
-              "GET /pet/findByStatus",
-              "GET /pet/findByTags"
-            ],
-            "access-roles": [
-              "beta"
-            ]
-          },
-          {
-            "group": "Components",
-            "icon": "layers",
-            "pages": [
-              {
-                "title": "b6",
-                "path": "b6a"
+                "group": "Troubleshooting",
+                "icon": "alert-triangle",
+                "expandable": false,
+                "pages": [
+                  {
+                    "title": "Page Missing in Sidebar",
+                    "path": "help-center/troubleshooting/install-error"
+                  }
+                ]
               },
               {
-                "title": "b5",
-                "path": "b51"
-              },
-              {
-                "title": "b4",
-                "path": "b4"
-              },
-              {
-                "title": "b3",
-                "path": "b3"
-              },
-              {
-                "title": "b2",
-                "path": "b2"
-              },
-              {
-                "title": "b1",
-                "path": "b1"
-              },
-              {
-                "title": "a1",
-                "path": "a1"
-              },
-              {
-                "title": "newtest1",
-                "path": "newtest1"
-              },
-              {
-                "title": "tt1",
-                "path": "tt1"
-              },
-              {
-                "title": "qoaslda sdasd",
-                "path": "qoaslda-sdasd-asdas"
-              },
-              {
-                "title": "helloasdasdasd",
-                "path": "helloasdasdasd"
-              },
-              {
-                "title": "test121",
-                "path": "test121"
-              },
-              {
-                "title": "heyalsoasd",
-                "path": "heyalsoasd-asd"
-              },
-              {
-                "title": "hyndas",
-                "path": "hyndas-as"
-              },
-              {
-                "title": "heyas dasd",
-                "path": "heyas-dasd-as"
-              },
-              {
-                "title": "gudmor",
-                "path": "gudmor"
-              },
-              {
-                "title": "Images",
-                "path": "components/images",
-                "icon": "image"
-              },
-              {
-                "title": "Cards",
-                "path": "components/cards",
-                "icon": "square"
-              },
-              {
-                "title": "Code",
-                "path": "components/code",
-                "icon": "code"
-              },
-              {
-                "title": "Callouts",
-                "path": "components/callouts",
-                "icon": "message-square"
-              },
-              {
-                "title": "Steps",
-                "path": "components/steps",
-                "icon": "list-ordered"
-              },
-              {
-                "title": "Tabs",
-                "path": "components/tabs",
-                "icon": "columns"
-              },
-              {
-                "title": "HTML Block",
-                "path": "components/html-block",
-                "icon": "file-code"
-              },
-              {
-                "title": "SVG",
-                "path": "components/svg",
-                "icon": "pen-tool"
-              }
-            ],
-            "access-roles": [
-              "enterprise"
-            ]
-          },
-          {
-            "group": "Features",
-            "icon": "settings",
-            "pages": [
-              {
-                "title": "PDF Export",
-                "path": "features/pdf-export",
-                "icon": "file-down"
-              },
-              {
-                "title": "Page Actions",
-                "path": "features/page-actions",
-                "icon": "mouse-pointer-click"
-              },
-              {
-                "title": "Danger Zone",
-                "path": "features/danger-zone",
-                "icon": "alert-triangle"
-              },
-              {
-                "title": "Custom Domains",
-                "path": "features/custom-domains",
-                "icon": "globe"
-              }
-            ],
-            "access-roles": [
-              "enterprise"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "icon": "code",
-        "groups": [
-          {
-            "group": "Overview",
-            "icon": "file-text",
-            "pages": [
-              {
-                "title": "Authentication",
-                "path": "authentication",
-                "icon": "lock"
+                "group": "Guides",
+                "icon": "book-open",
+                "expandable": false,
+                "pages": [
+                  {
+                    "title": "Create Your First Page",
+                    "path": "help-center/guides/setup-project"
+                  }
+                ]
               }
             ]
           },
           {
-            "group": "Sample Endpoints",
-            "openapi": "openapi.yaml"
-          }
-        ],
-        "access-roles": [
-          "internal"
-        ]
-      },
-      {
-        "tab": "Help Center",
-        "icon": "help-circle",
-        "pages": [
-          {
-            "title": "Help Center",
-            "path": "help-center",
-            "icon": "home"
-          },
-          {
-            "group": "FAQs",
-            "icon": "help-circle",
-            "expandable": false,
+            "tab": "Changelog",
+            "icon": "clock",
             "pages": [
               {
-                "title": "Documentation Source",
-                "path": "help-center/faq/getting-started"
+                "title": "Changelog",
+                "path": "changelog",
+                "icon": "history"
               }
             ]
-          },
-          {
-            "group": "Troubleshooting",
-            "icon": "alert-triangle",
-            "expandable": false,
-            "pages": [
-              {
-                "title": "Page Missing in Sidebar",
-                "path": "help-center/troubleshooting/install-error"
-              }
-            ]
-          },
-          {
-            "group": "Guides",
-            "icon": "book-open",
-            "expandable": false,
-            "pages": [
-              {
-                "title": "Create Your First Page",
-                "path": "help-center/guides/setup-project"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Changelog",
-        "icon": "clock",
-        "pages": [
-          {
-            "title": "Changelog",
-            "path": "changelog",
-            "icon": "history"
           }
         ]
       }
