@@ -22,12 +22,12 @@
                 "icon": "rocket",
                 "pages": [
                   {
-                    "title": "bye babai",
-                    "path": "bye-babai"
+                    "title": "hello ba",
+                    "path": "hello-ba"
                   },
                   {
-                    "title": "hello babai",
-                    "path": "hello-babai"
+                    "title": "bye babai",
+                    "path": "bye-babai"
                   },
                   {
                     "title": "Introduction",
