@@ -57,6 +57,10 @@
             "icon": "layers",
             "pages": [
               {
+                "title": "b5",
+                "path": "b5"
+              },
+              {
                 "title": "b4",
                 "path": "b4"
               },
