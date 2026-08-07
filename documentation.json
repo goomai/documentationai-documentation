@@ -48,7 +48,8 @@
                   "GET /pet/findByTags"
                 ],
                 "access-roles": [
-                  "beta"
+                  "beta",
+                  "enterprise"
                 ]
               },
               {
