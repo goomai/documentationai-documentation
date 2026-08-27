@@ -1220,7 +1220,7 @@
         ],
         "show-page-navigation": false,
         "ask-feedback": false,
-        "public": true
+        "public": false
       },
       {
         "tab": "Release Notes",
@@ -1312,13 +1312,13 @@
             ]
           }
         ],
-        "public": true
+        "public": false
       },
       {
         "tab": "Learning Hub",
         "icon": "graduation-cap",
         "href": "https://academy.capillarytech.com/sessionm/pages/112/home",
-        "public": true
+        "public": false
       }
     ]
   },
