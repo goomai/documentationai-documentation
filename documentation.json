@@ -2,8 +2,12 @@
   "name": "Starter Kit",
   "initialRoute": "getting-started/introduction",
   "colors": {
-    "light": { "brand": "#3143e3" },
-    "dark": { "brand": "#85a1ff" }
+    "light": {
+      "brand": "#3143e3"
+    },
+    "dark": {
+      "brand": "#85a1ff"
+    }
   },
   "navigation": {
     "tabs": [
@@ -15,18 +19,31 @@
             "group": "Getting Started",
             "icon": "rocket",
             "pages": [
-              { "title": "Introduction", "path": "getting-started/introduction", "icon": "star" },
-              { "title": "Quickstart", "path": "getting-started/quickstart", "icon": "zap" }
+              {
+                "title": "Introduction",
+                "path": "getting-started/introduction",
+                "icon": "star"
+              },
+              {
+                "title": "Quickstart",
+                "path": "getting-started/quickstart",
+                "icon": "zap"
+              }
             ]
           },
           {
             "group": "Guides",
             "icon": "compass",
             "pages": [
-              { "title": "Customization", "path": "guides/customization", "icon": "palette" }
+              {
+                "title": "Customization",
+                "path": "guides/customization",
+                "icon": "palette"
+              }
             ]
           }
-        ]
+        ],
+        "public": true
       },
       {
         "tab": "API Reference",
@@ -36,7 +53,11 @@
             "group": "Endpoints",
             "icon": "server",
             "pages": [
-              { "title": "Authentication", "path": "api-reference/authentication", "icon": "key" }
+              {
+                "title": "Authentication",
+                "path": "api-reference/authentication",
+                "icon": "key"
+              }
             ]
           }
         ]
