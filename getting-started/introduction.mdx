@@ -1,0 +1,47 @@
+---
+title: "Introduction"
+description: "What this documentation covers and how it is organized."
+---
+
+Welcome. This starter kit is a minimal, working Documentation.AI site you can
+build on. Replace this text with your own introduction.
+
+## What is here
+
+<Columns cols={2}>
+  <Card title="Quickstart" href="/getting-started/quickstart" icon="zap">
+    Get from zero to a published page in a few minutes.
+  </Card>
+  <Card title="Customization" href="/guides/customization" icon="palette">
+    Change colors, navigation, and layout to match your brand.
+  </Card>
+  <Card title="Authentication" href="/api-reference/authentication" icon="key">
+    An example API reference page.
+  </Card>
+</Columns>
+
+## How pages work
+
+Every page is an MDX file with YAML frontmatter at the very top. The `title`
+field is required:
+
+```mdx
+---
+title: "Page title"
+description: "One line describing the page."
+---
+```
+
+A page only appears on your site once it is listed in `documentation.json`. The
+`path` in the navigation matches the file path without the `.mdx` extension, so
+`getting-started/introduction.mdx` is referenced as
+`getting-started/introduction`.
+
+<Callout kind="info">
+  Add, rename, or remove a page and you must update `documentation.json` in the
+  same change, or the page will not show up in the sidebar.
+</Callout>
+
+## Next steps
+
+Head to the [Quickstart](/getting-started/quickstart) to make your first edit.

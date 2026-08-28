@@ -1,0 +1,68 @@
+---
+title: "Quickstart"
+description: "Edit your first page and publish it."
+---
+
+This page walks through the smallest useful change: editing a page, adding a new
+one, and publishing.
+
+## Make your first edit
+
+<Steps>
+  <Step title="Open a page" icon="edit-2">
+    Open `getting-started/introduction.mdx` in your editor and change a line of
+    text.
+  </Step>
+  <Step title="Add a component" icon="box">
+    Drop a callout into the page to see a component render:
+
+    ```mdx
+    <Callout kind="tip">
+      Keep your API keys out of documentation examples.
+    </Callout>
+    ```
+  </Step>
+  <Step title="Publish" icon="upload">
+    Commit and push. Pushing to the deployment branch triggers a deployment.
+
+    ```bash
+    git add .
+    git commit -m "First content update"
+    git push origin main
+    ```
+  </Step>
+</Steps>
+
+## Add a new page
+
+Create the MDX file, then register it in `documentation.json`. Both steps are
+required.
+
+<CodeGroup>
+```mdx guides/my-page.mdx
+---
+title: "My page"
+description: "What this page explains."
+---
+
+## Overview
+
+Your content here.
+```
+
+```json documentation.json
+{
+  "group": "Guides",
+  "icon": "compass",
+  "pages": [
+    { "title": "Customization", "path": "guides/customization" },
+    { "title": "My page", "path": "guides/my-page" }
+  ]
+}
+```
+</CodeGroup>
+
+<Callout kind="warning">
+  Paths are lowercase kebab-case, unique across the site, and never include the
+  `.mdx` extension.
+</Callout>
