@@ -1,4 +1,4 @@
-export const Counter = () => {
+export const Counter = ({}) => {
   const [count, setCount] = useState(0)
 
   return (
