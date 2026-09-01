@@ -1,3 +1,5 @@
+export const description = "An interactive React color picker component with a live preview swatch, hex code input with validation, eight preset color swatches, and a native color picker for custom selection. Includes full dark mode support via data-theme attribute, .dark class, and prefers-color-scheme media query."
+
 export const Colorpicker = () => {
   const [color, setColor] = useState('#6366f1')
 
