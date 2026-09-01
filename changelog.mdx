@@ -9,6 +9,15 @@ description: Sample release notes you can replace with your real updates.
 This changelog is example content. Replace every entry with your real releases.
 </Callout>
 
+<Update label="2026-02-14" description="Reusable Snippets" tags={["new"]}>
+## What changed
+- Introduced reusable snippets: store `.mdx`, `.md`, or `.jsx` files under `snippets/` and import them into any page.
+- Snippets deploy automatically — no navigation entry required.
+- Snippet content is inlined into importing pages for search indexing; snippets are not indexed as standalone pages.
+- JSX snippets are searchable via their exported `description` string.
+- Changing or deleting a snippet automatically refreshes all pages that import it.
+</Update>
+
 <Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
 ## What changed
 - Cleaned up placeholder copy across the starter kit.

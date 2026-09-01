@@ -159,6 +159,11 @@
                     "title": "SVG",
                     "path": "components/svg",
                     "icon": "pen-tool"
+                  },
+                  {
+                    "title": "Snippets",
+                    "path": "components/snippets",
+                    "icon": "package"
                   }
                 ],
                 "access-roles": [

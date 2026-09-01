@@ -1,0 +1,82 @@
+---
+title: Snippets
+description: Create reusable Markdown, MDX, and React content blocks, import them into any page, and keep shared documentation synchronized automatically.
+---
+
+## Reusable content blocks
+
+Snippets are reusable content blocks stored under the `snippets/` directory. Import them into any documentation page with standard ES import syntax, then render the imported block wherever you need it.
+
+<Callout kind="tip">
+
+Snippets do not need a navigation entry. Documentation.AI deploys them automatically when you add or update them.
+
+</Callout>
+
+## Example
+
+Create a snippet at `snippets/intro.mdx`:
+
+```mdx
+## Welcome to the API
+
+Use the API to create projects, manage members, and retrieve deployment status.
+```
+
+Import and render the snippet from a page:
+
+```mdx
+import Intro from "/snippets/intro.mdx"
+
+<Intro />
+```
+
+The page displays the snippet content where you place the component. Reuse the same snippet across multiple pages to keep shared instructions consistent.
+
+<Callout kind="info">
+
+When you change a snippet, Documentation.AI automatically refreshes every page that imports it.
+
+</Callout>
+
+## Supported file types
+
+| Extension | Description |
+| --- | --- |
+| `.mdx` | Markdown with JSX support. Use this format for most snippets. |
+| `.md` | Plain Markdown treated as MDX. Imports ending in `.md` resolve to the corresponding `.mdx` snippet. |
+| `.jsx` | Interactive React components. |
+
+## Import syntax
+
+Use default imports, named imports, aliases, or a combination of default and named imports:
+
+```mdx
+import Intro from "/snippets/intro.mdx"
+import Intro from "snippets/intro.mdx"
+import { Counter } from "/snippets/counter.jsx"
+import { Counter as QuantityPicker } from "/snippets/counter.jsx"
+import Base, { Counter } from "/snippets/ui.jsx"
+```
+
+Single and double quotes both work. The leading slash and trailing semicolon are optional, and `.md` and `.mdx` extensions are interchangeable in import paths.
+
+## Search behavior
+
+Snippet content is not indexed as a standalone documentation page. When a page imports a Markdown or MDX snippet, the snippet content is inlined into that page's search representation.
+
+Search indexing removes snippet frontmatter and indexes the rendered content in the context of the importing page. Changes to a snippet update search results for every page that imports it.
+
+### JSX snippets
+
+Documentation.AI does not index JSX source code directly. Export a `description` string to provide searchable text for an interactive component:
+
+```jsx
+export const description = "Interactive counter for tracking quantities"
+```
+
+The exported description represents the JSX snippet in search. Without a description export, the JSX snippet contributes no searchable text.
+
+## Learn more
+
+Read the full [Snippets guide](https://documentation.ai/docs/components/snippets).
