@@ -1,42 +1,686 @@
 {
-  "name": "Starter Kit",
-  "initialRoute": "getting-started/introduction",
+  "name": "Leading Cloud Enterprise Security Provider for Zero Trust",
+  "initialRoute": "home",
+  "favicon": "https://www.zscaler.com/favicons/favicon-32x32.ico",
   "colors": {
-    "light": { "brand": "#3143e3" },
-    "dark": { "brand": "#85a1ff" }
+    "light": {
+      "brand": "#3143e3",
+      "heading": "#1a1a1a",
+      "text": "#374151"
+    },
+    "dark": {
+      "brand": "#85a1ff",
+      "heading": "#f2f2f2",
+      "text": "#c1c1c1"
+    }
   },
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
-        "icon": "book",
+        "tab": "Home",
+        "icon": "home",
+        "pages": [
+          {
+            "title": "Home",
+            "path": "home",
+            "icon": "home",
+            "show-sidebar": false,
+            "show-toc": false,
+            "show-parent-label": false,
+            "show-page-navigation": false,
+            "content-width": "wide"
+          }
+        ]
+      },
+      {
+        "tab": "Platform",
+        "icon": "layers",
         "groups": [
           {
-            "group": "Getting Started",
-            "icon": "rocket",
+            "group": "Featured",
+            "icon": "star",
             "pages": [
-              { "title": "Introduction", "path": "getting-started/introduction", "icon": "star" },
-              { "title": "Quickstart", "path": "getting-started/quickstart", "icon": "zap" }
+              {
+                "title": "Zero Trust SASE Everywhere",
+                "path": "platform/zero-trust-sase-everywhere"
+              },
+              {
+                "title": "Security for AI",
+                "path": "platform/security-for-ai"
+              },
+              {
+                "title": "Data Security",
+                "path": "platform/data-security"
+              },
+              {
+                "title": "Agentic SecOps",
+                "path": "platform/agentic-secops"
+              }
             ]
           },
           {
-            "group": "Guides",
-            "icon": "compass",
+            "group": "The Zscaler Platform",
+            "icon": "shield",
             "pages": [
-              { "title": "Customization", "path": "guides/customization", "icon": "palette" }
+              {
+                "title": "Zscaler Platform",
+                "path": "platform/zscaler-platform"
+              },
+              {
+                "title": "Why Zscaler",
+                "path": "platform/why-zscaler"
+              },
+              {
+                "title": "Leadership in AI",
+                "path": "platform/leadership-in-ai"
+              },
+              {
+                "title": "Zscaler SASE",
+                "path": "platform/zscaler-sase"
+              },
+              {
+                "title": "Zscaler SSE",
+                "path": "platform/zscaler-sse"
+              },
+              {
+                "title": "Zero Trust Automation",
+                "path": "platform/zero-trust-automation"
+              },
+              {
+                "title": "Analyst Recognition",
+                "path": "platform/analyst-recognition"
+              },
+              {
+                "title": "Customer Stories",
+                "path": "platform/customer-stories"
+              },
+              {
+                "title": "Partner Ecosystem",
+                "path": "platform/partner-ecosystem"
+              },
+              {
+                "title": "Reduce Your Carbon Footprint",
+                "path": "platform/reduce-your-carbon-footprint"
+              }
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
-        "icon": "code",
+        "tab": "Products",
+        "icon": "package",
         "groups": [
           {
-            "group": "Endpoints",
-            "icon": "server",
+            "group": "Zero Trust SASE",
+            "icon": "globe",
             "pages": [
-              { "title": "Authentication", "path": "api-reference/authentication", "icon": "key" }
+              {
+                "title": "Secure Internet Access (ZIA)",
+                "path": "products/secure-internet-access-zia"
+              },
+              {
+                "title": "Secure Private Access (ZPA)",
+                "path": "products/secure-private-access-zpa"
+              },
+              {
+                "title": "Digital Experience (ZDX)",
+                "path": "products/digital-experience-zdx"
+              },
+              {
+                "title": "Zero Trust Firewall",
+                "path": "products/zero-trust-firewall"
+              },
+              {
+                "title": "Cloud Sandbox",
+                "path": "products/cloud-sandbox"
+              },
+              {
+                "title": "Zero Trust Browser",
+                "path": "products/zero-trust-browser"
+              },
+              {
+                "title": "Zero Trust Branch",
+                "path": "products/zero-trust-branch"
+              },
+              {
+                "title": "Zero Trust SD-WAN",
+                "path": "products/zero-trust-sd-wan"
+              },
+              {
+                "title": "IoT/OT Segmentation",
+                "path": "products/iot-ot-segmentation"
+              },
+              {
+                "title": "Privileged Remote Access",
+                "path": "products/privileged-remote-access"
+              },
+              {
+                "title": "Zscaler Cellular",
+                "path": "products/zscaler-cellular"
+              }
+            ]
+          },
+          {
+            "group": "AI Security",
+            "icon": "brain",
+            "pages": [
+              {
+                "title": "AI Security",
+                "path": "products/ai-security"
+              },
+              {
+                "title": "AI Asset Management",
+                "path": "products/ai-asset-management"
+              },
+              {
+                "title": "AI Access Security",
+                "path": "products/ai-access-security"
+              },
+              {
+                "title": "AI Red Teaming",
+                "path": "products/ai-red-teaming"
+              },
+              {
+                "title": "AI Guardrails",
+                "path": "products/ai-guardrails"
+              }
+            ]
+          },
+          {
+            "group": "Zero Trust Cloud",
+            "icon": "cloud",
+            "pages": [
+              {
+                "title": "Zero Trust Cloud",
+                "path": "products/zero-trust-cloud"
+              },
+              {
+                "title": "Secure Ingress and Egress Traffic",
+                "path": "products/secure-ingress-and-egress-traffic"
+              },
+              {
+                "title": "Secure East-West Traffic",
+                "path": "products/secure-east-west-traffic"
+              },
+              {
+                "title": "Microsegmentation",
+                "path": "products/microsegmentation"
+              },
+              {
+                "title": "Zero Trust Gateway",
+                "path": "products/zero-trust-gateway"
+              }
+            ]
+          },
+          {
+            "group": "Data Security",
+            "icon": "lock",
+            "pages": [
+              {
+                "title": "Data Security",
+                "path": "products/data-security"
+              },
+              {
+                "title": "Web and Email DLP",
+                "path": "products/web-and-email-dlp"
+              },
+              {
+                "title": "Endpoint DLP",
+                "path": "products/endpoint-dlp"
+              },
+              {
+                "title": "BYOD Security",
+                "path": "products/byod-security"
+              },
+              {
+                "title": "Multi-Mode CASB",
+                "path": "products/multi-mode-casb"
+              },
+              {
+                "title": "Unified SaaS Security",
+                "path": "products/unified-saas-security"
+              },
+              {
+                "title": "DSPM",
+                "path": "products/dspm"
+              },
+              {
+                "title": "Microsoft Copilot Data Protection",
+                "path": "products/microsoft-copilot-data-protection"
+              }
+            ]
+          },
+          {
+            "group": "Agentic Security Operations",
+            "icon": "radar",
+            "pages": [
+              {
+                "title": "Agentic Security Operations",
+                "path": "products/agentic-security-operations"
+              },
+              {
+                "title": "Agentic SOC",
+                "path": "products/agentic-soc"
+              },
+              {
+                "title": "Deception",
+                "path": "products/deception"
+              },
+              {
+                "title": "Asset Exposure Management",
+                "path": "products/asset-exposure-management"
+              },
+              {
+                "title": "Unified Vulnerability Management",
+                "path": "products/unified-vulnerability-management"
+              },
+              {
+                "title": "Threat Hunting",
+                "path": "products/threat-hunting"
+              },
+              {
+                "title": "Managed Detection & Response",
+                "path": "products/managed-detection-and-response"
+              },
+              {
+                "title": "Data Fabric for Security",
+                "path": "products/data-fabric-for-security"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Solutions",
+        "icon": "lightbulb",
+        "groups": [
+          {
+            "group": "Use Cases",
+            "icon": "target",
+            "pages": [
+              {
+                "title": "AI Asset Management",
+                "path": "solutions/ai-asset-management"
+              },
+              {
+                "title": "Zero Trust + AI",
+                "path": "solutions/zero-trust-ai"
+              },
+              {
+                "title": "Business Insights",
+                "path": "solutions/business-insights"
+              },
+              {
+                "title": "Replace VPN",
+                "path": "solutions/replace-vpn"
+              },
+              {
+                "title": "Cyberthreat Protection",
+                "path": "solutions/cyberthreat-protection"
+              },
+              {
+                "title": "Stop Ransomware",
+                "path": "solutions/stop-ransomware"
+              },
+              {
+                "title": "VDI Alternative",
+                "path": "solutions/vdi-alternative"
+              },
+              {
+                "title": "Secure Your Data",
+                "path": "solutions/secure-your-data"
+              },
+              {
+                "title": "Optimize Digital Experiences",
+                "path": "solutions/optimize-digital-experiences"
+              },
+              {
+                "title": "Deploy BYOD Securely",
+                "path": "solutions/deploy-byod-securely"
+              },
+              {
+                "title": "Reduce Cyber Risk",
+                "path": "solutions/reduce-cyber-risk"
+              },
+              {
+                "title": "Security Operations",
+                "path": "solutions/security-operations"
+              },
+              {
+                "title": "Continuous Threat Exposure Management",
+                "path": "solutions/continuous-threat-exposure-management"
+              },
+              {
+                "title": "Accelerate M&A and Divestitures",
+                "path": "solutions/accelerate-m-and-a-and-divestitures"
+              }
+            ]
+          },
+          {
+            "group": "Industry & Market Solutions",
+            "icon": "building",
+            "pages": [
+              {
+                "title": "Healthcare",
+                "path": "solutions/healthcare"
+              },
+              {
+                "title": "Banking & Financial Services",
+                "path": "solutions/banking-and-financial-services"
+              },
+              {
+                "title": "Manufacturing",
+                "path": "solutions/manufacturing"
+              },
+              {
+                "title": "Education",
+                "path": "solutions/education"
+              },
+              {
+                "title": "Retail",
+                "path": "solutions/retail"
+              },
+              {
+                "title": "Australia Government",
+                "path": "solutions/australia-government"
+              },
+              {
+                "title": "China Government",
+                "path": "solutions/china-government"
+              },
+              {
+                "title": "US Public Sector",
+                "path": "solutions/us-public-sector"
+              },
+              {
+                "title": "US Federal Government",
+                "path": "solutions/us-federal-government"
+              },
+              {
+                "title": "US State & Local Government",
+                "path": "solutions/us-state-and-local-government"
+              },
+              {
+                "title": "APJ Mid-Market / Commercial",
+                "path": "solutions/apj-mid-market-commercial"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Resources",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Resource Center",
+            "icon": "library",
+            "pages": [
+              {
+                "title": "Resource Library",
+                "path": "resources/resource-library"
+              },
+              {
+                "title": "Blog",
+                "path": "resources/blog"
+              },
+              {
+                "title": "Customer Success Stories",
+                "path": "resources/customer-success-stories"
+              },
+              {
+                "title": "Webinars",
+                "path": "resources/webinars"
+              },
+              {
+                "title": "Zpedia",
+                "path": "resources/zpedia"
+              }
+            ]
+          },
+          {
+            "group": "Events & Trainings",
+            "icon": "calendar",
+            "pages": [
+              {
+                "title": "Upcoming Events",
+                "path": "resources/upcoming-events"
+              },
+              {
+                "title": "Zenith Live",
+                "path": "resources/zenith-live"
+              },
+              {
+                "title": "Zscaler Cyber Academy",
+                "path": "resources/zscaler-cyber-academy"
+              }
+            ]
+          },
+          {
+            "group": "Security Research & Services",
+            "icon": "microscope",
+            "pages": [
+              {
+                "title": "ThreatLabz Analytics",
+                "path": "resources/threatlabz-analytics"
+              },
+              {
+                "title": "Security Advisory Updates",
+                "path": "resources/security-advisory-updates"
+              }
+            ]
+          },
+          {
+            "group": "Tools",
+            "icon": "wrench",
+            "pages": [
+              {
+                "title": "Security Preview",
+                "path": "resources/security-preview"
+              },
+              {
+                "title": "Security and Risk Assessment",
+                "path": "resources/security-and-risk-assessment"
+              },
+              {
+                "title": "Disclose a Vulnerability",
+                "path": "resources/disclose-a-vulnerability"
+              },
+              {
+                "title": "Executive Insights App",
+                "path": "resources/executive-insights-app"
+              },
+              {
+                "title": "Ransomware Protection ROI Calculator",
+                "path": "resources/ransomware-protection-roi-calculator"
+              }
+            ]
+          },
+          {
+            "group": "Community & Support",
+            "icon": "life-buoy",
+            "pages": [
+              {
+                "title": "Customer Success Center",
+                "path": "resources/customer-success-center"
+              },
+              {
+                "title": "Zenith Community",
+                "path": "resources/zenith-community"
+              },
+              {
+                "title": "Zscaler Help Portal",
+                "path": "resources/zscaler-help-portal"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Company",
+        "icon": "building-2",
+        "groups": [
+          {
+            "group": "About",
+            "icon": "info",
+            "pages": [
+              {
+                "title": "About Zscaler",
+                "path": "company/about-zscaler"
+              },
+              {
+                "title": "Leadership Team",
+                "path": "company/leadership-team"
+              },
+              {
+                "title": "News & Announcements",
+                "path": "company/news-and-announcements"
+              },
+              {
+                "title": "Press Center",
+                "path": "company/press-center"
+              },
+              {
+                "title": "Investor Relations",
+                "path": "company/investor-relations"
+              },
+              {
+                "title": "Careers",
+                "path": "company/careers"
+              },
+              {
+                "title": "Culture",
+                "path": "company/culture"
+              },
+              {
+                "title": "Compliance",
+                "path": "company/compliance"
+              },
+              {
+                "title": "Corporate Responsibility",
+                "path": "company/corporate-responsibility"
+              },
+              {
+                "title": "Zenith Ventures",
+                "path": "company/zenith-ventures"
+              }
+            ]
+          },
+          {
+            "group": "Partners",
+            "icon": "handshake",
+            "pages": [
+              {
+                "title": "Explore Our Partners",
+                "path": "company/explore-our-partners"
+              },
+              {
+                "title": "Become a Partner",
+                "path": "company/become-a-partner"
+              },
+              {
+                "title": "Partner Portal",
+                "path": "company/partner-portal"
+              }
+            ]
+          },
+          {
+            "group": "Technology Partners",
+            "icon": "plug",
+            "pages": [
+              {
+                "title": "Explore Technology Partners",
+                "path": "company/explore-technology-partners"
+              },
+              {
+                "title": "Microsoft",
+                "path": "company/microsoft"
+              },
+              {
+                "title": "CrowdStrike",
+                "path": "company/crowdstrike"
+              },
+              {
+                "title": "AWS",
+                "path": "company/aws"
+              },
+              {
+                "title": "Okta",
+                "path": "company/okta"
+              },
+              {
+                "title": "Rubrik",
+                "path": "company/rubrik"
+              },
+              {
+                "title": "SAP",
+                "path": "company/sap"
+              }
+            ]
+          },
+          {
+            "group": "Quick Links",
+            "icon": "link",
+            "pages": [
+              {
+                "title": "ThreatLabz",
+                "path": "company/threatlabz"
+              },
+              {
+                "title": "Support",
+                "path": "company/support"
+              },
+              {
+                "title": "Get in touch",
+                "path": "company/get-in-touch"
+              },
+              {
+                "title": "Zscaler Cloud Portal | Admin",
+                "path": "company/zscaler-cloud-portal-admin"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Docs",
+        "icon": "file-text",
+        "groups": [
+          {
+            "group": "All about Carbon",
+            "icon": "atom",
+            "pages": [
+              {
+                "title": "What is Carbon?",
+                "path": "all-about-carbon/what-is-carbon",
+                "icon": "help-circle"
+              },
+              {
+                "title": "Who uses Carbon?",
+                "path": "all-about-carbon/who-uses-carbon",
+                "icon": "users"
+              },
+              {
+                "title": "The Carbon ecosystem",
+                "path": "all-about-carbon/the-carbon-ecosystem",
+                "icon": "network"
+              },
+              {
+                "title": "Releases",
+                "path": "all-about-carbon/releases",
+                "icon": "tag"
+              }
+            ]
+          },
+          {
+            "group": "Components",
+            "icon": "code",
+            "pages": [
+              {
+                "title": "Snippets",
+                "path": "snippets",
+                "icon": "puzzle"
+              }
             ]
           }
         ]

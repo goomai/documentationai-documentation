@@ -1,0 +1,150 @@
+---
+title: Snippets
+description: Write your own React components in the snippets folder and import them into any page.
+---
+import { ColorPalette } from '/snippets/color-palette.jsx';
+import { Checklist } from '/snippets/checklist.jsx';
+
+## What a snippet is
+
+A snippet is a React component that lives in the `snippets` folder and is imported
+into the pages that need it. The platform renders it directly — there is no build
+step, no bundler config, and nothing to install.
+
+Use a snippet when a reader needs to *try* something rather than read about it: a
+value they can copy, a calculation they can adjust, or a preview that responds to
+their input.
+
+<Callout kind="info">
+  React and its hooks are already in scope. Write `useState`, `useEffect`, `useMemo`,
+  `useRef`, and `useCallback` without importing them.
+</Callout>
+
+## Write a snippet
+
+<Steps>
+  <Step title="Create the file" icon="file-plus" title-type="h3">
+    Add a file to `snippets`, named after the component in kebab-case — for example
+    `snippets/color-palette.jsx` for a `ColorPalette` component.
+  </Step>
+
+  <Step title="Export the component" icon="code" title-type="h3">
+    Export a single arrow function that takes a props object and returns JSX. Give
+    every prop a default so the component renders on its own with no attributes.
+
+    ```jsx
+    export const Greeting = ({ name = 'there' }) => {
+      const [count, setCount] = useState(0)
+
+      return (
+        <button type="button" onClick={() => setCount(count + 1)}>
+          Hello {name} — clicked {count} times
+        </button>
+      )
+    }
+    ```
+  </Step>
+
+  <Step title="Describe it for search" icon="search" title-type="h3">
+    Add an optional `description` export at the top of the file. It is what search
+    shows for the component. Leave it out to omit it.
+
+    ```jsx
+    export const description = "a button that counts its own clicks"
+    ```
+  </Step>
+
+  <Step title="Style it in the file" icon="palette" title-type="h3">
+    Put the CSS in a `<style>` tag inside the component and prefix every class so it
+    cannot collide with another snippet. Styles are global once rendered.
+
+    ```jsx
+    <style>{`
+      .greeting-button { border-radius: 8px; }
+    `}</style>
+    ```
+  </Step>
+</Steps>
+
+## Use a snippet in a page
+
+Import the component at the top of the page, just below the frontmatter, then use it
+anywhere in the body.
+
+```mdx
+---
+title: My page
+---
+import { ColorPalette } from '/snippets/color-palette.jsx';
+
+## Brand colours
+
+<ColorPalette title="Starter palette" columns="4" />
+```
+
+The import path always starts at `/snippets/` and includes the `.jsx` extension.
+
+<Callout kind="alert">
+  Props written in MDX arrive as strings. Convert them inside the component with
+  `Number(...)` before doing arithmetic, and give every prop a sensible default.
+</Callout>
+
+## Rules to follow
+
+| Rule | Why |
+| --- | --- |
+| One component per file | Keeps the import path predictable and the file easy to scan. |
+| Never import one snippet into another | Snippets are imported by pages, not by each other. Duplicate the few lines instead. |
+| No npm packages | Nothing is installed at render time. Use React and plain CSS only. |
+| Prefix every CSS class | Styles are global, so unprefixed names leak between snippets. |
+| Support light and dark | Style the `.dark` and `[data-theme="dark"]` variants alongside the defaults. |
+| Guard browser APIs | `navigator.clipboard` and `window` are not always available. Check before you call. |
+
+## What ships in this folder
+
+<Columns cols="2">
+  <Card title="ColorPalette" icon="palette">
+    Swatch grid. Each swatch copies its hex value on click.
+  </Card>
+
+  <Card title="ContrastChecker" icon="contrast">
+    Scores a foreground and background pair against the WCAG thresholds.
+  </Card>
+
+  <Card title="SpacingScale" icon="ruler">
+    Previews each spacing token at its real size, in pixels or rem.
+  </Card>
+
+  <Card title="TypeScale" icon="type">
+    Builds a type ramp from an adjustable base size and ratio.
+  </Card>
+
+  <Card title="Checklist" icon="check-square">
+    A tickable list that tracks how far the reader has got.
+  </Card>
+</Columns>
+
+## Live examples
+
+<ColorPalette
+  title="Carbon-style palette"
+  colors="Blue 60:#0f62fe,Blue 40:#78a9ff,Gray 100:#161616,Gray 60:#6f6f6f,Gray 10:#f4f4f4,Green 50:#24a148,Red 60:#da1e28,Yellow 30:#f1c21b"
+  columns="4"
+/>
+
+<Checklist
+  title="Ship your first snippet"
+  items="Create the file in the snippets folder,Export one component with default props,Add a description export for search,Prefix the CSS classes,Import it into a page and preview it"
+/>
+
+## Next steps
+
+<Columns cols="2">
+  <Card title="Components" href="/components" icon="layout-grid" horizontal="false">
+    See the built-in components alongside two more snippet examples.
+  </Card>
+
+  <Card title="Core Concepts" href="/concepts" icon="layers" horizontal="false">
+    Understand how pages, navigation, and components fit together.
+  </Card>
+</Columns>
