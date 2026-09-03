@@ -170,6 +170,11 @@
                 "icon": "settings",
                 "pages": [
                   {
+                    "title": "Access Control",
+                    "path": "features/access-control",
+                    "icon": "shield"
+                  },
+                  {
                     "title": "PDF Export",
                     "path": "features/pdf-export",
                     "icon": "file-down"

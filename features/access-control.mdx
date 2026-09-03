@@ -1,0 +1,130 @@
+---
+title: Access Control
+description: Restrict published documentation pages by user role with JWT or OAuth authentication, inherited navigation rules, and clear access controls for admins.
+---
+
+## Overview
+
+Access Control restricts which pages authenticated users can see based on their roles. Configure it under **Settings → Access Control**, then assign roles to pages or navigation groups in the editor.
+
+Users must have at least one role in their JWT or OAuth token that matches a page's assigned roles. Pages without a role assignment remain accessible to all authenticated users.
+
+## Prerequisites
+
+<Callout kind="alert">
+
+Role-based access requires authentication with **JWT** or **OAuth 2.0**. It does not work with password authentication. Save your authentication configuration before you enable role-based access.
+
+</Callout>
+
+The **Enable role-based access** toggle appears only when authentication is enabled and the authentication method is JWT or OAuth 2.0. The toggle remains unavailable until you save a complete JWT or OAuth configuration.
+
+## Enabling role-based access
+
+<Steps>
+  <Step title="Open Access Control settings" icon="settings" title-type="p">
+
+    Open **Settings → Access Control** in the documentation editor.
+
+  </Step>
+
+  <Step title="Enable role-based access" icon="shield" title-type="p">
+
+    Turn on **Enable role-based access**.
+
+  </Step>
+
+  <Step title="Define the available roles" icon="users" title-type="p">
+
+    Review the default roles and add any custom roles your documentation requires.
+
+  </Step>
+
+  <Step title="Save your access settings" icon="check-circle" title-type="p">
+
+    Save the configuration. Role-based access is ready to configure when the setting remains enabled and your roles appear in the defined roles list.
+
+  </Step>
+</Steps>
+
+## Defining roles
+
+The defined roles list contains the roles you can assign to navigation items. New configurations include the `admin` and `member` roles by default.
+
+Add custom roles for the groups that need access to specific documentation. Use lowercase letters and numbers in role names. Hyphens and underscores are also supported.
+
+Remove a role by selecting the **X** on its role badge. Removing a role also removes that role from every page and navigation item where it was assigned. If an item has no roles left, it returns to inherited or default access.
+
+## Assigning roles to pages
+
+Assign roles directly to a page or to a navigation container such as a group. Assignments are stored as `access-roles` in the documentation configuration and control access after you publish the site.
+
+<Callout kind="info">
+
+Shield icons appear in the editor only when role-based access is enabled with JWT or OAuth 2.0 authentication.
+
+</Callout>
+
+<Steps>
+  <Step title="Open the editor navigation view" icon="folder" title-type="p">
+
+    Open the navigation editor that contains the pages and groups you want to protect.
+
+  </Step>
+
+  <Step title="Open access roles for a navigation item" icon="shield" title-type="p">
+
+    Select the shield icon beside a page, group, or other navigation container. An assigned-role shield indicates an explicit assignment. A standard shield indicates inherited or default access.
+
+  </Step>
+
+  <Step title="Select the required roles" icon="users" title-type="p">
+
+    Choose one or more roles in the **Access Roles** popover. Users need at least one selected role in their JWT or OAuth token to view the corresponding page.
+
+  </Step>
+
+  <Step title="Save and publish" icon="upload" title-type="p">
+
+    Save your changes, then publish the documentation. The updated access rules apply to the live site after publishing completes.
+
+  </Step>
+</Steps>
+
+## Role inheritance
+
+Roles assigned to a group or navigation container apply to its child pages. A page without its own role assignment inherits roles from the nearest ancestor that has roles.
+
+A child page with an explicit role assignment replaces the roles inherited from its parent. Assigning an empty role list clears inherited roles, making the page available to all authenticated users.
+
+<Callout kind="tip">
+
+Use group-level assignments when several pages share the same audience. Add an explicit assignment to a child page when that page needs different access from the rest of the group.
+
+</Callout>
+
+For example, if you assign `engineering` to an **Engineering** group, every page in that group inherits the `engineering` role. If you assign `sre` directly to a **Runbooks** page, that page requires `sre` instead of `engineering`.
+
+## When role-based access is disabled
+
+Disabling role-based access stops enforcement without deleting your role assignments. The `access-roles` metadata remains in the documentation configuration, but authenticated users can see all pages subject to your normal authentication rules.
+
+Shield controls disappear from the editor while the feature is disabled. Enable role-based access again to resume enforcement with the existing role assignments.
+
+<Callout kind="alert">
+
+Access Control changes do not affect the live documentation site until you publish. Role-based access is separate from authentication mode, including full and partial authentication, and from organization member roles such as admin, editor, and viewer.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Custom Domains" href="/features/custom-domains" icon="cloud" horizontal="false">
+    Configure a custom domain for your published documentation site.
+  </Card>
+
+  <Card title="Page Actions" href="/features/page-actions" icon="settings" horizontal="false">
+    Control which actions appear for readers on published documentation pages.
+  </Card>
+</Columns>
