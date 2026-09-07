@@ -170,6 +170,11 @@
                 "icon": "settings",
                 "pages": [
                   {
+                    "title": "Media Manager",
+                    "path": "features/media-manager",
+                    "icon": "folder-open"
+                  },
+                  {
                     "title": "PDF Export",
                     "path": "features/pdf-export",
                     "icon": "file-down"
@@ -212,8 +217,9 @@
                 ]
               },
               {
-                "group": "Sample Endpoints",
-                "openapi": "openapi.yaml"
+                "group": "Media Manager API",
+                "openapi": "openapi.yaml",
+                "icon": "server"
               }
             ],
             "access-roles": [

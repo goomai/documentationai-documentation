@@ -1,0 +1,232 @@
+---
+title: Media Manager
+description: Upload, organize, and manage images, video, audio, documents, and other media files across your documentation projects.
+---
+
+## Overview
+
+Media Manager lets you upload, organize, and manage images, video, audio, documents, and other media files across your documentation projects. Media is stored in dedicated CDN-backed storage and served through optimized delivery paths based on file type.
+
+The API route namespace uses `/images` for backward compatibility, but the Media Manager handles all supported media kinds.
+
+## Supported file types
+
+Media Manager accepts the following file types.
+
+| Category | Format | MIME type | Extensions |
+| --- | --- | --- | --- |
+| Images | JPEG | `image/jpeg` | `.jpg`, `.jpeg` |
+| Images | PNG | `image/png` | `.png` |
+| Images | GIF | `image/gif` | `.gif` |
+| Images | WebP | `image/webp` | `.webp` |
+| Images | SVG | `image/svg+xml` | `.svg` |
+| Images | ICO | `image/x-icon` | `.ico` |
+| Images | HEIC | `image/heic` | `.heic`, `.heif` |
+| Images | AVIF | `image/avif` | `.avif` |
+| Images | BMP | `image/bmp` | `.bmp` |
+| Images | TIFF | `image/tiff` | `.tif`, `.tiff` |
+| Video | MP4 | `video/mp4` | `.mp4`, `.m4v` |
+| Video | WebM | `video/webm` | `.webm` |
+| Video | QuickTime | `video/quicktime` | `.mov` |
+| Audio | MP3 | `audio/mpeg` | `.mp3` |
+| Audio | WAV | `audio/wav` | `.wav` |
+| Audio | OGG | `audio/ogg` | `.ogg`, `.oga` |
+| Audio | M4A | `audio/mp4` | `.m4a` |
+| Audio | AAC | `audio/aac` | `.aac` |
+| Documents | PDF | `application/pdf` | `.pdf` |
+| Documents | Word | `application/vnd.openxmlformats-officedocument.wordprocessingml.document` and `application/msword` | `.docx`, `.doc` |
+| Documents | Excel | `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` and `application/vnd.ms-excel` | `.xlsx`, `.xls` |
+| Documents | PowerPoint | `application/vnd.openxmlformats-officedocument.presentationml.presentation` and `application/vnd.ms-powerpoint` | `.pptx`, `.ppt` |
+| Documents | OpenDocument text | `application/vnd.oasis.opendocument.text` | `.odt` |
+| Documents | OpenDocument spreadsheet | `application/vnd.oasis.opendocument.spreadsheet` | `.ods` |
+| Documents | OpenDocument presentation | `application/vnd.oasis.opendocument.presentation` | `.odp` |
+| Data and text | CSV | `text/csv` | `.csv` |
+| Data and text | TSV | `text/tab-separated-values` | `.tsv` |
+| Data and text | JSON | `application/json` | `.json` |
+| Data and text | YAML | `application/yaml` | `.yaml`, `.yml` |
+| Data and text | XML | `application/xml` | `.xml` |
+| Data and text | Plain text | `text/plain` | `.txt`, `.log` |
+| Data and text | Markdown | `text/markdown` | `.md`, `.mdx` |
+| Archives | ZIP | `application/zip` | `.zip` |
+| Archives | Gzip | `application/gzip` | `.gz`, `.tgz` |
+| Archives | Tar | `application/x-tar` | `.tar` |
+| Fonts | WOFF | `font/woff` | `.woff` |
+| Fonts | WOFF2 | `font/woff2` | `.woff2` |
+| Fonts | TTF | `font/ttf` | `.ttf` |
+| Fonts | OTF | `font/otf` | `.otf` |
+
+Media Manager normalizes common MIME aliases to their canonical types. For example, `image/jpg` is normalized to `image/jpeg`, and `audio/mp3` is normalized to `audio/mpeg`.
+
+<Callout kind="alert" collapsed="false">
+
+Executable files, scripts, macro-enabled Office documents, and HTML files are rejected for security reasons. Examples include `.exe`, `.dll`, `.msi`, `.apk`, `.js`, `.sh`, `.docm`, `.xlsm`, `.pptm`, `.html`, and `.htm`.
+
+SVG files are screened for scripts and other dangerous constructs before acceptance.
+
+</Callout>
+
+## Storage quotas
+
+Each organization has a pooled storage quota shared across all documentation projects. Per-file limits apply to each individual upload and do not increase when you distribute files across projects.
+
+| Plan | Storage quota | Image limit | Video and audio limit | Document limit |
+| --- | ---: | ---: | ---: | ---: |
+| Starter | 1 GB | 10 MB | 20 MB | 10 MB |
+| Standard | 5 GB | 10 MB | 30 MB | 20 MB |
+| Professional | 20 GB | 10 MB | 50 MB | 30 MB |
+| Enterprise | 100 GB | 10 MB | 50 MB | 30 MB |
+
+<Callout kind="info" collapsed="false">
+
+Audio files use the video and audio per-file limit. The limit applies to each individual upload, while the storage quota is pooled across the entire organization and all of its documentation projects.
+
+</Callout>
+
+## Roles and permissions
+
+Media Manager uses your organization roles to control access to media operations.
+
+| Action | Admin | Editor | Viewer |
+| --- | --- | --- | --- |
+| Upload media | Yes | Yes | No |
+| List and view media | Yes | Yes | Yes |
+| Update alt text | Yes | Yes | No |
+| Delete media | Yes | No | No |
+| Bulk delete | Yes | No | No |
+| Backfill references | Yes | No | No |
+| Reconcile storage | Yes | No | No |
+| View audit log | Yes | No | No |
+| Export audit log | Yes | No | No |
+
+## Uploading media
+
+Upload a file by requesting a presigned URL, sending the file directly to storage, and confirming the completed upload with Media Manager.
+
+<Steps>
+  <Step title="Request a presigned upload URL" icon="upload" title-type="p">
+
+    Send `POST /upload-url` with the filename, MIME type, and file size. The response contains the presigned storage URL and the storage path that you will use when confirming the upload.
+
+  </Step>
+
+  <Step title="Upload the file to storage" icon="cloud" title-type="p">
+
+    Send the file directly to the presigned URL returned in the first step. Do not send the file through the Media Manager API.
+
+  </Step>
+
+  <Step title="Confirm the upload" icon="check-circle" title-type="p">
+
+    Send `POST /confirm` with the storage path and original filename. Include optional metadata such as image dimensions, media duration, or document page count when it is available.
+
+  </Step>
+</Steps>
+
+<Callout kind="tip" collapsed="false">
+
+For non-image media, the presign response includes a `cacheControl` header. Send that header during the upload to storage so the file receives the intended caching behavior.
+
+</Callout>
+
+Presign requests are limited to 120 per organization per minute. When your organization exceeds this limit, the API returns a `429` response.
+
+## Large file uploads
+
+Files that are 20 MiB or larger use multipart upload. Multipart uploads divide the file into parts so you can upload each part independently and retry individual parts without restarting the entire upload.
+
+<Steps>
+  <Step title="Start the multipart upload" icon="upload" title-type="p">
+
+    Send `POST /multipart/start` with the file metadata. The response provides the upload identifier and presigned URLs for the file parts.
+
+  </Step>
+
+  <Step title="Upload each part" icon="cloud" title-type="p">
+
+    Upload every part to its corresponding presigned URL. Record the part number and returned ETag for each successful upload.
+
+  </Step>
+
+  <Step title="Complete the upload" icon="check-circle" title-type="p">
+
+    Send `POST /multipart/complete` with the upload identifier, part numbers, and ETags. Media Manager registers the file after all parts are accepted.
+
+  </Step>
+
+  <Step title="Abort an incomplete upload" icon="x-circle" title-type="p">
+
+    If the upload fails or you cancel it, send `POST /multipart/abort` with the upload identifier. Aborting removes the incomplete upload and helps avoid storage charges for abandoned parts.
+
+  </Step>
+</Steps>
+
+<Callout kind="info" collapsed="false">
+
+Multipart uploads are not eligible for automatic deduplication because multipart ETags are not content hashes.
+
+</Callout>
+
+## Replacing media
+
+Replace a media item's bytes without changing its ID or public URL. The replacement process uses a staging upload and optimistic concurrency checks to prevent an older client from overwriting a newer version.
+
+<Steps>
+  <Step title="Request a replacement URL" icon="upload" title-type="p">
+
+    Send `POST /:id/replace-url` for the media item. The replacement MIME type must match the original media item's MIME type.
+
+  </Step>
+
+  <Step title="Upload the replacement file" icon="cloud" title-type="p">
+
+    Upload the new file to the staging URL returned by the API.
+
+  </Step>
+
+  <Step title="Confirm the replacement" icon="check-circle" title-type="p">
+
+    Send `POST /:id/replace-confirm` with the staging path and the item's expected version.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert" collapsed="false">
+
+The replacement MIME type must match the original. Media Manager enforces optimistic concurrency with an `expectedVersion` timestamp. If the item changed after you retrieved its version, confirmation returns a `409` conflict.
+
+</Callout>
+
+## Deduplication
+
+When you confirm an upload, Media Manager checks for identical bytes in the same documentation. If an identical item already exists, Media Manager deletes the new upload and returns the existing media item with `deduplicated: true`.
+
+Deduplication reduces storage usage and prevents duplicate entries. Multipart uploads are not eligible because their multipart ETags do not represent the complete file's content hash.
+
+## Audit log
+
+Media operations are logged automatically for traceability. The audit log records these actions:
+
+- `media.upload`
+- `media.replace`
+- `media.delete`
+- `media.bulk_delete`
+
+Admins can list audit entries with filters for documentation, action, actor, and date range. Admins can also export filtered entries as CSV, with a maximum of 10,000 rows.
+
+## Next steps
+
+<Columns cols={2}>
+
+  <Card title="PDF Export" href="/features/pdf-export" icon="download" horizontal="false">
+
+    Export your full documentation site as a PDF for sharing and offline access.
+
+  </Card>
+
+  <Card title="Custom Domains" href="/features/custom-domains" icon="globe" horizontal="false">
+
+    Connect your own domain and manage DNS for your published documentation.
+
+  </Card>
+
+</Columns>

@@ -1,192 +1,1470 @@
 openapi: '3.0.0'
 info:
   version: 1.0.0
-  title: Sample API
+  title: Media Manager API
   description: >
-    This is a sample OpenAPI file included with the starter kit.
-
-    Replace this entire file with your own OpenAPI specification that fully
-    describes your API, including your endpoints, schemas, authentication,
-    and error handling. Use this sample only as a structural reference, not
-    as a starting point for a production API definition.
+    API for uploading, managing, auditing, and reconciling media assets across
+    documentation projects. All endpoints require a Bearer token in the
+    Authorization header. Access is controlled by organization roles:
+    viewers can read media, editors can upload and update media, and admins can
+    delete, backfill, reconcile, and export audit data.
   license:
     name: MIT
 servers:
-  - url: https://api.example.com/v1
+  - url: https://api.documentation.ai
+    description: Media Manager API
+tags:
+  - name: Media Uploads
+    description: Presigned and multipart media upload operations.
+  - name: Media
+    description: Media library operations.
+  - name: Storage
+    description: Organization storage usage and reconciliation.
+  - name: Audit Log
+    description: Media audit log operations.
 paths:
-  /projects:
-    get:
-      summary: List all projects
-      operationId: listProjects
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: An paged array of projects
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Projects'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+  /organizations/{organizationId}/documentation/{documentationId}/images/upload-url:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
     post:
-      summary: Create project
-      operationId: createProjects
-      responses:
-        201:
-          description: Null response
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /projects/{projectId}:
-    get:
-      summary: Get project info
-      operationId: showProjectById
-      parameters:
-        - name: projectId
-          in: path
-          required: true
-          description: The id of the project to retrieve
-          schema:
-            type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Projects'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /documents:
-    get:
-      summary: List all documents
-      operationId: listDocuments
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: An paged array of documents
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Documents'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    post:
-      summary: Create document
-      operationId: createDocuments
-      responses:
-        201:
-          description: Null response
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /documents/{docId}:
-    get:
-      summary: Get document info
-      operationId: showDocumentById
-      parameters:
-        - name: docId
-          in: path
-          required: true
-          description: The id of the document to retrieve
-          schema:
-            type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Documents'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-components:
-  schemas:
-    Project:
-      required:
-        - id
-        - name
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        description:
-          type: string
-    Projects:
-      type: array
-      items:
-        $ref: '#/components/schemas/Project'
-    Document:
-      required:
-        - id
-        - title
-      properties:
-        id:
-          type: integer
-          format: int64
-        title:
-          type: string
+      tags:
+        - Media Uploads
+      summary: Get a presigned upload URL
+      description: >
+        Gets a presigned upload URL for a single-file upload. Requires an
+        editor or admin role. All registered media types are accepted subject
+        to filename, MIME consistency, security, plan limits, quota, and rate
+        limit validation.
+      operationId: createMediaUploadUrl
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
         content:
-          type: string
-    Documents:
-      type: array
-      items:
-        $ref: '#/components/schemas/Document'
-    Error:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadUrlRequest'
+      responses:
+        '200':
+          description: Presigned upload URL created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadUrlResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '507':
+          $ref: '#/components/responses/InsufficientStorage'
+  /organizations/{organizationId}/documentation/{documentationId}/images/confirm:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+    post:
+      tags:
+        - Media Uploads
+      summary: Confirm an uploaded file
+      description: >
+        Confirms an uploaded file and registers it in the media library.
+        Requires an editor or admin role. The server verifies object metadata,
+        actual bytes, MIME type, and SVG safety before registration.
+      operationId: confirmMediaUpload
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmUploadRequest'
+      responses:
+        '201':
+          description: Media item registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaMutationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '507':
+          $ref: '#/components/responses/InsufficientStorage'
+  /organizations/{organizationId}/documentation/{documentationId}/images/multipart/start:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+    post:
+      tags:
+        - Media Uploads
+      summary: Start a multipart upload
+      description: >
+        Starts a multipart upload for files of at least 20 MiB. Requires an
+        editor or admin role. Part sizes are at least 5 MiB and remain within
+        the 10,000-part limit.
+      operationId: startMultipartMediaUpload
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadUrlRequest'
+      responses:
+        '200':
+          description: Multipart upload started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipartStartResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '507':
+          $ref: '#/components/responses/InsufficientStorage'
+  /organizations/{organizationId}/documentation/{documentationId}/images/multipart/complete:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+    post:
+      tags:
+        - Media Uploads
+      summary: Complete a multipart upload
+      description: >
+        Completes a multipart upload and registers the media. Requires an
+        editor or admin role. Multipart ETags are not content hashes, so
+        deduplication is not available for multipart uploads.
+      operationId: completeMultipartMediaUpload
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultipartCompleteRequest'
+      responses:
+        '201':
+          description: Multipart upload completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaMutationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '507':
+          $ref: '#/components/responses/InsufficientStorage'
+  /organizations/{organizationId}/documentation/{documentationId}/images/multipart/abort:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+    post:
+      tags:
+        - Media Uploads
+      summary: Abort a multipart upload
+      description: Aborts a multipart upload to prevent abandoned parts from incurring storage charges.
+      operationId: abortMultipartMediaUpload
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultipartAbortRequest'
+      responses:
+        '204':
+          description: Multipart upload aborted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /organizations/{organizationId}/documentation/{documentationId}/images:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+    get:
+      tags:
+        - Media
+      summary: List media items
+      description: Lists all media items in a documentation project.
+      operationId: listMediaItems
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: Media items and pagination details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+        - Media Uploads
+      summary: Backfill media references
+      description: Scans content files and adopts referenced media that lacks a library entry. Requires an admin role.
+      operationId: backfillMediaItems
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackfillRequest'
+      responses:
+        '200':
+          description: Backfill results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackfillResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /organizations/{organizationId}/documentation/{documentationId}/images/{imageId}:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+      - $ref: '#/components/parameters/ImageId'
+    get:
+      tags:
+        - Media
+      summary: Get a media item
+      description: Gets a media item scoped to the specified documentation project and media ID.
+      operationId: getMediaItem
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Media
+      summary: Update media alt text
+      description: Updates the alt text of a media item. Requires an editor or admin role.
+      operationId: updateMediaAltText
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAltTextRequest'
+      responses:
+        '200':
+          description: Updated media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Media
+      summary: Delete a media item
+      description: Deletes a media item, associated poster objects, and its storage object. Requires an admin role.
+      operationId: deleteMediaItem
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Deleted media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteMediaResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /organizations/{organizationId}/documentation/{documentationId}/images/{imageId}/replace-url:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+      - $ref: '#/components/parameters/ImageId'
+    post:
+      tags:
+        - Media Uploads
+      summary: Get a media replacement upload URL
+      description: Gets a staging upload URL for replacing existing media bytes using optimistic concurrency.
+      operationId: createMediaReplacementUrl
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplacementUrlRequest'
+      responses:
+        '200':
+          description: Replacement upload URL created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplacementUrlResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '507':
+          $ref: '#/components/responses/InsufficientStorage'
+  /organizations/{organizationId}/documentation/{documentationId}/images/{imageId}/replace-confirm:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+      - $ref: '#/components/parameters/ImageId'
+    post:
+      tags:
+        - Media Uploads
+      summary: Confirm a media replacement
+      description: Confirms a replacement, validates the new bytes, and archives the old bytes under _versions/.
+      operationId: confirmMediaReplacement
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplacementConfirmRequest'
+      responses:
+        '200':
+          description: Replacement confirmed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplacementResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /organizations/{organizationId}/documentation/{documentationId}/images/{imageId}/usage:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+      - $ref: '#/components/parameters/ImageId'
+    get:
+      tags:
+        - Media
+      summary: Get media usage
+      description: Checks where a media item is referenced. Published usage is not currently available.
+      operationId: getMediaUsage
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Media usage details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaUsageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /organizations/{organizationId}/documentation/{documentationId}/images/bulk-delete:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/DocumentationId'
+    post:
+      tags:
+        - Media
+      summary: Delete multiple media items
+      description: Deletes up to 100 media items independently and returns partial success results. Requires an admin role.
+      operationId: bulkDeleteMediaItems
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkDeleteRequest'
+      responses:
+        '200':
+          description: Bulk deletion results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkDeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /organizations/{organizationId}/storage:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    get:
+      tags:
+        - Storage
+      summary: Get organization storage usage
+      description: Gets pooled storage usage and quota information for an organization.
+      operationId: getOrganizationStorage
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Organization storage usage.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageUsage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /organizations/{organizationId}/storage/by-documentation:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    get:
+      tags:
+        - Storage
+      summary: Get storage by documentation
+      description: Gets storage usage broken down by documentation project. Requires an admin role.
+      operationId: getStorageByDocumentation
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Storage usage by documentation project.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentationStorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /organizations/{organizationId}/storage/reconcile:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    post:
+      tags:
+        - Storage
+      summary: Reconcile organization storage
+      description: Recomputes storage usage from the database and repairs the stored counter. Requires an admin role.
+      operationId: reconcileOrganizationStorage
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Storage reconciliation result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageReconciliationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /organizations/{organizationId}/media-audit-log:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    get:
+      tags:
+        - Audit Log
+      summary: List media audit log entries
+      description: Lists media audit log entries. Requires an admin role.
+      operationId: listMediaAuditLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DocumentationIdQuery'
+        - $ref: '#/components/parameters/Action'
+        - $ref: '#/components/parameters/ActionPrefix'
+        - $ref: '#/components/parameters/ActorUserId'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+        - $ref: '#/components/parameters/AuditLimit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Audit log entries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /organizations/{organizationId}/media-audit-log/export:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    get:
+      tags:
+        - Audit Log
+      summary: Export the media audit log
+      description: Exports up to 10,000 media audit log rows as a CSV attachment. Requires an admin role.
+      operationId: exportMediaAuditLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DocumentationIdQuery'
+        - $ref: '#/components/parameters/Action'
+        - $ref: '#/components/parameters/ActionPrefix'
+        - $ref: '#/components/parameters/ActorUserId'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+        - $ref: '#/components/parameters/AuditLimit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: CSV audit log export.
+          headers:
+            Content-Disposition:
+              description: Attachment filename for the exported CSV.
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token.
+  parameters:
+    OrganizationId:
+      name: organizationId
+      in: path
+      required: true
+      description: Organization identifier.
+      schema:
+        type: string
+        format: uuid
+    DocumentationId:
+      name: documentationId
+      in: path
+      required: true
+      description: Documentation project identifier.
+      schema:
+        type: string
+        format: uuid
+    ImageId:
+      name: imageId
+      in: path
+      required: true
+      description: Media item identifier.
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 20
+    Search:
+      name: search
+      in: query
+      required: false
+      description: Search term for media items.
+      schema:
+        type: string
+    DocumentationIdQuery:
+      name: documentationId
+      in: query
+      required: false
+      description: Filter by documentation project identifier.
+      schema:
+        type: string
+        format: uuid
+    Action:
+      name: action
+      in: query
+      required: false
+      description: Filter by exact action.
+      schema:
+        type: string
+        enum:
+          - media.upload
+          - media.replace
+          - media.delete
+          - media.bulk_delete
+    ActionPrefix:
+      name: actionPrefix
+      in: query
+      required: false
+      description: Filter by action prefix.
+      schema:
+        type: string
+    ActorUserId:
+      name: actorUserId
+      in: query
+      required: false
+      description: Filter by acting user identifier.
+      schema:
+        type: string
+        format: uuid
+    From:
+      name: from
+      in: query
+      required: false
+      description: Include entries created at or after this timestamp.
+      schema:
+        type: string
+        format: date-time
+    To:
+      name: to
+      in: query
+      required: false
+      description: Include entries created before or at this timestamp.
+      schema:
+        type: string
+        format: date-time
+    AuditLimit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of audit entries to return, up to 500.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 500
+        default: 100
+    Offset:
+      name: offset
+      in: query
+      required: false
+      description: Number of audit entries to skip.
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Insufficient permissions for the requested operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Resource conflict, including duplicate media or stale version.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Too many uploads started at once.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 429
+            error: Too Many Requests
+            message: Too many uploads started at once. Wait a moment and try again.
+    InsufficientStorage:
+      description: Organization storage quota exceeded.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    UploadUrlRequest:
+      type: object
       required:
-        - code
-        - message
+        - filename
+        - mimeType
+        - fileSize
       properties:
-        code:
+        filename:
+          type: string
+          description: Name of the file to upload.
+        mimeType:
+          type: string
+          description: Declared MIME type.
+        fileSize:
+          type: integer
+          format: int64
+          minimum: 1
+          description: File size in bytes.
+    UploadUrlResponse:
+      type: object
+      required:
+        - uploadUrl
+        - storagePath
+        - expiresAt
+      properties:
+        uploadUrl:
+          type: string
+          format: uri
+        storagePath:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        cacheControl:
+          type: string
+    ConfirmUploadRequest:
+      type: object
+      required:
+        - storagePath
+        - originalName
+      properties:
+        storagePath:
+          type: string
+        originalName:
+          type: string
+        altText:
+          type: string
+          nullable: true
+        metadata:
+          $ref: '#/components/schemas/MediaMetadata'
+    MediaMetadata:
+      type: object
+      properties:
+        width:
           type: integer
           format: int32
+        height:
+          type: integer
+          format: int32
+        durationSeconds:
+          type: integer
+          format: int32
+        pageCount:
+          type: integer
+          format: int32
+        posterPath:
+          type: string
+    MultipartStartResponse:
+      type: object
+      required:
+        - uploadId
+        - storagePath
+        - partSize
+        - partUrls
+        - expiresAt
+      properties:
+        uploadId:
+          type: string
+        storagePath:
+          type: string
+        partSize:
+          type: integer
+          format: int64
+          minimum: 5242880
+        partUrls:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultipartPartUrl'
+        expiresAt:
+          type: string
+          format: date-time
+    MultipartPartUrl:
+      type: object
+      required:
+        - partNumber
+        - url
+      properties:
+        partNumber:
+          type: integer
+          format: int32
+          minimum: 1
+        url:
+          type: string
+          format: uri
+    MultipartCompleteRequest:
+      type: object
+      required:
+        - storagePath
+        - uploadId
+        - parts
+        - originalName
+      properties:
+        storagePath:
+          type: string
+        uploadId:
+          type: string
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultipartPart'
+        originalName:
+          type: string
+        altText:
+          type: string
+          nullable: true
+        metadata:
+          $ref: '#/components/schemas/MediaMetadata'
+    MultipartPart:
+      type: object
+      required:
+        - partNumber
+        - etag
+      properties:
+        partNumber:
+          type: integer
+          format: int32
+          minimum: 1
+        etag:
+          type: string
+    MultipartAbortRequest:
+      type: object
+      required:
+        - storagePath
+        - uploadId
+      properties:
+        storagePath:
+          type: string
+        uploadId:
+          type: string
+    MediaMutationResponse:
+      type: object
+      required:
+        - image
+        - deduplicated
+      properties:
+        image:
+          $ref: '#/components/schemas/MediaItem'
+        deduplicated:
+          type: boolean
+    MediaItem:
+      type: object
+      required:
+        - id
+        - documentationId
+        - filename
+        - originalName
+        - fileHash
+        - storageProvider
+        - storagePath
+        - publicUrl
+        - fileSize
+        - mimeType
+        - kind
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        documentationId:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        originalName:
+          type: string
+        fileHash:
+          type: string
+        storageProvider:
+          type: string
+        storagePath:
+          type: string
+        publicUrl:
+          type: string
+          format: uri
+        fileSize:
+          type: integer
+          format: int64
+        mimeType:
+          type: string
+        kind:
+          type: string
+          enum:
+            - image
+            - video
+            - audio
+            - document
+            - data
+            - archive
+            - font
+        width:
+          type: integer
+          format: int32
+          nullable: true
+        height:
+          type: integer
+          format: int32
+          nullable: true
+        durationSeconds:
+          type: integer
+          format: int32
+          nullable: true
+        pageCount:
+          type: integer
+          format: int32
+          nullable: true
+        posterPath:
+          type: string
+          nullable: true
+        posterUrl:
+          type: string
+          format: uri
+          nullable: true
+        altText:
+          type: string
+          nullable: true
+        uploadedBy:
+          type: string
+          format: uuid
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+    MediaItemWithUploader:
+      allOf:
+        - $ref: '#/components/schemas/MediaItem'
+        - type: object
+          required:
+            - uploaderName
+            - uploaderEmail
+          properties:
+            uploaderName:
+              type: string
+            uploaderEmail:
+              type: string
+              format: email
+    MediaResponse:
+      type: object
+      required:
+        - image
+      properties:
+        image:
+          $ref: '#/components/schemas/MediaItem'
+    MediaListResponse:
+      type: object
+      required:
+        - images
+        - pagination
+      properties:
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaItemWithUploader'
+        pagination:
+          $ref: '#/components/schemas/PagePagination'
+    PagePagination:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - pages
+      properties:
+        page:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int64
+        pages:
+          type: integer
+          format: int32
+    UpdateAltTextRequest:
+      type: object
+      required:
+        - altText
+      properties:
+        altText:
+          type: string
+    DeleteMediaResponse:
+      type: object
+      required:
+        - image
+        - message
+      properties:
+        image:
+          $ref: '#/components/schemas/MediaItem'
+        message:
+          type: string
+    ReplacementUrlRequest:
+      type: object
+      required:
+        - mimeType
+        - fileSize
+      properties:
+        mimeType:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+          minimum: 1
+    ReplacementUrlResponse:
+      type: object
+      required:
+        - uploadUrl
+        - stagingPath
+        - expiresAt
+        - expectedVersion
+      properties:
+        uploadUrl:
+          type: string
+          format: uri
+        stagingPath:
+          type: string
+        cacheControl:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        expectedVersion:
+          type: string
+          format: date-time
+    ReplacementConfirmRequest:
+      type: object
+      required:
+        - stagingPath
+        - expectedVersion
+      properties:
+        stagingPath:
+          type: string
+        expectedVersion:
+          type: string
+          format: date-time
+        metadata:
+          $ref: '#/components/schemas/MediaMetadata'
+    ReplacementResponse:
+      type: object
+      required:
+        - image
+        - archivedAs
+      properties:
+        image:
+          $ref: '#/components/schemas/MediaItem'
+        archivedAs:
+          type: string
+    MediaUsageResponse:
+      type: object
+      required:
+        - indexBuilt
+        - totalPages
+        - unpublishedPages
+        - branches
+      properties:
+        indexBuilt:
+          type: boolean
+          example: false
+        totalPages:
+          type: integer
+          format: int32
+        unpublishedPages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnpublishedPage'
+        branches:
+          type: array
+          items:
+            type: string
+    UnpublishedPage:
+      type: object
+      required:
+        - filePath
+        - branch
+      properties:
+        filePath:
+          type: string
+        branch:
+          type: string
+    BackfillRequest:
+      type: object
+      properties:
+        branch:
+          type: string
+          default: main
+        dryRun:
+          type: boolean
+          default: true
+    BackfillResponse:
+      type: object
+      required:
+        - dryRun
+        - branch
+        - filesScanned
+        - referencesFound
+        - assetsAdopted
+        - adoptedBytes
+        - danglingReferences
+        - externalUrls
+        - errors
+      properties:
+        dryRun:
+          type: boolean
+        branch:
+          type: string
+        filesScanned:
+          type: integer
+          format: int32
+        referencesFound:
+          type: integer
+          format: int32
+        assetsAdopted:
+          type: integer
+          format: int32
+        adoptedBytes:
+          type: integer
+          format: int64
+        danglingReferences:
+          type: array
+          items:
+            type: string
+        externalUrls:
+          type: integer
+          format: int32
+        errors:
+          type: array
+          items:
+            type: string
+    BulkDeleteRequest:
+      type: object
+      required:
+        - imageIds
+      properties:
+        imageIds:
+          type: array
+          maxItems: 100
+          items:
+            type: string
+            format: uuid
+    BulkDeleteResponse:
+      type: object
+      required:
+        - deleted
+        - refused
+        - reclaimedBytes
+      properties:
+        deleted:
+          type: array
+          items:
+            type: string
+            format: uuid
+        refused:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefusedDeletion'
+        reclaimedBytes:
+          type: integer
+          format: int64
+    RefusedDeletion:
+      type: object
+      required:
+        - imageId
+        - reason
+      properties:
+        imageId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+    StorageUsage:
+      type: object
+      required:
+        - usedBytes
+        - objectCount
+        - quotaBytes
+        - percentUsed
+        - isWarning
+        - isOverQuota
+        - planType
+        - limits
+        - enforced
+      properties:
+        usedBytes:
+          type: integer
+          format: int64
+        objectCount:
+          type: integer
+          format: int64
+        quotaBytes:
+          type: integer
+          format: int64
+        percentUsed:
+          type: integer
+          format: int32
+          maximum: 100
+        isWarning:
+          type: boolean
+        isOverQuota:
+          type: boolean
+        planType:
+          type: string
+        limits:
+          $ref: '#/components/schemas/StorageLimits'
+        enforced:
+          type: boolean
+    StorageLimits:
+      type: object
+      required:
+        - maxImageBytes
+        - maxVideoBytes
+        - maxDocumentBytes
+      properties:
+        maxImageBytes:
+          type: integer
+          format: int64
+        maxVideoBytes:
+          type: integer
+          format: int64
+        maxDocumentBytes:
+          type: integer
+          format: int64
+    DocumentationStorageResponse:
+      type: object
+      required:
+        - documentations
+      properties:
+        documentations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentationStorage'
+    DocumentationStorage:
+      type: object
+      required:
+        - documentationId
+        - name
+        - usedBytes
+        - objectCount
+      properties:
+        documentationId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        usedBytes:
+          type: integer
+          format: int64
+        objectCount:
+          type: integer
+          format: int64
+    StorageReconciliationResponse:
+      type: object
+      required:
+        - stored
+        - computed
+        - driftBytes
+      properties:
+        stored:
+          $ref: '#/components/schemas/StorageCounter'
+        computed:
+          $ref: '#/components/schemas/StorageCounter'
+        driftBytes:
+          type: integer
+          format: int64
+    StorageCounter:
+      type: object
+      required:
+        - usedBytes
+        - objectCount
+      properties:
+        usedBytes:
+          type: integer
+          format: int64
+        objectCount:
+          type: integer
+          format: int64
+    AuditLogResponse:
+      type: object
+      required:
+        - entries
+        - pagination
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEntry'
+        pagination:
+          $ref: '#/components/schemas/AuditPagination'
+    AuditPagination:
+      type: object
+      required:
+        - total
+        - limit
+        - offset
+        - hasMore
+      properties:
+        total:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        hasMore:
+          type: boolean
+    AuditLogEntry:
+      type: object
+      required:
+        - id
+        - organizationId
+        - actorType
+        - action
+        - metadata
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        organizationId:
+          type: string
+          format: uuid
+        documentationId:
+          type: string
+          format: uuid
+          nullable: true
+        actorUserId:
+          type: string
+          format: uuid
+          nullable: true
+        actorType:
+          type: string
+        actorLabel:
+          type: string
+          nullable: true
+        action:
+          type: string
+          enum:
+            - media.upload
+            - media.replace
+            - media.delete
+            - media.bulk_delete
+        resourceType:
+          type: string
+          nullable: true
+        resourceId:
+          type: string
+          format: uuid
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+        ipAddress:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        actorName:
+          type: string
+          nullable: true
+        actorEmail:
+          type: string
+          format: email
+          nullable: true
+    ErrorResponse:
+      type: object
+      required:
+        - statusCode
+        - error
+        - message
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
         message:
           type: string
