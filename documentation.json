@@ -5,7 +5,7 @@
       "brand": "#EA580C"
     },
     "dark": {
-      "brand": "#FDBA74"
+      "brand": "#FB923C"
     }
   },
   "navigation": {
@@ -144,6 +144,10 @@
                     "title": "Callouts",
                     "path": "components/callouts",
                     "icon": "message-square"
+                  },
+                  {
+                    "title": "Rate limits",
+                    "path": "guides/rate-limits"
                   },
                   {
                     "title": "MCP Final Check",
@@ -289,5 +293,11 @@
         "public": true
       }
     ]
-  }
+  },
+  "redirects": [
+    {
+      "source": "/rate-limits",
+      "destination": "/guides/rate-limits"
+    }
+  ]
 }

@@ -1,0 +1,22 @@
+---
+title: Rate limits
+description: Understand the request limits for each plan tier and how to handle throttling.
+---
+
+# Rate limits
+
+To keep the API fast and reliable for everyone, requests are limited based on your plan tier.
+
+## Limits by plan
+
+| Plan | Requests per minute |
+|------|----------------------|
+| Free | 60 |
+| Pro | 600 |
+| Enterprise | Custom |
+
+Need a higher limit? Enterprise plans can request a custom rate limit tailored to your usage.
+
+<Callout kind="alert">
+  Exceeding your plan's rate limit returns an HTTP 429 response. Back off and retry after the time indicated in the response before sending further requests.
+</Callout>
