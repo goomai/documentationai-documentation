@@ -1,0 +1,356 @@
+---
+title: "MCP Tools"
+description: "Reference for every MCP tool available in Documentation.AI: project selection, content reading, page authoring, change review, and working version management."
+---
+
+## Available MCP tools
+
+Use these MCP tools from your AI client to select projects, read documentation, edit pages, review changes, publish updates, and manage working versions. The available tools depend on your authentication method and role in the selected documentation project.
+
+## Project selection
+
+Project selection tools identify the documentation projects available to you and set the project and working version that later tools use.
+
+### `list_projects`
+
+Returns the organizations and documentation projects available to the authenticated user. Each project includes its organization ID, documentation ID, name, and your role: `admin`, `editor`, or `viewer`.
+
+**Parameters:** None.
+
+### `select_project`
+
+Sets the default organization, documentation project, and optional working version for later tool calls. The selection remains available for seven days.
+
+**Parameters:**
+
+- `organizationId` (string, required): UUID of the organization.
+- `documentationId` (string, required): UUID of the documentation project.
+- `branch` (string, optional): Name of the working version to use.
+
+The tool validates that you belong to the organization and can access the documentation project. Omitting `branch` clears the previous working-version selection.
+
+Project-scoped tools also accept the following optional parameters when you need to target a project without changing the session selection:
+
+- `organizationId` (string, optional): UUID of the organization.
+- `documentationId` (string, optional): UUID of the documentation project.
+
+Provide both parameters together. If you omit them, the tool uses the project selected in the session.
+
+## Reading content
+
+Reading tools use the current collaborative workspace when they read files or configuration. This includes unpublished workspace changes.
+
+### `list_pages`
+
+Lists files in the current collaborative workspace, including unpublished files.
+
+**Parameters:**
+
+- `limit` (number, optional): Number of files to return.
+- `cursor` (string, optional): Cursor for retrieving the next page of results.
+
+Each result includes the file path, size, and file type. The default page size is 200, and the maximum is 500.
+
+### `get_page`
+
+Reads the current workspace content for one file.
+
+**Parameters:**
+
+- `path` (string, required): File path, including the file extension.
+
+The result preserves frontmatter and raw file content. Files larger than 200 KB are capped and marked as truncated. Empty files are valid results.
+
+### `get_site_config`
+
+Reads the current `documentation.json` configuration from the collaborative workspace.
+
+**Parameters:** None.
+
+The result includes the parsed site configuration, file size, and truncation status. Use this tool to inspect navigation and site settings, including unpublished configuration changes.
+
+### `search`
+
+Searches the deployed site's live search index.
+
+**Parameters:**
+
+- `query` (string, required): Search terms.
+- `limit` (number, optional): Number of results to return.
+- `cursor` (string, optional): Cursor for retrieving the next page of results.
+
+Results include the page ID, title, path, URL, snippet, breadcrumb, and relevance score.
+
+<Callout kind="info">
+
+`search` searches the deployed site index, not unpublished workspace changes. Use `list_pages`, `get_page`, or `get_site_config` to inspect unpublished content.
+
+</Callout>
+
+### `fetch`
+
+Reads content for a search result or documentation path.
+
+**Parameters:**
+
+- `id` (string, optional): Search result ID.
+- `path` (string, optional): File or navigation path.
+- `branch` (string, optional): Working version to read.
+
+Provide either `id` or `path`. The result includes structured and text content and extracts the title and description from frontmatter.
+
+## Authoring pages
+
+Authoring tools create and modify files in the collaborative workspace. Changes remain unpublished until you call `publish`.
+
+<Callout kind="alert">
+
+Page authoring tools require OAuth authentication and an `editor` or `admin` role in the selected documentation project.
+
+</Callout>
+
+Every authoring tool that operates on content accepts an optional `branch` parameter. If you omit it, the tool uses the selected working version, or the project's live version when no working version is selected.
+
+### `update_page`
+
+Performs focused, exact-text replacements in an existing file.
+
+**Parameters:**
+
+- `path` (string, required): File path, including the file extension.
+- `edits` (array, required): Ordered replacement objects. Each object contains `old_string` and `new_string`.
+- `replaceAll` (boolean, optional): Replaces every matching occurrence when `true`. Defaults to `false`.
+- `branch` (string, optional): Working version to update.
+
+Each `old_string` must match the current content. The tool refuses unmatched edits and ambiguous matches unless `replaceAll` is `true`, then returns applied and skipped edits.
+
+### `rewrite_page`
+
+Replaces most or all of a page with the supplied content.
+
+**Parameters:**
+
+- `path` (string, required): File path, including the file extension.
+- `content` (string, required): Complete replacement content.
+- `branch` (string, optional): Working version to update.
+
+Use this tool for structural reorganizations or format conversions. The tool preserves concurrent edits where possible and reports changes it could not apply cleanly.
+
+### `create_page`
+
+Creates a new documentation file and can add it to navigation in the same operation.
+
+**Parameters:**
+
+- `path` (string, required): New file path, including the file extension.
+- `content` (string, required): File content. MDX files require suitable frontmatter.
+- `addToNav` (object, optional): Navigation placement for the new page.
+  - `title` (string, required): Navigation label.
+  - `after` (string, optional): Navigation path after which to place the page, without the file extension.
+  - `parent` (string, optional): JSON pointer to the navigation parent.
+  - `position` (string or number, optional): `start`, `end`, or a numeric position.
+- `branch` (string, optional): Working version where the page is created.
+
+The tool refuses to overwrite an existing file. The result reports whether navigation changed and includes any warnings.
+
+### `delete_page`
+
+Deletes a file from the collaborative workspace.
+
+**Parameters:**
+
+- `path` (string, required): File path, including the file extension.
+- `branch` (string, optional): Working version where the deletion occurs.
+
+The tool also removes navigation entries that point to the file. You can undo the unpublished deletion with `revert_changes`.
+
+### `move_page`
+
+Moves or renames a documentation file.
+
+**Parameters:**
+
+- `path` (string, required): Current file path, including the file extension.
+- `destination` (string, required): New file path, including the file extension.
+- `branch` (string, optional): Working version where the move occurs.
+
+The tool preserves the page content and editing history and updates navigation entries that reference the page.
+
+### `update_site_config`
+
+Applies ordered patches to `documentation.json`.
+
+**Parameters:**
+
+- `patches` (array, required): Patch operations with `op`, `path`, and optional `value`.
+  - `op` (string, required): `add`, `remove`, or `replace`.
+  - `path` (string, required): RFC 6901 JSON pointer.
+  - `value` (any, optional): Value for `add` or `replace`.
+- `branch` (string, optional): Working version where the configuration changes occur.
+
+For example, this patch changes the light theme brand color:
+
+```json
+{
+  "patches": [
+    {
+      "op": "replace",
+      "path": "/colors/light/brand",
+      "value": "#0c6b56"
+    }
+  ]
+}
+```
+
+The tool applies patches in order, validates the resulting navigation and configuration, and writes canonical two-space formatting. Invalid changes are refused, and values that the site ignores produce warnings.
+
+## Reviewing and publishing changes
+
+Review tools help you inspect unpublished work before publishing it. They include changes made by all collaborators in the working version.
+
+### `list_changes`
+
+Lists files with unpublished changes.
+
+**Parameters:**
+
+- `branch` (string, optional): Working version to inspect.
+- `limit` (number, optional): Number of changes to return.
+- `cursor` (string, optional): Cursor for retrieving the next page of results.
+
+Results identify added, modified, and deleted files. Use this tool to see which changes a later `publish` call would include.
+
+### `diff_page`
+
+Returns a line-by-line diff for one changed file.
+
+**Parameters:**
+
+- `path` (string, required): File path, including the file extension. The path can also refer to `documentation.json`.
+- `branch` (string, optional): Working version to inspect.
+
+The result returns `changed: false` when the file has no unpublished changes. Diffs larger than 100 KB are truncated.
+
+### `publish`
+
+Publishes all unpublished changes in a working version.
+
+**Parameters:**
+
+- `commitMessage` (string, required): Publication message from 1 to 500 characters.
+- `branch` (string, optional): Working version to publish.
+
+Publishing the live version updates the live site. Publishing another working version saves its changes without changing the live site. Changes made while publication is in progress remain unpublished for the next publication.
+
+The result status is one of:
+
+- `published`: Changes were published.
+- `nothing-to-publish`: No unpublished changes were available.
+- `conflicts`: Newer published content conflicts with the pending changes.
+
+When conflicts occur, nothing is published. The response identifies each conflicting path and includes the current content and diff.
+
+### `resolve_conflict`
+
+Saves a complete reconciled file after `publish` reports a conflict.
+
+**Parameters:**
+
+- `path` (string, required): Conflicting file path, including the file extension.
+- `content` (string, required): Complete reconciled file content.
+- `branch` (string, optional): Working version containing the conflict.
+
+The resolution remains unpublished. Call `publish` again after resolving every conflict.
+
+### `revert_changes`
+
+Discards unpublished changes.
+
+**Parameters:**
+
+- `path` (string, optional): File to revert. Omit this parameter to revert every unpublished change in the working version.
+- `branch` (string, optional): Working version where changes should be reverted.
+
+<Callout kind="alert">
+
+`revert_changes` is destructive and irreversible before publication. It does not undo changes that are already published.
+
+</Callout>
+
+## Working versions
+
+Working-version tools let you isolate changes, inspect review requests, and apply published changes between versions.
+
+### `list_branches`
+
+Lists the working versions available to the selected documentation project.
+
+**Parameters:**
+
+- `limit` (number, optional): Number of working versions to return.
+- `cursor` (string, optional): Cursor for retrieving the next page of results.
+
+Each result includes the working version name, latest revision identifier, whether it is live, and whether it is protected.
+
+### `list_pull_requests`
+
+Lists review requests for working versions.
+
+**Parameters:**
+
+- `state` (string, optional): `open`, `closed`, or `all`. Defaults to `open`.
+- `limit` (number, optional): Number of review requests to return.
+- `cursor` (string, optional): Cursor for retrieving the next page of results.
+
+Results include the review request number, title, state, URL, source working version, target working version, and creation, update, and merge timestamps.
+
+### `create_branch`
+
+Creates a working version from the latest published state of another version.
+
+**Parameters:**
+
+- `branchName` (string, required): Name for the new working version.
+- `sourceBranch` (string, optional): Source working version. Defaults to the live version.
+
+### `delete_branch`
+
+Deletes a non-live working version.
+
+**Parameters:**
+
+- `branchName` (string, required): Name of the working version to delete.
+
+### `merge_branches`
+
+Applies published changes from one working version to another.
+
+**Parameters:**
+
+- `base` (string, required): Target working version.
+- `head` (string, required): Source working version.
+- `commitMessage` (string, optional): Message describing the merge.
+
+The tool does not include unpublished changes from the source version. The source working version remains available after the merge, and the result reports `alreadyMerged` when no changes need to be applied.
+
+## Pagination
+
+List tools support `limit` and `cursor` parameters when their reference lists those parameters. The default page size is 200 items, and the maximum page size is 500 items. Pass the returned `cursor` to retrieve the next page.
+
+## Next steps
+
+<Columns cols={2}>
+
+<Card title="MCP overview" href="/mcp/overview" icon="book-open">
+
+Learn how Documentation.AI exposes MCP access, authentication, sessions, and available capabilities.
+
+</Card>
+
+<Card title="MCP credentials" href="/mcp/credentials" icon="lock">
+
+Create and manage credentials for connecting MCP clients to protected documentation.
+
+</Card>
+
+</Columns>

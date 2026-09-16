@@ -3,6 +3,33 @@ title: Changelog
 description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
+<Update label="2026-09-16" description="MCP Authoring" tags={["feature"]}>
+## What changed
+
+**MCP Authoring**
+- Connect AI assistants like Claude and ChatGPT to read, edit, review, and publish documentation through the Model Context Protocol
+- Edits are applied to a live collaborative workspace and attributed to your signed-in user and AI client — other editors see changes in real time
+- All changes remain unpublished until you explicitly call the publish tool
+- OAuth authentication provides full authoring access for users with editor or admin role; API keys remain read-only
+- Role permissions are rechecked on every tool call, so access changes take effect immediately
+
+**New MCP tools**
+- `list_projects` and `select_project` for discovering and targeting documentation projects
+- `list_pages`, `get_page`, `get_site_config`, `search`, and `fetch` for reading workspace content and deployed site search
+- `create_page`, `update_page`, `rewrite_page`, `delete_page`, and `move_page` for editing documentation files
+- `update_site_config` for modifying navigation and site configuration using JSON pointers
+- `list_changes`, `diff_page`, `publish`, `resolve_conflict`, and `revert_changes` for reviewing and publishing changes
+- `list_branches`, `list_pull_requests`, `create_branch`, `delete_branch`, and `merge_branches` for managing working versions
+
+**MCP credentials**
+- Organization admins can create, update, and revoke credentials that control MCP client access to documentation projects
+- Credentials support named access roles and configurable expiration (30d, 60d, 90d, 180d, 1y, or custom)
+
+**Renamed and removed**
+- `search_documentation` tool renamed to `search` with improved structured output
+- `update_documentation` tool removed and replaced by the individual authoring, review, and publish tools above
+</Update>
+
 <Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
 

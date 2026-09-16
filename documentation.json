@@ -208,6 +208,27 @@
                 "access-roles": [
                   "enterprise"
                 ]
+              },
+              {
+                "group": "MCP Authoring",
+                "icon": "terminal",
+                "pages": [
+                  {
+                    "title": "Overview",
+                    "path": "mcp/overview",
+                    "icon": "compass"
+                  },
+                  {
+                    "title": "Tools",
+                    "path": "mcp/tools",
+                    "icon": "wrench"
+                  },
+                  {
+                    "title": "Credentials",
+                    "path": "mcp/credentials",
+                    "icon": "key"
+                  }
+                ]
               }
             ]
           },

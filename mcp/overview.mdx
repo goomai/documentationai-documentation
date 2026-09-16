@@ -1,0 +1,100 @@
+---
+title: "MCP Authoring"
+description: "Connect an AI assistant to read, edit, review, and publish your documentation through the Model Context Protocol."
+---
+
+## Overview
+
+Connect an AI coding assistant to your Documentation.AI project to read, edit, review, and publish documentation without leaving the AI tool. MCP authoring works with clients such as Claude and ChatGPT through a Streamable HTTP MCP connection.
+
+## How it works
+
+MCP edits are applied to a live collaborative workspace instead of directly to your published site. Changes are attributed to your signed-in user and AI client, and other editors see them in real time.
+
+Changes remain unpublished until you explicitly publish them. You can review the pending changes before they affect a working version or the live site.
+
+<Callout kind="info">
+
+MCP never publishes edits automatically. Review your pending changes and call the publish tool when you are ready to make them available.
+
+</Callout>
+
+## Authentication
+
+MCP supports OAuth and API key authentication. The authentication method determines which projects and tools the AI client can use.
+
+### OAuth
+
+OAuth authenticates you as an individual Documentation.AI user. Users with an **editor** or **admin** role for the selected project receive the full authoring toolset, including tools for creating, editing, moving, and deleting pages.
+
+Your role is checked for every tool call. You can select a project during the session and target a different accessible project when needed.
+
+### API keys
+
+API keys are scoped to one documentation project and identify the project rather than an individual author. They support reading project content but do not provide content authoring tools.
+
+<Callout kind="alert">
+
+API keys cannot author content. Connect with OAuth and use an editor or admin account to create, edit, or publish documentation.
+
+</Callout>
+
+## Connecting your AI client
+
+Connect your AI client once, then use MCP tools to work with your project.
+
+<Steps>
+  <Step title="Copy the MCP server URL" icon="copy" title-type="p">
+    
+    Open the page actions sidebar and select **Copy MCP server URL**.
+
+  </Step>
+  <Step title="Configure your AI client" icon="settings" title-type="p">
+    
+    Add the MCP server URL to your AI client and complete the OAuth sign-in flow when prompted. Grant the requested `profile` and `email` scopes so the client can act as your signed-in user.
+
+  </Step>
+  <Step title="Select a project" icon="folder" title-type="p">
+    
+    Use the `select_project` tool with the organization and documentation project you want to edit. You can also select a working version for the session.
+
+  </Step>
+  <Step title="Start working with your documentation" icon="edit" title-type="p">
+    
+    Use the available tools to read current content, make changes, review pending edits, and publish when the changes are ready.
+
+  </Step>
+</Steps>
+
+## The authoring workflow
+
+MCP authoring follows the same review flow as collaborative editing in Documentation.AI:
+
+1. **Select a project.** Choose the organization and documentation project that the AI client should use.
+2. **Read current content.** Read pages, navigation, and site configuration, including unpublished edits from other collaborators.
+3. **Make changes.** Create, update, rewrite, move, or delete pages. You can also update navigation and supported site configuration.
+4. **Review pending changes.** List changed files and inspect file-level differences before publishing.
+5. **Publish the result.** Publish the selected working version when the changes are ready.
+
+Working versions let you make changes in an isolated editing branch. Publishing the live version updates the live site. Publishing another working version saves its changes without changing the live site.
+
+## Working versions
+
+Working versions are isolated editing branches for developing and reviewing documentation separately from the live version. Create one when you want to prepare changes without affecting the published site.
+
+You can publish changes to a working version, review them there, and apply the published changes to another working version through a merge. Merging published changes into the live version updates the live site, while the source working version remains available.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="MCP tools" href="/mcp/tools" icon="terminal">
+    
+    Explore the tools for selecting projects, editing pages, reviewing changes, managing navigation, and publishing documentation.
+
+  </Card>
+  <Card title="MCP credentials" href="/mcp/credentials" icon="lock">
+    
+    Manage credentials and control how MCP clients access documentation projects.
+
+  </Card>
+</Columns>
