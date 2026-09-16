@@ -2,7 +2,7 @@
   "name": "Starter Kit",
   "colors": {
     "light": {
-      "brand": "#F97316"
+      "brand": "#EA580C"
     },
     "dark": {
       "brand": "#FDBA74"
@@ -144,6 +144,10 @@
                     "title": "Callouts",
                     "path": "components/callouts",
                     "icon": "message-square"
+                  },
+                  {
+                    "title": "MCP Final Check",
+                    "path": "new/mcp-final-moved"
                   },
                   {
                     "title": "Steps",
