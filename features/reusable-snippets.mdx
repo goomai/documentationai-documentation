@@ -1,0 +1,63 @@
+---
+title: Reusable Snippets
+description: Create and reuse MDX and JSX components across your documentation pages.
+---
+
+## Reusable Snippets
+
+Reusable Snippets let you create `.mdx` and `.jsx` files that you can insert into any documentation page. Keep repeated content in one place so updates stay consistent across your documentation.
+
+## Creating a snippet
+
+<Steps>
+  <Step title="Open the file tree sidebar" icon="folder" title-type="p">
+    Open the file tree sidebar in the editor.
+  </Step>
+  <Step title="Create a snippet file" icon="plus" title-type="p">
+    Create a new `.mdx` or `.jsx` snippet file.
+  </Step>
+  <Step title="Add a name and description" icon="edit" title-type="p">
+    Enter a name for the snippet and, optionally, add a description to help identify it when you insert snippets later.
+  </Step>
+  <Step title="Write the snippet content" icon="code" title-type="p">
+    Add the reusable MDX or JSX content to the file.
+  </Step>
+  <Step title="Save the file" icon="check" title-type="p">
+    Save the snippet. The file becomes available for insertion from the editor.
+  </Step>
+</Steps>
+
+<Callout kind="info">
+Snippets support JSX components compiled with Sucrase. Use them to create interactive reusable elements such as counters or color pickers.
+</Callout>
+
+## Inserting snippets with /snippet
+
+Type `/snippet` in the editor to open the snippet picker. Browse the available files or search by name, then select a snippet to insert it into the page.
+
+The editor adds a snippet node to your document. The node keeps the reference to the reusable file, so you can update the snippet once and reuse the updated content wherever the snippet appears.
+
+## Preview behavior
+
+The editor renders a live preview of each snippet with JSX compilation before insertion. Caching and dependency detection keep the preview current as the snippet or its dependencies change.
+
+## Deployment and caching
+
+Snippets are included automatically in site builds and deployments. You do not need to copy snippet content into each page or add separate deployment configuration.
+
+Snippet previews use caching and dependency detection to stay up to date. Snippet content is also indexed and searchable, so readers can find documentation that includes the content.
+
+<Callout kind="alert">
+If a snippet references a component that is not available in the page context, its preview may fail. Ensure that imported components are valid and available wherever you use the snippet.
+</Callout>
+
+## Next steps
+
+<Columns cols="2">
+  <Card title="Media Manager" href="/features/media-manager" icon="image" horizontal="false">
+    Upload, organize, preview, and insert media into your documentation.
+  </Card>
+  <Card title="Page Actions" href="/features/page-actions" icon="mouse-pointer-click" horizontal="false">
+    Control which quick actions appear in your published documentation sidebar.
+  </Card>
+</Columns>

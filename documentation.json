@@ -66,11 +66,11 @@
                   },
                   {
                     "title": "b4",
-                    "path": "b4"
+                    "path": "new/b4"
                   },
                   {
                     "title": "b3",
-                    "path": "b3"
+                    "path": "new/b3"
                   },
                   {
                     "title": "b2",
@@ -188,6 +188,21 @@
                     "title": "Custom Domains",
                     "path": "features/custom-domains",
                     "icon": "globe"
+                  },
+                  {
+                    "title": "Media Manager",
+                    "path": "features/media-manager",
+                    "icon": "image"
+                  },
+                  {
+                    "title": "Reusable Snippets",
+                    "path": "features/reusable-snippets",
+                    "icon": "file-text"
+                  },
+                  {
+                    "title": "Search Analytics",
+                    "path": "features/search-analytics",
+                    "icon": "bar-chart"
                   }
                 ],
                 "access-roles": [

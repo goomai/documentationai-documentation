@@ -1,22 +1,46 @@
 ---
-title: Sample Changelog
-description: Sample release notes you can replace with your real updates.
+title: Changelog
+description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
-## Sample updates
-
-<Callout kind="alert">
-This changelog is example content. Replace every entry with your real releases.
-</Callout>
-
-<Update label="2026-01-26" description="Sample Update" tags={["sample"]}>
+<Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
-- Cleaned up placeholder copy across the starter kit.
-- Added clearer "sample" messaging to avoid confusion.
-</Update>
 
-<Update label="2025-12-10" description="Sample Update" tags={["sample"]}>
-## What changed
-- Simplified the Quickstart steps.
-- Trimmed Help Center examples.
+**Media Manager**
+- Upload and manage images, video, and other files in a dedicated media library
+- Access media files from a sidebar panel directly in the editor
+- Drag and drop multiple files at once, including within read-only contexts
+- View inline previews for PDFs and videos
+- Replace existing media files while preserving page references
+- Monitor storage usage with plan-based quotas and upgrade options
+- Track media changes with audit logging
+- Compact thumbnails in list views and search results
+
+**Reusable Snippets**
+- Create reusable `.mdx` and `.jsx` snippet files from the editor file tree
+- Insert snippets into any page using the `/snippet` slash command
+- Preview snippets with live JSX compilation before insertion
+- Snippets are automatically included in site builds and deployments
+- Snippet content is indexed and searchable alongside your pages
+- Caching and dependency detection keep snippet previews fresh
+- Add optional descriptions when creating snippets
+
+**Search Analytics**
+- Track search queries and reader behavior with a new analytics dashboard
+- View search volume trends, event tables, and result performance reports
+- Privacy-first tracking with debounced and validated events
+- Access analytics via API for custom integrations
+
+**Collaboration & Auth**
+- Rename and move files across directories with full destination path support
+- Role-based access control now enforced for signed-in readers with cached delivery
+- Private documentation pages served from cache for authenticated readers
+- OAuth redirect URI now resolves from forwarded host for reverse-proxy compatibility
+- Performance improvements through per-request config and session deduplication
+
+**Platform Fixes**
+- Fixed video player preload behavior when no poster image is set
+- Webhook deploys now only trigger for branch refs, not tags
+- MDX cache tagging improved for deterministic revalidation
+- Sidebar animation transition duration corrected
 </Update>
