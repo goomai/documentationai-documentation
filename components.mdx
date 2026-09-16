@@ -2,4 +2,125 @@
 title: Components (Sample)
 description: A small showcase of the built-in MDX components with usage guidelines.
 ---
+Pages here are MDX: Markdown plus a fixed set of components that ship with the platform. Components borrowed from other documentation tools will not render, so this page is the list worth working from. Each section says what the component is for and, more usefully, when to reach for something else.
 
+Attribute names are kebab-case and their values are strings, including booleans — write `required="true"`, not `required={true}`.
+
+## Callouts
+
+Use a callout to break the reader out of the flow. Reserve `danger` for things that lose data.
+
+<Callout kind="info" collapsed="false">
+  Informational aside. The reader can keep going without acting on it.
+</Callout>
+
+<Callout kind="tip" collapsed="false">
+  A shortcut or a better way to do what the reader is already doing.
+</Callout>
+
+<Callout kind="danger" collapsed="false">
+  Destructive and irreversible. Say what is lost, not just that it is dangerous.
+</Callout>
+
+## Cards and columns
+
+Cards are navigation, not decoration. Every card needs a `title` and an `href`.
+
+<Columns cols="2">
+  <Card title="Quickstart" href="/quickstart" icon="zap" horizontal="false">
+    Get a site running in about five minutes.
+  </Card>
+
+  <Card title="Authentication" href="/authentication" icon="lock" horizontal="false">
+    API keys, tokens, and how to rotate them.
+  </Card>
+</Columns>
+
+## Tabs
+
+Tabs suit the same task done in different environments. Keep the tab set identical across a page so readers are not hunting for their language.
+
+<Tabs>
+  <Tab title="macOS" icon="terminal">
+    Install with Homebrew, then run the setup command.
+  </Tab>
+
+  <Tab title="Windows" icon="terminal">
+    Install with winget, then run the same setup command.
+  </Tab>
+</Tabs>
+
+## Steps
+
+Steps are for an ordered procedure where each step changes the system.
+
+<Steps>
+  <Step title="Create a project" icon="folder-plus" title-type="p">
+    A project holds your pages and your configuration.
+  </Step>
+
+  <Step title="Add your first page" icon="file-plus" title-type="p">
+    Pages are MDX files. They need YAML frontmatter with at least a title.
+  </Step>
+
+  <Step title="Add it to the navigation" icon="list" title-type="p">
+    A page is invisible on the live site until documentation.json references it.
+  </Step>
+</Steps>
+
+## Expandable
+
+Hide detail that most readers do not need, but never hide something required to finish the task.
+
+<Expandable title="What happens if the build fails?" default-open="false">
+  The previous deployment stays live. Nothing is taken down while a build is failing.
+</Expandable>
+
+## Code groups
+
+A code group is one example in several languages. A plain fenced block is enough for a single snippet.
+
+<CodeGroup show-lines="true">
+  ```bash
+  curl https://api.example.com/v1/pages \
+    -H "Authorization: Bearer $TOKEN"
+  ```
+
+  ```javascript
+  const res = await fetch("https://api.example.com/v1/pages", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  ```
+</CodeGroup>
+
+## API fields
+
+`ParamField` documents what goes in; `ResponseField` documents what comes back.
+
+<ParamField query="limit" param-type="integer" required="false" deprecated="false" show-location="true" enum="10,25,50,100">
+  Maximum number of results per page. Defaults to 25.
+</ParamField>
+
+<ResponseField name="id" field-type="string" required="true" deprecated="false">
+  Unique identifier for the created page.
+</ResponseField>
+
+## Diagrams
+
+Use a diagram when the relationship between parts is the point. Prose is better for a sequence of actions.
+
+<MermaidDiagram
+  chart="`
+flowchart LR
+A[Edit a page] --> B[Unsaved change]
+B --> C{Publish?}
+C -->|Yes| D[Committed to Git]
+C -->|No| B
+`"
+/>
+
+## Changelog entries
+
+<Update label="v2.1.0" description="September 2026" tags={["feature"]}>
+  Added the components showcase page.
+</Update>
