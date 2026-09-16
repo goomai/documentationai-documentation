@@ -39,6 +39,11 @@
                     "title": "Components",
                     "path": "components",
                     "icon": "code"
+                  },
+                  {
+                    "title": "MCP Smoke Test",
+                    "path": "new/mcp-smoke-test",
+                    "icon": "flask-conical"
                   }
                 ],
                 "openapi": "https://petstore3.swagger.io/api/v3/openapi.json",
