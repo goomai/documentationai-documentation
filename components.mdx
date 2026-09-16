@@ -2,7 +2,7 @@
 title: Components (Sample)
 description: A small showcase of the built-in MDX components with usage guidelines.
 ---
-Pages here are MDX: Markdown plus a fixed set of components that ship with the platform. Components borrowed from other documentation tools will not render, so this page is the list worth working from. Each section says what the component is for and, more usefully, when to reach for something else.
+Pages here are MDX: Markdown plus a fixed set of components that ship with the platform. Components borrowed from other documentation tools will not render, so this page is the list worth working from. Each section says what the component is for and, more usefully, when to reach for something else instead.
 
 Attribute names are kebab-case and their values are strings, including booleans — write `required="true"`, not `required={true}`.
 
@@ -109,15 +109,13 @@ A code group is one example in several languages. A plain fenced block is enough
 
 Use a diagram when the relationship between parts is the point. Prose is better for a sequence of actions.
 
-<MermaidDiagram
-  chart="`
+```mermaid
 flowchart LR
-A[Edit a page] --> B[Unsaved change]
-B --> C{Publish?}
-C -->|Yes| D[Committed to Git]
-C -->|No| B
-`"
-/>
+  A[Edit a page] --> B[Unsaved change]
+  B --> C{Publish?}
+  C -->|Yes| D[Committed to Git]
+  C -->|No| B
+```
 
 ## Changelog entries
 
