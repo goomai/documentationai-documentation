@@ -1,11 +1,11 @@
 ---
 title: Media Manager
-description: Upload, organize, and manage images, video, and files across your documentation.
+description: Upload, organize, and manage images, video, audio, documents, and other media across your documentation through the dashboard, REST API, or MCP.
 ---
 
 ## Overview
 
-Media Manager gives you a built-in library for images, video, and file uploads. Open it from the editor sidebar to upload, preview, replace, and insert visual assets without leaving your documentation workflow.
+Media Manager gives you a built-in library for all your documentation media. Upload, preview, replace, and insert assets from the editor sidebar, import files from public URLs, or automate everything programmatically through the REST API and MCP tools.
 
 ## Accessing the Media Manager
 
@@ -30,25 +30,113 @@ Upload one file or several files at once with drag and drop.
   </Step>
 </Steps>
 
-<Callout kind="alert">
-Supported file types include images, video, and documents. Large files may take longer to upload and process.
+<Callout kind="info">
+Supported file types include images, video, audio, documents, spreadsheets, archives, and fonts. Large files may take longer to upload and process.
 </Callout>
+
+## Supported media types
+
+Media Manager categorizes every file into one of the following media kinds:
+
+| Kind | Examples | Notes |
+|---|---|---|
+| `image` | PNG, JPEG, SVG, GIF, WebP | Displayed with an `Image` component snippet. |
+| `video` | MP4, WebM | Displayed with a `Video` component snippet, including poster frames and duration. |
+| `audio` | MP3, WAV, OGG | Linked or embedded depending on your theme. |
+| `document` | PDF, DOCX, PPTX | Rendered as a download or preview link. |
+| `data` | CSV, JSON, XML, XLSX | Rendered as a download link. |
+| `archive` | ZIP, TAR, GZ | Rendered as a download link. |
+| `font` | TTF, OTF, WOFF, WOFF2 | Uploaded and served for use in custom themes. |
+
+When you upload or import a file, Media Manager determines the kind from the MIME type and file content, then generates an MDX snippet you can paste into any page.
+
+## Importing media from a URL
+
+Import files directly from public HTTPS URLs without downloading them to your computer first.
+
+<Steps>
+  <Step title="Open the media sidebar" icon="folder" title-type="p">
+  In the editor, open the media sidebar from the editor toolbar or the sidebar menu.
+  </Step>
+  <Step title="Paste the URL" icon="link" title-type="p">
+  Click **Import from URL** and paste the public HTTPS URL of the file you want to import. Optionally provide a display name and alt text.
+  </Step>
+  <Step title="Wait for the import" icon="cloud" title-type="p">
+  Media Manager downloads the file from the URL, validates it, and adds it to your library. Processing time depends on the file size.
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+Only public HTTPS URLs are accepted. HTTP, FTP, and other protocols are rejected. Redirects are followed up to three hops, and each redirect target must also be a public HTTPS address.
+</Callout>
+
+## Upload links
+
+Upload links let an AI agent or team member request a file from someone who has local access. The link is short-lived and opens an upload page in the dashboard.
+
+When an agent creates an upload link, it receives a URL valid for 15 minutes. Anyone who opens the link must sign in and have editor access to the documentation. The link does not expire when used, so multiple files can be uploaded through the same link until it expires.
+
+<Callout kind="info">
+Upload links are prefixed with `mup_` and can be shared with anyone in your organization who has editor access.
+</Callout>
+
+## Deduplication and naming
+
+Media Manager automatically handles duplicate files and names:
+
+- **Identical files**: If you upload a file whose bytes are identical to one already in your library, the existing entry is reused. No duplicate is created.
+- **Same name, different content**: If two files have the same name but different content, the second file gets a numeric suffix. For example, `screenshot.png` becomes `screenshot-2.png` while preserving the file extension.
+- **Deleted names**: Names from deleted files can be reused by new uploads.
 
 ## Replacing media
 
-Replace an existing media file from its details view when you need to update an asset without changing the pages that use it. Media Manager preserves the existing page references while serving the replacement file.
+Replace an existing media file when you need to update an asset without changing the pages that reference it. The replacement keeps the same public URL and media kind as the original, so all existing page references continue to work.
+
+<Callout kind="alert">
+The replacement file must be the same media kind as the original. For example, you can only replace an image with another image, not with a video.
+</Callout>
+
+The previous version is archived internally but is no longer served. You can replace a file from its details view in the dashboard, through the REST API, or via MCP.
+
+## Accessing media via the REST API and MCP
+
+In addition to the dashboard, media operations are available through the REST API and MCP tools:
+
+- **REST API**: Upload, list, search, import, replace, update, and delete media using API key authentication.
+- **MCP tools**: The AI assistant can list, search, import, replace, request uploads, and delete media on your behalf. Media reads are available to API key sessions and OAuth sessions. Media writes require editor-level API keys.
+
+Uploads and imports through the API support up to 10 files per request. Each file is processed independently, so a single file failure does not affect other files in the same batch.
+
+## Roles and permissions
+
+Media access is controlled by role:
+
+- **Viewer**: List, search, and view media; check storage usage.
+- **Editor**: Upload, import, replace, and update media; create upload links.
+- **Admin**: Delete media, perform bulk deletions, and backfill media.
+
+These permissions apply consistently across the dashboard, REST API, and MCP tools.
 
 ## Storage quotas
 
-Your plan determines how much storage your media library can use. Monitor your storage usage in the media settings and remove files you no longer need when you approach the limit.
+Your plan determines how much storage your media library can use. Monitor your storage usage in the media settings and remove files you no longer need when you approach the limit. You can also check storage usage programmatically through the REST API.
 
 <Callout kind="info">
 When your storage quota is nearly full, open **Settings** to review available upgrade options.
 </Callout>
 
+## Rate limits
+
+Media write operations (uploads, imports, and replacements) are rate-limited per organization at 120 requests per minute. If you exceed this limit, the API returns a `429` status with a retry interval.
+
 ## Audit logging
 
-Media changes are tracked with audit logging, including upload and replacement activity. Use the audit history to review changes made to your media library.
+Media changes are tracked with audit logging, including uploads, replacements, deletions, and metadata updates. Each entry records who performed the action:
+
+- **Signed-in users** are identified by their user ID.
+- **API keys** are identified by their key name, so automated changes are traceable to the script or integration that made them.
+
+Use the audit history to review changes made to your media library.
 
 ## Next steps
 

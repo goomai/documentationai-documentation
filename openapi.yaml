@@ -13,6 +13,8 @@ info:
     name: MIT
 servers:
   - url: https://api.example.com/v1
+security:
+  - ApiKeyAuth: []
 paths:
   /projects:
     get:
@@ -146,6 +148,313 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /media:
+    get:
+      summary: List and search media
+      description: Lists and searches media items with pagination and optional filtering.
+      operationId: listMedia
+      parameters:
+        - name: search
+          in: query
+          description: Search term used to filter media.
+          required: false
+          schema:
+            type: string
+        - name: kind
+          in: query
+          description: Filter media by kind.
+          required: false
+          schema:
+            type: string
+            enum:
+              - image
+              - video
+              - audio
+              - document
+              - data
+              - archive
+              - font
+        - name: page
+          in: query
+          description: Page number.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of media items to return.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        200:
+          description: A paginated list of media items.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaListResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Upload media files
+      description: Uploads one or more files using multipart/form-data. Maximum 10 files per request. Each file is processed independently.
+      operationId: uploadMedia
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: array
+                  maxItems: 10
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        200:
+          description: Media upload results.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaBatchResult'
+        207:
+          description: Media upload results with partial success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaBatchResult'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /media/import:
+    post:
+      summary: Import media from URLs
+      description: Imports one or more media files from URLs.
+      operationId: importMedia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaImportRequest'
+      responses:
+        200:
+          description: Media import results.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaBatchResult'
+        207:
+          description: Media import results with partial success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaBatchResult'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /media/{mediaId}:
+    get:
+      summary: Get a media item
+      description: Retrieves a media item by ID.
+      operationId: getMedia
+      parameters:
+        - name: mediaId
+          in: path
+          required: true
+          description: The ID of the media item to retrieve.
+          schema:
+            type: string
+      responses:
+        200:
+          description: The requested media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaSingleResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Update media metadata
+      description: Updates metadata for a media item.
+      operationId: updateMedia
+      parameters:
+        - name: mediaId
+          in: path
+          required: true
+          description: The ID of the media item to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaUpdateRequest'
+      responses:
+        200:
+          description: The updated media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaSingleResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a media item
+      description: Deletes a media item.
+      operationId: deleteMedia
+      parameters:
+        - name: mediaId
+          in: path
+          required: true
+          description: The ID of the media item to delete.
+          schema:
+            type: string
+      responses:
+        200:
+          description: The media item was deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /media/{mediaId}/replace:
+    post:
+      summary: Replace a media file
+      description: Replaces an existing media file while keeping its public URL. The replacement must be the same media kind. Accepts either multipart/form-data with a file or a JSON body with a url.
+      operationId: replaceMedia
+      parameters:
+        - name: mediaId
+          in: path
+          required: true
+          description: The ID of the media item to replace.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+      responses:
+        200:
+          description: The replaced media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaSingleResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /media/bulk-delete:
+    post:
+      summary: Delete multiple media items
+      description: Deletes multiple media items in a single request.
+      operationId: bulkDeleteMedia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mediaIds
+              properties:
+                mediaIds:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items:
+                    type: string
+      responses:
+        200:
+          description: The bulk deletion result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkDeleteResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /storage:
+    get:
+      summary: Get storage usage
+      description: Retrieves storage usage and quota information.
+      operationId: getStorage
+      responses:
+        200:
+          description: Storage usage information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageUsage'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Project:
@@ -190,3 +499,167 @@ components:
           format: int32
         message:
           type: string
+    MediaItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        kind:
+          type: string
+          enum:
+            - image
+            - video
+            - audio
+            - document
+            - data
+            - archive
+            - font
+        mimeType:
+          type: string
+        sizeBytes:
+          type: integer
+        altText:
+          type: string
+          nullable: true
+        width:
+          type: integer
+          nullable: true
+        height:
+          type: integer
+          nullable: true
+        durationSeconds:
+          type: integer
+          nullable: true
+        pageCount:
+          type: integer
+          nullable: true
+        posterUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        snippet:
+          type: string
+    MediaListResponse:
+      type: object
+      properties:
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaItem'
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+            total:
+              type: integer
+            pages:
+              type: integer
+    MediaSingleResponse:
+      type: object
+      properties:
+        media:
+          $ref: '#/components/schemas/MediaItem'
+    MediaBatchResult:
+      type: object
+      properties:
+        source:
+          type: string
+        status:
+          type: string
+          enum:
+            - added
+            - reused
+            - failed
+        media:
+          allOf:
+            - $ref: '#/components/schemas/MediaItem'
+          nullable: true
+        error:
+          type: string
+          nullable: true
+        statusCode:
+          type: integer
+          nullable: true
+    MediaImportRequest:
+      type: object
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            type: object
+            required:
+              - url
+            properties:
+              url:
+                type: string
+              name:
+                type: string
+                maxLength: 255
+              altText:
+                type: string
+                maxLength: 1000
+    MediaUpdateRequest:
+      type: object
+      required:
+        - altText
+      properties:
+        altText:
+          type: string
+          maxLength: 1000
+    DeleteResponse:
+      type: object
+      properties:
+        deleted:
+          type: object
+    BulkDeleteResponse:
+      type: object
+      properties:
+        deleted:
+          type: array
+          items:
+            type: string
+        failed:
+          type: array
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+              error:
+                type: string
+        reclaimedBytes:
+          type: integer
+    StorageUsage:
+      type: object
+      properties:
+        usedBytes:
+          type: integer
+        quotaBytes:
+          type: integer
+          nullable: true
+        perFileLimitBytes:
+          type: integer
+          nullable: true
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      description: API key used as a Bearer token

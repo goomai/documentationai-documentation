@@ -228,7 +228,31 @@
               },
               {
                 "group": "Sample Endpoints",
-                "openapi": "openapi.yaml"
+                "openapi": "openapi.yaml",
+                "hidden-apis": [
+                  "GET /media",
+                  "POST /media",
+                  "POST /media/import",
+                  "GET /media/{mediaId}",
+                  "PATCH /media/{mediaId}",
+                  "DELETE /media/{mediaId}",
+                  "POST /media/{mediaId}/replace",
+                  "POST /media/bulk-delete",
+                  "GET /storage"
+                ]
+              },
+              {
+                "group": "Media API",
+                "icon": "image",
+                "openapi": "openapi.yaml",
+                "hidden-apis": [
+                  "GET /projects",
+                  "POST /projects",
+                  "GET /projects/{projectId}",
+                  "GET /documents",
+                  "POST /documents",
+                  "GET /documents/{docId}"
+                ]
               }
             ],
             "access-roles": [
