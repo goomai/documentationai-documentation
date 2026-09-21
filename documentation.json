@@ -203,6 +203,11 @@
                     "title": "Search Analytics",
                     "path": "features/search-analytics",
                     "icon": "bar-chart"
+                  },
+                  {
+                    "title": "AI Assistant Settings",
+                    "path": "features/ai-assistant",
+                    "icon": "sparkles"
                   }
                 ],
                 "access-roles": [

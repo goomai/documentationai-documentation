@@ -1,0 +1,82 @@
+---
+title: AI Assistant Settings
+description: Configure custom instructions and search scope so the AI assistant answers from your documentation with the right context for every reader.
+---
+
+## AI Assistant Settings
+
+Configure how the AI assistant answers questions about your published documentation. Add custom instructions to guide its responses, or limit its search to the reader's current product, version, and language.
+
+## Custom Instructions
+
+Custom instructions tell the AI assistant how to answer questions about your documentation. Use them to define response preferences, clarify your terminology, or provide guidance for handling specific topics.
+
+You can enter up to **500 words** or **3,750 characters**. The previous limits were 200 words and 1,500 characters.
+
+### Setting custom instructions
+
+<Steps>
+  <Step title="Open the dashboard settings" icon="settings" title-type="p">
+
+    Open your documentation project in the dashboard and go to its settings.
+
+  </Step>
+
+  <Step title="Add instructions for the AI assistant" icon="edit" title-type="p">
+
+    Find the AI Assistant settings and enter the instructions you want the assistant to follow when answering reader questions.
+
+  </Step>
+
+  <Step title="Save and publish your changes" icon="upload" title-type="p">
+
+    Save the updated settings and publish your documentation. The AI assistant uses the new instructions on the published site.
+
+  </Step>
+</Steps>
+
+<Callout kind="tip" collapsed="false">
+
+Write instructions that describe the result you want. For example, tell the assistant to use your product's terminology, keep answers concise, or link readers to the most relevant documentation page.
+
+</Callout>
+
+## Strict Dimensions
+
+Use `search.strict-dimensions` to control whether the AI assistant searches only the reader's current documentation context. Add the setting under the top-level `search` key in `documentation.json`.
+
+```json
+{
+  "search": {
+    "strict-dimensions": true
+  }
+}
+```
+
+When `strict-dimensions` is `true`, the AI assistant answers only from the reader's current product, version, and language. This keeps answers within the documentation context the reader is viewing.
+
+When `strict-dimensions` is `false` or omitted, the assistant may use content from other products, versions, or languages when needed. The answer indicates where the information came from.
+
+The `strict-dimensions` value must be a boolean. The `search` object does not accept other child properties.
+
+<Callout kind="info" collapsed="false">
+
+Use strict mode when readers must receive answers only from the documentation context they are currently viewing, such as when different product versions contain incompatible instructions. Leave it disabled when cross-version or cross-product answers are useful.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Page Actions" href="/features/page-actions" icon="settings" horizontal="false">
+
+    Control which quick actions appear in your published documentation sidebar.
+
+  </Card>
+
+  <Card title="Search Analytics" href="/features/search-analytics" icon="bar-chart" horizontal="false">
+
+    Review how readers search your documentation and identify gaps in your content.
+
+  </Card>
+</Columns>
