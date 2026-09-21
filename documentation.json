@@ -170,6 +170,11 @@
                 "icon": "settings",
                 "pages": [
                   {
+                    "title": "Assistant Modes",
+                    "path": "features/assistant-modes",
+                    "icon": "sparkles"
+                  },
+                  {
                     "title": "PDF Export",
                     "path": "features/pdf-export",
                     "icon": "file-down"
