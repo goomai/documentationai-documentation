@@ -200,6 +200,11 @@
                     "icon": "file-text"
                   },
                   {
+                    "title": "Context Connectors",
+                    "path": "features/context-connectors",
+                    "icon": "plug"
+                  },
+                  {
                     "title": "Search Analytics",
                     "path": "features/search-analytics",
                     "icon": "bar-chart"

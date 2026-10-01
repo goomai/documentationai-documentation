@@ -1,0 +1,150 @@
+---
+title: Context Connectors
+description: Connect external tools like Jira, Linear, Notion, HubSpot, and Plain so the AI agent can research real-time context while writing and answering documentation questions.
+---
+
+## Context Connectors
+
+Connect your team's tools so the AI agent can pull current context from Jira, Confluence, Linear, Notion, HubSpot, and Plain while answering questions or writing documentation.
+
+## Supported connectors
+
+- **Jira:** Issues, sprints, releases, and project metadata
+- **Confluence:** Wiki pages, spaces, and knowledge base content
+- **Linear:** Issues, projects, cycles, teams, and comments
+- **Notion:** Pages, databases, page content, and comments
+- **HubSpot:** Tickets, contacts, companies, notes, owners, pipelines, and inbox conversations when permitted
+- **Plain:** Support threads, customers, labels, and Help Center articles
+
+## How it works
+
+Connectors are authorized at the organization level through your integration settings. Each provider supports up to 10 connected accounts per documentation, so you can connect multiple workspaces or accounts when your team works across them.
+
+When you ask the AI agent a question or ask it to write documentation, it can research relevant content in your connected tools. If you connect multiple accounts for the same provider, the agent selects the account that best matches the request.
+
+<Callout kind="info">
+
+Context Connectors are read-only. The AI agent can search and read content, but it cannot create, modify, or delete records in a connected tool.
+
+</Callout>
+
+## Connecting a tool
+
+<Steps>
+  <Step title="Open your organization's integration settings" icon="settings" title-type="p">
+
+    Open your organization's integration settings in Documentation.AI.
+
+  </Step>
+
+  <Step title="Choose a tool to connect" icon="plus" title-type="p">
+
+    Select Jira, Confluence, Linear, Notion, HubSpot, or Plain.
+
+  </Step>
+
+  <Step title="Authorize the connection" icon="shield" title-type="p">
+
+    Complete the authorization flow for the provider you selected. When authorization finishes, the account appears in your organization's connected integrations.
+
+  </Step>
+
+  <Step title="Connect additional accounts when needed" icon="users" title-type="p">
+
+    Connect additional accounts or workspaces for the same provider if you need the agent to research more than one environment.
+
+  </Step>
+
+  <Step title="Research connected content with the AI agent" icon="search" title-type="p">
+
+    Ask the AI agent a question or have it write documentation. The agent can now research relevant content from the connected tool.
+
+  </Step>
+</Steps>
+
+## What the agent can research
+
+<Tabs>
+  <Tab title="Jira" icon="search">
+
+  - Issues
+  - Sprints
+  - Releases
+  - Project metadata
+  - Issue comments
+
+  </Tab>
+
+  <Tab title="Confluence" icon="book-open">
+
+  - Wiki pages
+  - Spaces
+  - Knowledge base content
+
+  </Tab>
+
+  <Tab title="Linear" icon="bar-chart">
+
+  - Issues searched or filtered by state, project, labels, assignee, or priority
+  - Projects and teams
+  - Cycles and cycle issues
+  - Issue comments
+  - Custom read-only GraphQL queries
+
+  </Tab>
+
+  <Tab title="Notion" icon="database">
+
+  - Pages through title-based search
+  - Page content as Markdown
+  - Databases and database schemas
+  - Database queries
+  - Page comments
+  - Workspace search
+
+  </Tab>
+
+  <Tab title="HubSpot" icon="users">
+
+  - Tickets through search, filters, and direct lookup
+  - Contacts and companies
+  - Notes and owners
+  - Ticket pipelines
+  - Inbox conversation threads and messages when permitted
+
+  </Tab>
+
+  <Tab title="Plain" icon="message-circle">
+
+  - Support threads through search and filters
+  - Thread details and timelines
+  - Customers
+  - Labels
+  - Help Center articles
+
+  </Tab>
+</Tabs>
+
+## Permissions and visibility
+
+<Callout kind="alert">
+
+Each connector can only access content that the connected account can access in the external tool. Notion pages must be explicitly shared with the integration before the agent can find them. HubSpot inbox conversations require an additional permission that may not be available in every configuration, so the agent reports when conversations are unavailable instead of treating the entire connection as failed. Plain access follows the role of the user who authorized the connection. If a provider has not been configured for your environment, authorization returns a "not available yet" message.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Changelog" href="/changelog" icon="clock" horizontal="false">
+
+    Review recent product changes and connector updates.
+
+  </Card>
+
+  <Card title="Page Actions" href="/features/page-actions" icon="mouse-pointer-click" horizontal="false">
+
+    Configure the actions readers can use from your published documentation.
+
+  </Card>
+</Columns>
