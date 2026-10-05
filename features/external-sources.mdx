@@ -1,0 +1,203 @@
+---
+title: External Sources
+description: Add PDFs and websites to your AI assistant's knowledge so it can answer reader questions beyond your documentation.
+---
+
+## Overview
+
+External Sources lets you add PDFs, individual web pages, and full websites to your AI assistant's knowledge. The assistant uses completed external sources alongside your documentation when answering reader questions.
+
+Add external sources when important information lives outside your documentation site, such as product manuals, policy documents, support articles, or a public knowledge base.
+
+## Requirements
+
+<Callout kind="alert" collapsed="false">
+
+External Sources requires the **Standard** plan or higher. The Starter plan does not include external sources.
+
+All PDFs and websites share one page budget per documentation site. Adding pages through one source reduces the pages available to other sources.
+
+</Callout>
+
+## Source types
+
+- **PDF upload:** Add a PDF as a searchable knowledge source. The server extracts its text, headings, tables, and page numbers during indexing.
+- **Single web page:** Add one public HTTP or HTTPS URL without crawling other pages on the site.
+- **Full website crawl:** Discover and index multiple pages from a starting URL using a sitemap or link crawling. Configure page limits, depth, exclusions, and additional URLs before adding the source.
+
+## Adding a PDF source
+
+PDF sources are uploaded to private storage before indexing begins. The source appears while its first indexing run processes asynchronously.
+
+<Steps>
+  <Step title="Start a PDF source" icon="plus" title-type="p">
+
+    Choose **Add source > PDF** and enter a name for the source.
+
+  </Step>
+
+  <Step title="Select the PDF file" icon="upload" title-type="p">
+
+    Select a PDF file that is no larger than **50 MB**. You can optionally set a priority from `0` to `1`.
+
+    The file uploads directly to private storage rather than passing through the application server. Files below 20 MB use a single upload. Files at or above 20 MB use multipart upload.
+
+  </Step>
+
+  <Step title="Wait for indexing" icon="play-circle" title-type="p">
+
+    After the upload completes, Documentation.AI creates the source and starts indexing automatically. The source may show a `TRIGGERED` status while indexing waits to begin, followed by `PROCESSING` while the PDF is being read.
+
+    When indexing completes, the assistant can use the PDF's extracted content in answers.
+
+  </Step>
+</Steps>
+
+<Callout kind="info" collapsed="false">
+
+PDFs must contain selectable text. Password-protected PDFs and scanned PDFs without text are rejected. Each PDF consumes pages from the shared page budget for your documentation site.
+
+</Callout>
+
+## Adding a website source
+
+Choose a single page when you need one specific URL. Choose a full website crawl when the assistant should use multiple pages from the same site.
+
+<Steps>
+  <Step title="Add a single web page" icon="globe" title-type="p">
+
+    Choose **Add source > Web page**, enter the page URL, and set a refresh schedule. A single-page source indexes only the URL you provide.
+
+    Use a public HTTP or HTTPS URL. The page must be accessible without credentials or a private network connection.
+
+  </Step>
+
+  <Step title="Configure a full website crawl" icon="settings" title-type="p">
+
+    Choose **Add source > Website** and enter the starting URL. Configure the maximum depth, maximum page count, URL exclusion patterns, and any additional URLs to include.
+
+    Select a refresh schedule, then run a preview before creating the source. The preview lets you review the pages that will be included and excluded.
+
+  </Step>
+
+  <Step title="Create the website source" icon="check-circle" title-type="p">
+
+    Review the preview results and confirm the source. Documentation.AI creates the website source and starts its first indexing run asynchronously.
+
+    The source becomes available to the assistant after the indexing run completes.
+
+  </Step>
+</Steps>
+
+## Website preview
+
+A website preview shows which pages Documentation.AI discovered before you commit the crawl. Starting a preview does not create a source or consume the website's page budget.
+
+Documentation.AI checks for a usable sitemap first. If sitemap discovery does not produce a result, the preview falls back to crawling links from the starting URL.
+
+The preview displays:
+
+- The discovery method, either `sitemap` or `links`.
+- Exact counts for pages found, included, and excluded.
+- An **Included pages** list with each URL and page title.
+- An **Excluded pages** list with each URL and its reason, such as an exclusion pattern or the page limit.
+- Whether the result is partial because the crawl deadline was reached.
+- Preview start and finish timestamps.
+
+Preview lists display up to 1,000 included and 1,000 excluded entries. The counts remain exact even when the lists reach that display limit. A completed preview can be reused for about one hour when you create a source with the same URL and crawl depth.
+
+<Callout kind="info" collapsed="false">
+
+Starting previews is limited to **10 per organization per minute**. Polling an existing preview does not count against this limit.
+
+</Callout>
+
+## Crawl settings
+
+Configure these settings before creating a full website source:
+
+- **Maximum depth:** Controls how many link levels Documentation.AI follows from the starting URL. The maximum is `5`.
+- **Maximum pages:** Limits the number of pages included in the crawl. The maximum is `500`, or `100` when the site does not provide a usable sitemap.
+- **Exclusion patterns:** Excludes URLs matching specified patterns. Add up to `20` patterns, with a maximum of `200` characters per pattern.
+- **Additional URLs:** Adds specific URLs to the source manually, even when the crawler does not discover them through the sitemap or links.
+
+Use exclusions to prevent areas such as changelogs, account pages, or unrelated product sections from entering the assistant's knowledge.
+
+## Refresh schedules
+
+Website sources support three refresh options:
+
+- **Weekly:** Refreshes approximately every seven days. This is the default.
+- **Monthly:** Refreshes approximately every 30 days.
+- **Manual:** Does not refresh automatically. Choose **Refresh now** when you want to update the source.
+
+The refresh system checks scheduled sources during its daily sweep. If three consecutive scheduled refreshes fail, automatic refreshes pause for the source. Choose **Refresh now** to retry the source and resume scheduled refreshes.
+
+<Callout kind="info" collapsed="false">
+
+You can manually refresh a website up to **3 times per rolling 24-hour period**. A manual refresh cannot start while another refresh for the same website is already running.
+
+</Callout>
+
+## Source settings
+
+Configure these settings for each external source:
+
+- **Name:** The label shown in the source list, indexing runs, and assistant context.
+- **Enabled:** Controls whether the assistant can use the source. Disable a source to remove it from answers without deleting its configuration.
+- **Priority:** A value from `0` to `1`. Higher-priority sources are preferred by the assistant when relevant content is available from multiple sources.
+- **Visibility:** Choose **Public** or **Protected**.
+- **Access roles:** Defines which authenticated reader roles can use a protected source. Add up to 100 role names containing letters, numbers, underscores, or hyphens.
+
+Public sources are available to all readers who can access the documentation. Changing a source to public clears its access roles.
+
+Protected sources are available only to authenticated readers whose documentation role matches one of the configured access roles. A protected source with no access roles is available to every signed-in reader.
+
+Source access roles control reader access to the source. They do not control whether an organization member can manage external sources. Admins and editors can add, edit, refresh, and delete sources. Admins, editors, and viewers can view source details, indexing runs, and website page lists.
+
+## How the AI assistant uses external sources
+
+After an external source finishes indexing, Documentation.AI makes its content available to the AI assistant. The assistant can draw from both your documentation and the external sources that the reader is allowed to access.
+
+External sources do not appear in regular documentation search results. They are used only by the AI assistant.
+
+Disabling a source removes it from assistant answers while preserving its configuration. Deleting a source removes the source and its indexed content, and the assistant stops using it immediately.
+
+## Plan limits and page usage
+
+PDFs and websites consume pages from the same shared budget for each documentation site.
+
+| Plan | Shared external-source pages |
+| --- | ---: |
+| Standard | 100 |
+| Professional | 300 |
+| Enterprise | 300 |
+
+A website page counts toward the budget whether it was discovered through a sitemap, found through link crawling, or added manually. PDF pages count toward the same budget.
+
+<Callout kind="info" collapsed="false">
+
+A PDF that exceeds the remaining page budget is rejected. Check your current page usage before adding a large PDF or website source.
+
+</Callout>
+
+## Deleting a source
+
+Deleting a source removes its configuration and indexed content from the AI assistant. The assistant stops using the source immediately after the deletion succeeds.
+
+Deleting a PDF also removes the stored PDF. If a source is deleted while indexing is in progress, the indexing run detects the deletion and removes any content it may have produced.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Search Analytics" href="/features/search-analytics" icon="bar-chart" horizontal="false">
+
+  Review what readers search for and identify gaps in your documentation.
+
+  </Card>
+  <Card title="Custom Domains" href="/features/custom-domains" icon="globe" horizontal="false">
+
+  Publish your documentation from a custom domain.
+
+  </Card>
+</Columns>

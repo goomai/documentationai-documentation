@@ -170,6 +170,11 @@
                 "icon": "settings",
                 "pages": [
                   {
+                    "title": "External Sources",
+                    "path": "features/external-sources",
+                    "icon": "external-link"
+                  },
+                  {
                     "title": "PDF Export",
                     "path": "features/pdf-export",
                     "icon": "file-down"
