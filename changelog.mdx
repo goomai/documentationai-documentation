@@ -3,6 +3,17 @@ title: Changelog
 description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
+<Update label="2026-09-10" description="Search Indexing Improvements" tags={["improvement", "fix"]}>
+## What changed
+
+**Search Improvements**
+- Table content is now indexed and searchable — values inside Markdown tables appear in search results, with column names attached to each cell value for better matching
+- Search result links now point to the correct section heading on the page, matching the heading IDs rendered by the documentation site
+- Fixed search citations that previously landed at the top of the page or used a fragment that did not exist in the rendered document
+- Improved anchor generation for headings with Unicode characters, punctuation, code spans, and repeated headings
+- Pages with a frontmatter title no longer receive an incorrect anchor for the page title — search results link to the page itself instead of a non-existent heading fragment
+</Update>
+
 <Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
 
