@@ -1,0 +1,97 @@
+---
+title: Site Authentication
+description: Protect published documentation with passwordless DocumentationAI Auth, giving organization members access based on their current roles.
+---
+
+## Overview
+
+Protect a published documentation site with **Site Authentication** and let readers sign in with their Documentation.AI account. DocumentationAI Auth uses organization membership to control access, so you do not need to manage passwords, JWT keys, or OAuth provider settings.
+
+Access follows the reader's membership in the organization that owns the documentation. When their membership changes, their access changes with it.
+
+## How it works
+
+When a reader visits a protected site, they sign in with their Documentation.AI account. Site Authentication verifies that the account belongs to an active member of the documentation's organization, then returns the reader to the documentation with access.
+
+The sign-in flow happens entirely in the browser. Readers do not create a separate account for your documentation site.
+
+<Callout kind="info">
+
+Readers do not need separate accounts for your documentation. Membership in your organization provides the access they need.
+
+</Callout>
+
+## Authentication modes
+
+Choose the mode that matches how much of your documentation should be public.
+
+| Mode | Behavior |
+| --- | --- |
+| **Full** | The entire documentation site requires readers to sign in. |
+| **Partial** | Only selected sections require readers to sign in. Other content remains public. |
+
+## Enabling DocumentationAI Auth
+
+<Steps>
+  <Step title="Open authentication settings" icon="settings" title-type="p">
+    Open the editor's settings sidebar and find the **Authentication** section.
+  </Step>
+
+  <Step title="Select DocumentationAI Auth" icon="key" title-type="p">
+    Select **DocumentationAI Auth** as the provider. No additional credentials are required.
+  </Step>
+
+  <Step title="Choose an authentication mode" icon="toggle-left" title-type="p">
+    Choose **Full** to protect the entire site or **Partial** to protect only selected sections.
+  </Step>
+
+  <Step title="Publish your documentation" icon="upload" title-type="p">
+    Publish your documentation to apply Site Authentication to the live site.
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+
+Authentication settings take effect only after you publish your documentation.
+
+</Callout>
+
+## Access control
+
+A reader gets access when all of these conditions are true:
+
+- They are an active member of the organization that owns the documentation.
+- Their organization role is **admin**, **editor**, or **viewer**.
+- Their Documentation.AI user account still exists.
+
+Removing a member from the organization automatically revokes their documentation access, even if the reader previously signed in.
+
+## MCP server access
+
+When DocumentationAI Auth is enabled, MCP credentials issued to a reader follow their current organization membership.
+
+- MCP access remains valid only while the reader is an active organization member.
+- Removing the reader from the organization automatically revokes their MCP credentials without requiring manual deletion.
+- The system rechecks access whenever it resolves an MCP credential, so membership changes take effect immediately.
+
+## Available authentication providers
+
+Site Authentication supports four providers. Choose the provider that matches how you want readers to access your documentation.
+
+| Provider | Description |
+| --- | --- |
+| **DocumentationAI Auth** | Readers sign in with their Documentation.AI account. Access is based on organization membership, and no provider configuration is required. |
+| **Password** | Readers use a shared password to access protected content. |
+| **JWT Ed25519** | Readers use tokens signed with an Ed25519 key. |
+| **OAuth2** | Readers authenticate through a third-party OAuth provider. |
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Custom Domains" href="/features/custom-domains" icon="globe">
+    Manage domain configuration and DNS records for your published documentation.
+  </Card>
+  <Card title="Danger Zone" href="/features/danger-zone" icon="alert-triangle">
+    Unpublish or permanently delete your documentation site.
+  </Card>
+</Columns>

@@ -203,6 +203,11 @@
                     "title": "Search Analytics",
                     "path": "features/search-analytics",
                     "icon": "bar-chart"
+                  },
+                  {
+                    "title": "Site Authentication",
+                    "path": "features/documentation-auth",
+                    "icon": "shield"
                   }
                 ],
                 "access-roles": [
