@@ -1,0 +1,117 @@
+---
+title: Intercom Connector
+description: Connect Intercom so the AI agent can research your Help Center articles, customer conversations, and support tickets while writing documentation.
+---
+
+## Intercom Connector
+
+Connect an Intercom workspace at the organization level so the AI agent can research Help Center content, customer conversations, and support tickets when answering questions or drafting documentation updates. The connector is read-only: the AI agent searches and reads Intercom data but never modifies it.
+
+## Before you begin
+
+<Callout kind="info" collapsed="false">
+
+- You need organization admin access to connect Intercom.
+- Your Intercom workspace must grant read permissions for conversations, tickets, articles, and tags.
+- An administrator must enable the connector before it appears as an available context source for your documentation.
+
+</Callout>
+
+## Connect Intercom to your organization
+
+<Steps>
+  <Step title="Open Integrations in your organization settings" icon="settings" title-type="p">
+
+    Open your organization settings and select **Integrations**.
+
+  </Step>
+
+  <Step title="Authorize the Intercom connection" icon="lock" title-type="p">
+
+    Select Intercom and complete the standard OAuth authorization flow. Grant the read permissions required for conversations, tickets, articles, and tags.
+
+  </Step>
+
+  <Step title="Attach the connected account to a documentation" icon="check-circle" title-type="p">
+
+    If you started authorization from within a documentation, the Intercom account is attached to that documentation automatically as a context connector. Other documentations can attach the same connected account separately.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert" collapsed="false">
+
+Connecting Intercom at the organization level does not automatically enable it for every documentation. Each documentation must have the connector enabled individually.
+
+</Callout>
+
+## Enable Intercom for a documentation
+
+<Steps>
+  <Step title="Open Agent Connectors settings" icon="settings" title-type="p">
+
+    Open the **Agent Connectors** settings for your documentation.
+
+  </Step>
+
+  <Step title="Attach the available Intercom account" icon="plus" title-type="p">
+
+    Find the available Intercom account and attach it to your documentation.
+
+  </Step>
+
+  <Step title="Turn on the connector" icon="check-circle" title-type="p">
+
+    Toggle the connector on to make Intercom content available to the AI agent.
+
+  </Step>
+</Steps>
+
+## What the AI agent can research
+
+The AI agent can use the connected Intercom workspace to:
+
+- Search Help Center articles by keyword
+- Read full Help Center articles, including their content
+- Browse Help Center collections to understand article organization
+- Search customer conversations using natural-language filters
+- Read complete conversation threads
+- Search support tickets and read ticket details
+- Use tags to narrow searches across conversations and tickets
+- Identify recurring support questions and documentation gaps from conversation and ticket patterns
+
+<Callout kind="tip" collapsed="false">
+
+The AI agent uses Intercom research to answer questions, draft documentation updates, and flag recurring customer issues that may indicate a documentation gap.
+
+</Callout>
+
+## Multiple Intercom workspaces
+
+Connect more than one Intercom workspace to your organization. When asking the AI agent to research Intercom, specify which workspace to search. If you do not specify a workspace, the agent uses the first connected workspace. If the requested workspace is not connected, the agent tells you which workspaces are available.
+
+## Privacy and data handling
+
+The AI agent is instructed to avoid exposing customer names and email addresses in research results unless you explicitly request them. Research output focuses on ticket and conversation themes, recurring issues, and content patterns rather than individual customer details.
+
+<Callout kind="info" collapsed="false">
+
+Intercom research is read-only. The AI agent does not modify articles, conversations, tickets, tags, or other Intercom data.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Page Actions" href="/features/page-actions" icon="mouse-pointer-click" horizontal="false">
+
+    Control which quick actions appear in your published documentation sidebar.
+
+  </Card>
+
+  <Card title="Search Analytics" href="/features/search-analytics" icon="bar-chart" horizontal="false">
+
+    Review how readers search your documentation and identify opportunities to improve content.
+
+  </Card>
+</Columns>

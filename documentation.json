@@ -203,6 +203,11 @@
                     "title": "Search Analytics",
                     "path": "features/search-analytics",
                     "icon": "bar-chart"
+                  },
+                  {
+                    "title": "Intercom Connector",
+                    "path": "features/intercom-connector",
+                    "icon": "headset"
                   }
                 ],
                 "access-roles": [
