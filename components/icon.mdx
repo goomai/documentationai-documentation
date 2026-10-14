@@ -1,0 +1,54 @@
+---
+title: Icon
+description: Add semantic icons to inline MDX content with support for library names, uploaded media, custom sizing, colors, and common text placements.
+---
+
+## Icon
+
+Use the `Icon` component to render a semantic icon within text content. The component is always self-closing and supports library icons, namespaced icon values, and managed media URLs.
+
+Use icons to identify buttons, statuses, or controls. Avoid using them only as decoration.
+
+## Example
+
+```mdx
+Click <Icon icon="rocket" /> to launch.
+
+<Icon icon="settings" size="20" color="#f59e0b" />
+```
+
+In the web editor, type `/icon` to insert an inline icon.
+
+## Properties
+
+- **`icon`** (required): The icon to render. Use a Lucide name such as `rocket`, `settings`, `check`, `star`, `book`, or `zap`; a namespaced value such as `fa-brands:github` or `tabler:keyboard`; or a managed media URL for an uploaded SVG or PNG.
+- **`size`** (optional): The icon size in pixels, such as `size="20"`.
+- **`color`** (optional): A CSS color value, such as `color="#f59e0b"`.
+
+## Placement
+
+Place icons anywhere inline content is supported, including sentences, headings, lists, callouts, tables, links, and bold text.
+
+```mdx
+A sentence with <Icon icon="rocket" /> an inline icon.
+
+## <Icon icon="settings" /> Configure settings
+
+- <Icon icon="check" /> Configuration complete
+
+<Callout kind="info">
+  Press <Icon icon="tabler:keyboard" /> to open the command menu.
+</Callout>
+
+| Status | Result |
+| --- | --- |
+| <Icon icon="check" /> | Ready |
+
+[<Icon icon="book" /> Read the documentation](/docs)
+
+**<Icon icon="star" /> Recommended**
+```
+
+## Learn more
+
+Read the full Icon guide at https://documentation.ai/docs/components/icon.
