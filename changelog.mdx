@@ -3,6 +3,17 @@ title: Changelog
 description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
+<Update label="2026-09-14" description="PromoteKit Affiliate Referrals & Promo Codes" tags={["feature"]}>
+## What changed
+
+**Billing & Checkout**
+- Stripe Checkout now displays a promotion code field for new plan subscriptions and credit pack purchases, allowing customers to enter valid promo codes during checkout
+- Affiliate referral IDs from PromoteKit are now accepted and forwarded to Stripe as metadata on new Checkout Sessions and resulting subscriptions
+- Referral IDs are automatically associated with the Stripe sale, enabling affiliate tracking and attribution
+- Promotion codes and affiliate referrals apply only when a new Stripe Checkout Session is created. Direct subscription updates and in-place plan changes are unaffected
+- Invalid, empty, or malformed referral values are silently ignored and do not interrupt the checkout process
+</Update>
+
 <Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
 
