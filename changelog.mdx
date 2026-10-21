@@ -3,6 +3,30 @@ title: Changelog
 description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
+<Update label="2026-09-14" description="Context Repositories" tags={["feature", "improvement"]}>
+## What changed
+
+**Context Repositories**
+- Connect GitHub and GitLab repositories as context sources for the Doc Agent
+- The Agent reads code at a pinned commit for each run, ensuring a consistent snapshot throughout the run
+- Set a default branch per connected repository
+- Override the default branch for individual chats and workflows
+- Branch resolution follows a priority order: merge commit from a pull request trigger, then the chat or workflow branch, then the repository's Agent default, then the repository's own default branch
+- If the requested branch no longer exists, the Agent falls back to the repository's default branch
+
+**GitLab Improvements**
+- GitLab repositories now appear as a distinct connector type instead of being grouped under GitHub
+- Connect GitLab repositories as context-only sources using read-only tokens
+- Two connection purposes: `source` for repositories that publish documentation (requires write access) and `context` for repositories the Agent reads (requires read access)
+- Nested group paths such as `group/subgroup/project` are supported
+- Merge-request automations trigger only on the actual merge action, not on later updates to an already merged request
+
+**Connector Management**
+- Each provider (GitHub and GitLab) supports up to 10 connected repositories with separate limits
+- Re-attaching the same repository does not use an additional connector slot
+- Repository lookups are now scoped to your organization to prevent resolving same-named repositories from other organizations
+</Update>
+
 <Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
 

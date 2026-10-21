@@ -170,6 +170,11 @@
                 "icon": "settings",
                 "pages": [
                   {
+                    "title": "Context Repositories",
+                    "path": "features/context-repositories",
+                    "icon": "git-branch"
+                  },
+                  {
                     "title": "PDF Export",
                     "path": "features/pdf-export",
                     "icon": "file-down"

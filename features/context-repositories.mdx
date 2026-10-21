@@ -1,0 +1,127 @@
+---
+title: Context Repositories
+description: Connect GitHub and GitLab repositories so the Doc Agent can read consistent code snapshots during documentation generation, chats, and updates.
+---
+
+## Context Repositories
+
+Context Repositories connect GitHub and GitLab repositories to the Doc Agent so it can read and analyze source code while generating or updating your documentation.
+
+## How it works
+
+At the start of each Agent run, each connected repository is pinned to a specific commit. The Agent reads that fixed snapshot for the entire run, so later pushes do not change the code being analyzed.
+
+The Agent resolves the repository branch in this order:
+
+1. The merge commit from a pull request trigger.
+2. A branch selected for the chat or workflow.
+3. The Agent default branch configured for the repository.
+4. The repository's own default branch.
+
+<Callout kind="tip">
+
+Pinning each run to a commit gives the Agent a consistent basis for repository answers, code analysis, and documentation updates.
+
+</Callout>
+
+<Callout kind="alert">
+
+If the requested branch no longer exists, the Agent falls back to the repository's default branch. Review the selected branch when the exact source version matters.
+
+</Callout>
+
+## Connecting a repository
+
+Connect repositories from your documentation's Agent connector settings.
+
+<Steps>
+  <Step title="Connect a repository as an Agent context source" icon="cloud" title-type="p">
+
+    Connect a GitHub or GitLab repository and make it available to the Doc Agent as a context source.
+
+  </Step>
+
+  <Step title="Choose the GitLab connection purpose" icon="settings" title-type="p">
+
+    For GitLab, choose `source` if the repository publishes documentation and requires write access. Choose `context` if the Agent only needs to read code. Context-only connections require read access.
+
+  </Step>
+
+  <Step title="Select repositories to include" icon="check-circle" title-type="p">
+
+    Select the connected repositories that the Agent should use when answering questions, analyzing code, or updating documentation.
+
+  </Step>
+</Steps>
+
+## Selecting a branch
+
+Set a default branch for each connected repository, then override that selection for an individual chat or workflow when you need the Agent to use another branch.
+
+### Set a repository default branch
+
+<Steps>
+  <Step title="Open the repository's Agent settings" icon="settings" title-type="p">
+
+    Open the settings for the connected repository in your documentation's Agent configuration.
+
+  </Step>
+
+  <Step title="Choose the default branch" icon="code" title-type="p">
+
+    Select the branch the Agent should use by default for that repository.
+
+  </Step>
+
+  <Step title="Save the branch selection" icon="check-circle" title-type="p">
+
+    Save the setting. The selected branch applies to the documentation unless a chat or workflow specifies another branch.
+
+  </Step>
+</Steps>
+
+When you select a branch for a chat or workflow, that selection takes precedence over the repository's Agent default. A pull request trigger takes precedence over both selections and uses its merge commit.
+
+## GitLab support
+
+<Callout kind="info">
+
+GitLab repositories appear as a distinct connector type. They were previously grouped under GitHub connectors. GitLab context-only connections accept read-only tokens, and nested group paths such as `group/subgroup/project` are supported.
+
+</Callout>
+
+## Connector limits
+
+<Callout kind="info">
+
+Each provider supports up to 10 connected repositories. GitHub and GitLab have separate limits, so you can connect up to 10 repositories from each provider. Re-attaching the same repository does not use an additional slot.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Reusable Snippets" href="/features/reusable-snippets" icon="code" horizontal="false">
+
+    Create reusable MDX and JSX components for consistent documentation content.
+
+  </Card>
+
+  <Card title="Page Actions" href="/features/page-actions" icon="settings" horizontal="false">
+
+    Control which quick actions appear in your published documentation sidebar.
+
+  </Card>
+
+  <Card title="Media Manager" href="/features/media-manager" icon="upload" horizontal="false">
+
+    Upload, organize, preview, and insert media into your documentation.
+
+  </Card>
+
+  <Card title="Custom Domains" href="/features/custom-domains" icon="cloud" horizontal="false">
+
+    Connect your own domain and manage DNS for your published site.
+
+  </Card>
+</Columns>
