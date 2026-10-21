@@ -3,6 +3,24 @@ title: Changelog
 description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
+<Update label="2026-09-14" description="Sidebar Title Wrapping" tags={["feature"]}>
+## What changed
+
+**Sidebar Configuration**
+- Added a new `sidebar.title-wrap` option to `documentation.json` that controls how long page titles and group labels display in the published sidebar
+- When `true` (default), long titles wrap onto as many lines as needed so the full text is always visible
+- When `false`, long titles stay on a single line and are truncated to keep sidebar rows compact
+- The option accepts only boolean values (`true` or `false`); omitting it preserves the default wrapping behavior
+
+```json
+{
+  "sidebar": {
+    "title-wrap": false
+  }
+}
+```
+</Update>
+
 <Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
 
