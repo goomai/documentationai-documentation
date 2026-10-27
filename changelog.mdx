@@ -3,6 +3,27 @@ title: Changelog
 description: Track the latest product updates, improvements, and fixes across Documentation.AI.
 ---
 
+<Update label="2026-09-14" description="Security Hardening" tags={["security", "fix"]}>
+## What changed
+
+**Automation Rate Limits**
+- Creating automations is now limited to 10 requests per minute per user
+- Updating automations is now limited to 30 requests per minute per user
+- Manually triggering automation runs is now limited to 10 requests per minute per user
+- Each documentation project can have at most 50 active automations; delete one before creating another if you reach the cap
+- Reading and deleting automations remain unlimited
+
+**Invitation Email Limits**
+- Organization invitation emails are now limited to 5 per recipient mailbox per 24 hours
+- The limit applies across all organizations and accounts for common email aliases (such as Gmail plus-addressing and dot variations)
+- When the limit is reached, additional invitation emails are silently suppressed rather than bounced
+
+**API Security Headers**
+- All API responses now include a strict Content-Security-Policy header (`default-src 'none'; frame-ancestors 'none'`) to prevent script execution and clickjacking
+- Error responses and 404s receive the same security headers as successful responses
+- Routes that set their own Content-Security-Policy headers are preserved
+</Update>
+
 <Update label="2026-09-07" description="Latest Updates" tags={["feature", "improvement", "fix"]}>
 ## What changed
 
