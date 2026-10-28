@@ -1,0 +1,167 @@
+---
+title: External Sources
+description: Expand your AI assistant's knowledge base with PDFs and website content, so it can answer questions beyond your documentation repository.
+---
+
+## Overview
+
+External Sources lets you add PDFs and website content to your documentation's AI assistant knowledge base. The assistant can use indexed external content to answer questions that your documentation repository does not cover.
+
+External sources use a separate index from your regular documentation search. A source becomes available to the assistant after indexing completes successfully.
+
+<Callout kind="alert">
+
+External Sources requires the Standard plan or higher. The Starter plan does not support external sources.
+
+</Callout>
+
+## Supported source types
+
+Choose the source type that matches the content you want the assistant to use:
+
+- **PDF:** Upload a PDF file. The system extracts and indexes its pages.
+- **Website:** Add one public web page or crawl a public website with multiple pages.
+
+Website sources must use a publicly accessible HTTP or HTTPS URL.
+
+## Adding a PDF source
+
+Before uploading a PDF, check your documentation's remaining shared page allocation. Each page in the PDF counts toward the allocation across all external sources.
+
+<Steps>
+  <Step title="Check the file limits" icon="settings" title-type="p">
+
+  Confirm that the file is no larger than **50 MiB** and uses the `application/pdf` file type.
+
+  </Step>
+  <Step title="Upload the PDF" icon="upload" title-type="p">
+
+  Open **External Sources**, choose **PDF**, and upload the file. Keep the upload open while the file finishes processing.
+
+  </Step>
+  <Step title="Create the source" icon="file-text" title-type="p">
+
+  Enter a name for the source and save it. The uploaded PDF becomes a source in your documentation.
+
+  </Step>
+  <Step title="Wait for indexing" icon="check-circle" title-type="p">
+
+  Wait for indexing to complete successfully. The PDF is searchable by the assistant after its pages have been indexed.
+
+  </Step>
+</Steps>
+
+<Callout kind="info">
+
+PDF pages count individually toward your documentation's shared page limit. A large PDF can use a substantial part of the available allocation.
+
+</Callout>
+
+## Adding a website source
+
+Use a single-page source when the assistant needs one specific page. Use a crawled website source when it needs content from multiple pages.
+
+<Steps>
+  <Step title="Check the crawl limits" icon="settings" title-type="p">
+
+  Confirm that the website fits within the available page allocation. Review the crawl settings before creating the source, including the maximum depth and page count.
+
+  </Step>
+  <Step title="Preview the crawl" icon="search" title-type="p">
+
+  Start a preview when you want to review the pages the crawler discovers before creating the source. The preview shows included and excluded pages and expires after one hour.
+
+  </Step>
+  <Step title="Create the website source" icon="globe" title-type="p">
+
+  Enter the public website URL, choose single-page or multi-page crawling, and configure the crawl settings. The crawler checks the sitemap first, then falls back to following links when a sitemap is unavailable.
+
+  </Step>
+  <Step title="Wait for indexing" icon="check-circle" title-type="p">
+
+  Save the source and wait for indexing to complete successfully. The assistant can use the website content after indexing finishes.
+
+  </Step>
+</Steps>
+
+A single-page source indexes the URL you provide. A multi-page source discovers additional pages according to its crawl settings.
+
+## Website crawl settings
+
+Configure the crawl to control how much content the website source includes.
+
+- **`maxDepth`:** Sets how many link levels the crawler can follow from the starting page. The maximum supported depth is 5.
+- **`maxPages`:** Limits the number of pages indexed for the website. A site can include up to 500 pages when a sitemap is available, or up to 100 pages when the crawler must discover pages through links.
+- **Exclude patterns:** Prevent matching pages from being included. Use glob-style patterns, with up to 20 patterns per source.
+- **Manually added URLs:** Add specific pages by URL when the crawler does not discover pages that you want to include.
+
+The crawler uses the sitemap first when one is available. It follows links as a fallback, so setting a suitable depth and page limit helps keep the source focused.
+
+## Refreshing website content
+
+Refresh a website source when its indexed content is out of date. A refresh re-crawls the site, adds new pages, removes pages that no longer exist, and keeps unchanged pages.
+
+You can refresh a website manually up to **three times in a 24-hour period**. You can also configure an automatic schedule:
+
+- **Weekly**
+- **Monthly**
+- **Manual**
+
+A preview does not update the indexed source. Create the source or start a refresh after reviewing the preview to apply the selected pages.
+
+## Visibility and access roles
+
+Choose who can use each source's content through its visibility setting.
+
+- **Public:** The source content is available to all readers.
+- **Protected:** The source content is available only to readers with the selected access roles.
+
+Use protected sources for content intended for specific audiences, such as readers with the `customer` or `partner` role. A protected source with no access roles is available to all signed-in readers.
+
+Public sources cannot have access roles assigned to them.
+
+## Page limits
+
+External source pages share one allocation across all sources in a documentation. PDF pages and website pages both count toward this limit.
+
+- **Standard:** 100 pages
+- **Professional:** 300 pages
+- **Enterprise:** 300 pages
+
+<Callout kind="info">
+
+Review your total page usage before adding a source. The number of PDF pages and included website pages is combined across every external source in the documentation.
+
+</Callout>
+
+## Managing sources
+
+After creating a source, use the source settings to:
+
+- Rename the source.
+- Enable or disable it.
+- Change its answer priority.
+- Change its visibility.
+- Change its access roles.
+- Change the refresh schedule for a website.
+- Include or exclude individual website pages.
+- Add specific website pages by URL.
+- Refresh a website manually.
+- Delete the source.
+
+Disabling a source prevents the assistant from using it without deleting the source configuration. Deleting a source removes it from the documentation's external knowledge base.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Media Manager" href="/features/media-manager" icon="folder" horizontal="false">
+
+  Upload and manage files used throughout your documentation.
+
+  </Card>
+  <Card title="Search Analytics" href="/features/search-analytics" icon="bar-chart" horizontal="false">
+
+  Review how readers search your documentation and identify content gaps.
+
+  </Card>
+</Columns>

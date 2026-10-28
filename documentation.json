@@ -203,6 +203,16 @@
                     "title": "Search Analytics",
                     "path": "features/search-analytics",
                     "icon": "bar-chart"
+                  },
+                  {
+                    "title": "External Sources",
+                    "path": "features/external-sources",
+                    "icon": "external-link"
+                  },
+                  {
+                    "title": "Embed Keys",
+                    "path": "features/embed-keys",
+                    "icon": "key"
                   }
                 ],
                 "access-roles": [

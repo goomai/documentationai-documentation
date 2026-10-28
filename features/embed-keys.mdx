@@ -1,0 +1,206 @@
+---
+title: Embed Keys
+description: Securely embed your documentation on external sites, authenticate readers with short-lived tokens, and manage browser access with embed keys.
+---
+
+## Overview
+
+Embed Keys lets you securely embed your documentation site on external websites while controlling which visitors can access authenticated content. Each embed key includes a publishable key for browser configuration and a secret key for your server.
+
+Your server uses the secret key to mint short-lived reader tokens. Pass each token to the embedded site so it can identify the visitor without exposing your secret key in browser code.
+
+## How embed keys work
+
+The two-part key model separates browser configuration from server authentication:
+
+- **Publishable key**, with a `pk_` prefix: Add this key to your frontend embed configuration. It identifies the documentation site and embed integration.
+- **Secret key**, with an `sk_` prefix: Keep this key on your server. Use it to create reader tokens for authenticated visitors.
+
+Reader tokens expire after 60 seconds and can only be used once. Your backend passes the token to the browser, and the embedded site uses it for visitor identification.
+
+## Creating an embed key
+
+Create separate keys for different websites, environments, or customers. Each key can have its own allowed origins and expiry date.
+
+<Steps>
+  <Step title="Open embed key settings" icon="settings" title-type="p">
+
+  Open your documentation project and go to the **Embed Keys** settings.
+
+  </Step>
+
+  <Step title="Enter a name" icon="key" title-type="p">
+
+  Enter a name between 1 and 100 characters. Use a name that identifies the website, environment, or customer associated with the key.
+
+  </Step>
+
+  <Step title="Add allowed origins" icon="globe" title-type="p">
+
+  Add the browser origins that may use the publishable key. You can leave this list empty if you do not want to restrict the key by origin.
+
+  </Step>
+
+  <Step title="Set an expiry date" icon="check-circle" title-type="p">
+
+  Choose an expiry preset if the key should expire automatically. Available presets are 7 days, 30 days, 60 days, 90 days, 180 days, and 1 year. Omit the expiry to create a key without an expiry date.
+
+  </Step>
+
+  <Step title="Save the key" icon="check-circle" title-type="p">
+
+  Save the key, then copy the secret key and store it securely on your server. The full secret key is shown only at creation.
+
+  </Step>
+</Steps>
+
+<Callout kind="alert">
+
+Copy the secret key before leaving the creation screen. You cannot retrieve the full secret key later.
+
+</Callout>
+
+## Publishable keys vs secret keys
+
+Use each key only in the environment it is designed for.
+
+<Tabs>
+  <Tab title="Publishable key" icon="globe">
+
+  Publishable keys use the `pk_` prefix. They are safe to include in browser-side embed configuration and identify the documentation site and embed integration.
+
+  A publishable key does not authenticate your backend and cannot mint reader tokens.
+
+  </Tab>
+
+  <Tab title="Secret key" icon="shield">
+
+  Secret keys use the `sk_` prefix. Keep them on your server and send them as bearer credentials when your backend creates reader tokens.
+
+  Secret keys are shown in full only when you create or rotate them. Store the value securely because the dashboard cannot display it again.
+
+  </Tab>
+</Tabs>
+
+<Callout kind="alert">
+
+Never expose a secret key in frontend code, browser requests, or deployed client-side configuration. If a secret key is compromised, rotate it immediately.
+
+</Callout>
+
+## Allowed origins
+
+Allowed origins restrict which browser sites can use a publishable key. Enter each origin as a scheme, hostname, and optional port, such as `https://acme.com` or `http://localhost:3000`.
+
+Origins must meet these requirements:
+
+- Use a bare browser origin.
+- Do not include wildcards.
+- Do not include paths, query strings, or fragments.
+- Use HTTP only for loopback or localhost origins.
+- Add no more than 50 origins to a key.
+
+Embed Keys normalize and deduplicate origins when you save them.
+
+## Rotating a secret key
+
+Rotate a secret key when it is compromised, outdated, or due for regular credential maintenance. Rotation changes only the secret key, so your frontend embed configuration can continue using the same publishable key.
+
+<Steps>
+  <Step title="Open the key settings" icon="settings" title-type="p">
+
+  Open the Embed Keys settings and select the key you want to rotate.
+
+  </Step>
+
+  <Step title="Rotate the secret" icon="refresh-cw" title-type="p">
+
+  Select the option to rotate the secret key and confirm the change.
+
+  </Step>
+
+  <Step title="Update your server" icon="shield" title-type="p">
+
+  Replace the old secret key with the new value in your server configuration. The old secret stops working immediately, and the new secret is shown only during rotation.
+
+  </Step>
+</Steps>
+
+Rotation does not invalidate existing reader sessions. It affects only the ability to mint new reader tokens with the old secret.
+
+## Revoking an embed key
+
+Revoke an embed key when you no longer want the associated integration to access your documentation. Revocation is immediate and permanent.
+
+<Steps>
+  <Step title="Open the key settings" icon="settings" title-type="p">
+
+  Open the Embed Keys settings and select the key you want to disable.
+
+  </Step>
+
+  <Step title="Revoke the key" icon="trash-2" title-type="p">
+
+  Select **Revoke** and confirm the action.
+
+  </Step>
+</Steps>
+
+Revocation removes the key from the active site configuration and prevents new reader tokens from being created. It is different from expiry because revocation is an explicit administrative action. Revoked keys remain visible in the dashboard for audit purposes.
+
+## Reader tokens
+
+Create reader tokens from your backend when an authenticated visitor needs access to the embedded site.
+
+1. Your backend authenticates with the secret key.
+2. Your backend creates a reader token with the visitor's claims.
+3. Your backend passes the opaque token to the browser.
+4. The browser passes the token to the embedded documentation site's identification flow.
+5. The token is redeemed once and expires after 60 seconds.
+
+Reader tokens support these claims:
+
+- `firstname`
+- `company`
+- `host`
+- `accessRoles`
+
+<Callout kind="alert">
+
+Create reader tokens from your server, never from browser code. A browser must receive the short-lived reader token, not the secret key used to create it.
+
+</Callout>
+
+Browser requests to create reader tokens are rejected. Keep the secret key and token-minting logic behind your server.
+
+## Limits
+
+<Callout kind="info">
+
+Embed Keys enforce these limits:
+
+- **Key name:** 1 to 100 characters.
+- **Unrevoked keys:** Up to 50 per documentation project.
+- **Allowed origins:** Up to 50 per key.
+- **Reader token body:** Up to 16 KiB.
+- **Reader token rate:** Up to 1,000 requests per minute per embed key.
+- **Reader token lifetime:** 60 seconds.
+- **Token usage:** Each reader token can be redeemed once.
+
+</Callout>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Custom Domains" href="/features/custom-domains" icon="globe" horizontal="false">
+
+  Configure a custom domain for your documentation site before embedding it on an external website.
+
+  </Card>
+
+  <Card title="PDF Export" href="/features/pdf-export" icon="download" horizontal="false">
+
+  Export your documentation as a PDF when readers need an offline version.
+
+  </Card>
+</Columns>
