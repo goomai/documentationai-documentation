@@ -44,3 +44,11 @@ description: Track the latest product updates, improvements, and fixes across Do
 - MDX cache tagging improved for deterministic revalidation
 - Sidebar animation transition duration corrected
 </Update>
+
+<Update label="2026-10-28" description="Search and Indexing Fixes" tags={["fix"]}>
+## What changed
+
+- Search indexing now safely handles special characters in OpenAPI names, frontmatter titles, and descriptions
+- Multiline snippets remain searchable when nested in steps, lists, and quotes
+- Failed page-indexing operations retain their error details and completion time
+</Update>
