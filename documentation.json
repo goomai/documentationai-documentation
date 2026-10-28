@@ -180,6 +180,10 @@
                     "icon": "mouse-pointer-click"
                   },
                   {
+                    "title": "Custom Footer",
+                    "path": "features/custom-footer"
+                  },
+                  {
                     "title": "Danger Zone",
                     "path": "features/danger-zone",
                     "icon": "alert-triangle"

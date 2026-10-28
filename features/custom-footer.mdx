@@ -1,0 +1,103 @@
+---
+title: Configure a custom footer
+description: Configure footer links, social URLs, and copyright text for pages, with top-level dashboard settings and language-specific overrides in documentation.json.
+---
+
+## Custom footers
+
+Configure footer links, social profiles, and copyright text for the footer shown under your documentation pages.
+
+## Configure the top-level footer
+
+Add an optional `footer` object to `documentation.json`, or configure it from **Site Config → Footer** in the dashboard. All footer fields are optional.
+
+<ParamField body="footer" param-type="object" required="false">
+
+Top-level footer configuration.
+
+</ParamField>
+
+<ParamField body="footer.links" param-type="array" required="false">
+
+Footer link columns. Each column may include a `header` and an `items` array.
+
+</ParamField>
+
+<ParamField body="footer.links[].header" param-type="string" required="false">
+
+The heading displayed for a link column.
+
+</ParamField>
+
+<ParamField body="footer.links[].items" param-type="array" required="false">
+
+Links in the column. Each item requires a `label` and an `href`.
+
+</ParamField>
+
+<ParamField body="footer.links[].items[].label" param-type="string" required="true">
+
+The text for the footer link.
+
+</ParamField>
+
+<ParamField body="footer.links[].items[].href" param-type="string" required="true">
+
+The link destination. Use a full URL, `mailto:` address, `tel:` number, `#anchor`, or site-relative page path.
+
+</ParamField>
+
+<ParamField body="footer.socials" param-type="object" required="false">
+
+A mapping of platform names to URL strings. Common platform names include `github`, `x`, `linkedin`, `discord`, `youtube`, `instagram`, and `podcast`. Other platform names are allowed.
+
+</ParamField>
+
+<ParamField body="footer.copyright" param-type="string" required="false">
+
+Plain-text copyright information. Keep the value to one line.
+
+</ParamField>
+
+Use a configuration like this:
+
+```json
+{"footer":{"links":[{"header":"Company","items":[{"label":"Privacy","href":"https://acme.com/privacy"},{"label":"Contact","href":"mailto:hello@acme.com"}]},{"header":"Resources","items":[{"label":"API reference","href":"docs/api"},{"label":"Status","href":"https://status.acme.com"}]}],"socials":{"github":"https://github.com/acme","linkedin":"https://www.linkedin.com/company/acme"},"copyright":"© 2026 Acme Inc."}}
+```
+
+## Configure a language-specific footer
+
+Set `footer` directly on the relevant language navigation entry in `documentation.json`. The language-specific footer replaces the top-level footer for that language's pages.
+
+```json
+{"language":"Español","footer":{"copyright":"© 2026 Acme S.L."},"pages":[]}
+```
+
+Use an empty object to explicitly hide the footer for a language instead of inheriting the top-level configuration:
+
+```json
+{"language":"Español","footer":{},"pages":[]}
+```
+
+<Callout kind="info" collapsed="false">
+
+Language-specific footer configuration is available in `documentation.json`. The dashboard's **Site Config → Footer** setting configures only the top-level footer.
+
+</Callout>
+
+## Validate social URLs
+
+Malformed social URLs produce warnings during configuration validation, not validation errors. Use one of these supported forms:
+
+- An `http:` or `https:` URL with a dotted hostname, such as `https://github.com/acme`
+- A `mailto:` or `tel:` value with a destination
+- A relative path beginning with `/`
+- An anchor beginning with `#`
+
+Check the warning before saving the configuration so social links open the intended destination.
+
+<Callout kind="warning" collapsed="false">
+
+Use `label` and `href` for footer link items. Legacy `translations` fields are not part of the supported footer configuration.
+
+</Callout>
