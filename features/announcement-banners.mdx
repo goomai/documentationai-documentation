@@ -1,0 +1,114 @@
+---
+title: Announcement Banners
+description: Publish targeted announcements across your documentation, control banner appearance and dismissal, and understand when changes reach readers.
+---
+
+## Announcement Banners
+
+Announcement Banners display short messages across your documentation site or within selected navigation sections. Manage them in **Documentation Settings → Banners**, not in `documentation.json`.
+
+## How it works
+
+Readers see one matching banner at a time: the first banner they have not dismissed that covers the current page. Banners are selected in this order:
+
+1. `danger`
+2. `alert`
+3. `info`
+
+Within each type, the most recently made live banner appears first.
+
+You can create up to 50 banners for a documentation site. Disabled banners remain saved but do not appear on the live site.
+
+## Creating and managing banners
+
+<Steps>
+  <Step title="Open Announcement Banners in settings" icon="settings" title-type="p">
+
+    Open **Documentation Settings → Banners**. Create a new banner or select an existing banner to edit it.
+
+  </Step>
+
+  <Step title="Add the banner content" icon="edit" title-type="p">
+
+    Enter a required message with up to 300 reader-visible characters. Leading and trailing whitespace is removed before the message is saved.
+
+    Banner content supports Markdown for **bold**, *italic*, inline code, and links. You can also use these inline HTML tags: `a`, `b`, `br`, `code`, `em`, `i`, `mark`, `s`, `small`, `span`, `strong`, `sub`, `sup`, and `u`. The `class` attribute is supported on these tags, and `href` is supported only on `a`.
+
+  </Step>
+
+  <Step title="Choose the banner settings" icon="settings" title-type="p">
+
+    Configure the banner type, color, dismissal behavior, and enabled state.
+
+    <ParamField body="type" param-type="string" required="false" enum="info,alert,danger" show-location="false">
+      Controls the banner type. The default is `info`.
+    </ParamField>
+
+    <ParamField body="color" param-type="string" required="false" show-location="false">
+      Overrides the type-based color with a six-digit hexadecimal color such as `#2563EB`. Use `null` to remove the custom color and return to the type-based color.
+    </ParamField>
+
+    <ParamField body="dismissible" param-type="boolean" required="false" show-location="false">
+      Controls whether readers can close the banner. The default is `true`.
+    </ParamField>
+
+    <ParamField body="enabled" param-type="boolean" required="false" show-location="false">
+      Controls whether the banner appears on the live site. The default is `true`. Set it to `false` to save the banner without displaying it.
+    </ParamField>
+
+  </Step>
+
+  <Step title="Set the target" icon="folder" title-type="p">
+
+    Target the banner by navigation dimensions in this order: product, version, then language.
+
+    An empty target, `{}`, applies the banner across the whole site. Target names must match the corresponding entries in your navigation.
+
+  </Step>
+
+  <Step title="Save the banner" icon="check-circle" title-type="p">
+
+    Save the banner to apply the change. You can later edit its settings, disable it, re-enable it, or delete it permanently.
+
+  </Step>
+</Steps>
+
+## Targeting sections and excluding pages
+
+Use a target when an announcement applies only to part of your documentation. For example, a target with a product, version, and language applies only to that navigation branch.
+
+<ParamField body="target" param-type="object" required="false" show-location="false">
+  Contains `product`, `version`, and `language` names. The dimensions must follow the outside-in order, and each name must exist in the navigation.
+</ParamField>
+
+<ParamField body="exclude" param-type="array" required="false" show-location="false">
+  Omits nested navigation sections from the target. Each exclusion must be a descendant of the target and may include at least one additional nested level. You can add up to 100 exclusions.
+</ParamField>
+
+A target cannot skip a navigation level. For example, a language must belong to the selected version, and that version must belong to the selected product.
+
+## When changes reach the live site
+
+Banner changes go live immediately after you save them. You do not need to publish your documentation separately.
+
+<Callout kind="info" collapsed="false">
+
+If your site has not been published yet, the banner is saved but readers see it after the site's first publish.
+
+</Callout>
+
+<Callout kind="alert" collapsed="false">
+
+Banner changes are refused while your site is publishing. If the banner list reports that publishing is in progress, wait for the deployment to finish and retry the change.
+
+</Callout>
+
+A failed live update does not leave a partial banner change. The previous banner state remains in place, and you can retry after the site is available.
+
+## Editing, disabling, and deleting banners
+
+Edit a banner to change its content, type, color, dismissal behavior, enabled state, target, or exclusions. Updating the target or exclusions replaces that setting rather than merging it with the existing value.
+
+Set `enabled` to `false` when you want to keep a banner for later without showing it. Re-enabling it makes it live again and places it according to its type and most-recently-live time.
+
+Delete a banner when you no longer need it. Deletion permanently removes the banner and takes it out of the live banner list.
