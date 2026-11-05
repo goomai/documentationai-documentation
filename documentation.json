@@ -203,6 +203,10 @@
                     "title": "Search Analytics",
                     "path": "features/search-analytics",
                     "icon": "bar-chart"
+                  },
+                  {
+                    "title": "Use the writing assistant",
+                    "path": "features/ai-assistant"
                   }
                 ],
                 "access-roles": [

@@ -1,0 +1,99 @@
+---
+title: Use the writing assistant
+description: Use the Documentation.AI writing assistant to answer questions, edit docs safely, manage larger tasks, migrate sources, and save or merge changes.
+---
+
+## Use the writing assistant
+
+Use the Documentation.AI writing assistant to answer documentation questions, create and edit pages, manage files, migrate existing content, and save or merge work from the dashboard.
+
+## Ask questions and request edits
+
+Ask the assistant about your documentation when you need an explanation, a summary, or help finding the right content. A question alone should not change files. State the change you want when you need the assistant to edit, create, move, copy, or delete documentation.
+
+The assistant can work across related documentation tasks in the same conversation. You can ask a question first, then request an edit after you understand the recommended approach.
+
+<Callout kind="info">
+
+Questions and edits use the same assistant, but the assistant should change files only when you request a change.
+
+</Callout>
+
+## Edit pages and manage files safely
+
+The assistant can create new pages, edit existing pages, copy pages or folders, and move or delete pages or folders.
+
+### Edit existing pages
+
+Use an edit request when a file already exists. Creating a file at an existing path does not overwrite the file. The assistant refuses the creation and directs the edit to the existing page instead.
+
+Edits that introduce new MDX or configuration syntax errors are refused before the changed content is saved. Existing errors do not count as errors introduced by the current edit.
+
+New pages are saved before syntax problems are reported. If a new page has errors, ask the assistant to fix them with a follow-up edit.
+
+### Protect substantial content
+
+The assistant asks for explicit confirmation before a full-page edit removes substantial content, including:
+
+- A section or heading
+- A code block
+- A table
+- More than 30 percent of the page text
+
+Confirm the removal only when it is intentional. This safeguard prevents a rewrite from silently discarding useful documentation.
+
+### Copy pages and folders
+
+Copy pages or complete folders when you need an exact version or template. Copies preserve their file contents and do not overwrite an existing destination.
+
+Copied pages are not added to navigation automatically. Add them to navigation separately when readers should be able to find them.
+
+### Move or delete pages and folders
+
+Moving or deleting a folder includes its descendants at every level. These operations update supported navigation and configuration references automatically.
+
+After a move, links to moved pages are repaired in the background. The operation can finish before all link updates complete.
+
+Some references that could change site behavior may need manual repair. Examples include links to deleted pages, logos, custom styles, external specifications, and redirects. Review any reported references before publishing.
+
+<Callout kind="alert">
+
+Moving or deleting documentation can affect navigation, links, and site configuration. Check reported references and repair any items that require manual attention.
+
+</Callout>
+
+## Handle larger tasks
+
+The assistant can plan work that spans multiple pages, includes multiple parts, or explicitly asks for a plan. Planning progress appears while the assistant reviews the requested scope.
+
+Plans with 10 or more unfinished tasks are processed in batches of five. The assistant records which tasks are complete and continues with the next batch. If you stop the run, the assistant stops after the current batch rather than continuing through the remaining work.
+
+A batch that completes no tasks ends instead of retrying indefinitely. Review the recorded progress before deciding whether to continue with another request.
+
+## Migrate existing sources
+
+Start a migration from one of these sources:
+
+- A website URL
+- A GitHub or GitLab repository
+- An uploaded ZIP, Markdown, MDX, or HTML source
+
+For a repository migration, you can optionally specify a branch or other ref, limit the source to a path, define include or exclude patterns, and request publishing when the migration completes. Publishing is not enabled by default.
+
+If you have a product website but no separate documentation source, use the website content to generate documentation instead of migrating an existing documentation set.
+
+Uploaded files have a maximum size of 500 MiB. Migration runs in the background and returns progress so you can track the work while continuing with other tasks.
+
+<Callout kind="alert">
+
+A migration can replace the project's navigation and add redirects. Review the source scope and the resulting content before publishing.
+
+</Callout>
+
+## Save and merge work
+
+The assistant can save documentation changes and, when appropriate, merge them into the live documentation. Saving a change can report that there was nothing new to save or that a conflict prevented the operation.
+
+Merging can also report conflicts, including the files that need attention. A save conflict prevents the merge from continuing. Resolve the reported files in the working changes before trying again.
+
+Saving or merging may also indicate that the live site is updating. Wait for the update to finish before checking the published result.
